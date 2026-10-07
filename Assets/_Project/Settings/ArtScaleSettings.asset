@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5674f782c80d35d4ab2cceca686ca4ea, type: 3}
+  m_Name: ArtScaleSettings
+  m_EditorClassIdentifier: DWH.Editor::DWH.Editor.ArtScaleSettings
+  maxTextureSize: 2048
+  compression: 1
+  filterMode: 1
+  rules:
+  - pathPrefix: Backgrounds/
+    pixelsPerUnit: 100
+    pivot: 7
+  - pathPrefix: Buildings/Normal/
+    pixelsPerUnit: 600
+    pivot: 7
+  - pathPrefix: Buildings/Golden/
+    pixelsPerUnit: 600
+    pivot: 7
+  - pathPrefix: Buildings/Attack/
+    pixelsPerUnit: 600
+    pivot: 7
+  - pathPrefix: Buildings/GoldenAttack/
+    pixelsPerUnit: 600
+    pivot: 7
+  - pathPrefix: Buildings/Landmark/
+    pixelsPerUnit: 350
+    pivot: 7
+  - pathPrefix: Dragon/
+    pixelsPerUnit: 700
+    pivot: 0
+  - pathPrefix: AirUnits/
+    pixelsPerUnit: 200
+    pivot: 0
+  - pathPrefix: Drops/
+    pixelsPerUnit: 500
+    pivot: 0
