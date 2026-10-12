@@ -1,12 +1,14 @@
 using System;
+using DWH.Data;
 using DWH.InGame.Combat;
+using DWH.InGame.Fx;
 using UnityEngine;
 
 namespace DWH.InGame.Skills
 {
     /// <summary>
-    /// 패시브 스킬 그레이박스 연출 (9.6: 스킬 이펙트 리소스 없음). 흰 사각형 스프라이트에 색을 입혀 모양만 낸다.
-    /// 모든 연출은 전투 오브젝트 아래에 만들어 전투를 정리할 때 함께 지워진다. 오래 남지 않게 수명을 둔다.
+    /// 스킬 연출. 이펙트 리소스(resource type 80)가 있으면 프레임 애니메이션을, 없으면(테스트 등) 색 사각형을 쓴다.
+    /// 모든 연출은 전투 오브젝트 아래에 만들어 전투를 정리할 때 함께 지워진다.
     /// </summary>
     public static class SkillFx
     {
@@ -26,57 +28,67 @@ namespace DWH.InGame.Skills
             return go;
         }
 
-        /// <summary>돌진 잔상</summary>
-        public static void Streak(Transform parent, Rect dragon, float facing, Color color) =>
-            Quad(parent, "FxDash", new Vector2(dragon.center.x + facing * dragon.width * 0.6f, dragon.center.y), new Vector2(dragon.width * 1.6f, dragon.height * 0.5f), color, 0.25f);
-
-        /// <summary>낙뢰: 대상 위로 세로 번개</summary>
-        public static void Bolt(Transform parent, Rect target, Color color) =>
-            Quad(parent, "FxBolt", new Vector2(target.center.x, target.yMin + 4f), new Vector2(0.25f, 8f), color, 0.18f);
-
-        /// <summary>충격파: 지면을 따라 퍼지는 띠</summary>
-        public static void Ring(Transform parent, Rect dragon, float radius, Color color) =>
-            Quad(parent, "FxShock", new Vector2(dragon.center.x, dragon.yMin + 0.15f), new Vector2(dragon.width + radius * 2, 0.3f), color, 0.35f);
-
-        /// <summary>파이어 브레스 부채꼴(사각형으로 근사). PlaceCone으로 위치를 맞춘다</summary>
-        public static GameObject Cone(Transform parent, Color color) => Quad(parent, "FxBreath", Vector2.zero, Vector2.one, color, 4f);
-
-        public static void PlaceCone(GameObject cone, Rect dragon, float facing, float range)
+        /// <summary>낙뢰: 대상 위에 떨어지는 번개 (P3 번개 골드, 256×512 프레임). 아래 끝을 대상 바닥 쪽에 맞춘다</summary>
+        public static void Bolt(Transform parent, GameDatabase db, ArtCatalog art, Rect target)
         {
-            if (cone == null) return;
-            float width = range + dragon.width * 0.3f;
-            float x = facing > 0 ? dragon.xMax - dragon.width * 0.3f + width / 2 : dragon.xMin + dragon.width * 0.3f - width / 2;
-            cone.transform.position = new Vector3(x, dragon.yMin + dragon.height * 0.55f, 0);
-            cone.transform.localScale = new Vector3(width, dragon.height * 0.6f, 1);
-        }
-
-        /// <summary>회전 회오리: 드래곤 둘레를 도는 사각형</summary>
-        public static GameObject Spinner(Transform dragonTransform, Rect dragon, Color color)
-        {
-            var go = Quad(dragonTransform, "FxWhirl", dragon.center, new Vector2(dragon.width * 1.3f, dragon.height * 1.1f), color, 5f);
-            go.AddComponent<FxSpin>();
-            return go;
+            const float Scale = 1.4f;
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.LightningGold, Vector2.zero, Scale, Order);
+            if (fx == null)
+            {
+                Quad(parent, "FxBolt", new Vector2(target.center.x, target.yMin + 4f), new Vector2(0.25f, 8f), new Color(1f, 0.95f, 0.5f), 0.18f);
+                return;
+            }
+            float half = fx.Renderer.sprite.bounds.extents.y * Scale;
+            fx.transform.position = new Vector2(target.center.x, target.yMin + target.height * 0.3f + half);
         }
 
         /// <summary>메테오 본체 (액티브). 호출하는 쪽이 위치를 옮긴다</summary>
-        public static GameObject Meteor(Transform parent, Vector2 at, Color color) => Quad(parent, "FxMeteor", at, new Vector2(0.6f, 0.6f), color, 2f);
+        public static GameObject Meteor(Transform parent, GameDatabase db, ArtCatalog art, Vector2 at)
+        {
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.Meteor, at, 0.9f, Order, 5f);
+            if (fx != null) fx.LoopFor(5f);
+            return fx != null ? fx.gameObject : Quad(parent, "FxMeteor", at, new Vector2(0.6f, 0.6f), new Color(1f, 0.45f, 0.2f), 2f);
+        }
 
         /// <summary>충돌 폭발</summary>
-        public static void Burst(Transform parent, Vector2 at, float size, Color color) => Quad(parent, "FxBurst", at, new Vector2(size, size), color, 0.3f);
+        public static void Burst(Transform parent, GameDatabase db, ArtCatalog art, string resId, Vector2 at, float size, Color fallback)
+        {
+            if (SpriteAnim.Play(parent, db, art, resId, at, size / 2.7f * 1.6f, Order) == null)
+                Quad(parent, "FxBurst", at, new Vector2(size, size), fallback, 0.3f);
+        }
 
         /// <summary>허리케인 기둥 (액티브). 호출하는 쪽이 위치를 옮긴다</summary>
-        public static GameObject Column(Transform parent, Vector2 center, Vector2 size, Color color, float lifetime) =>
-            Quad(parent, "FxHurricane", center, size, color, lifetime);
+        public static GameObject Column(Transform parent, GameDatabase db, ArtCatalog art, Vector2 center, Vector2 size, float lifetime)
+        {
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.Hurricane, center, size.y / 2.7f, Order, lifetime);
+            if (fx != null)
+            {
+                fx.LoopFor(lifetime);
+                return fx.gameObject;
+            }
+            return Quad(parent, "FxHurricane", center, size, new Color(0.7f, 0.9f, 1f, 0.35f), lifetime);
+        }
 
-        /// <summary>지진: 화면 폭의 지면 진동 띠</summary>
-        public static void Ground(Transform parent, float centerX, float width, float groundY, Color color) =>
-            Quad(parent, "FxQuake", new Vector2(centerX, groundY), new Vector2(width, 0.5f), color, 0.35f);
+        /// <summary>지진: 화면 폭의 지면 진동</summary>
+        public static void Ground(Transform parent, GameDatabase db, ArtCatalog art, float centerX, float width, float groundY)
+        {
+            int pieces = Mathf.Max(1, Mathf.CeilToInt(width / 4f));
+            bool any = false;
+            for (int i = 0; i < pieces; i++)
+            {
+                float x = centerX - width / 2 + (i + 0.5f) * width / pieces;
+                any |= SpriteAnim.Play(parent, db, art, FxIds.Earthquake, new Vector2(x, groundY + 0.8f), 1.2f, Order) != null;
+            }
+            if (!any) Quad(parent, "FxQuake", new Vector2(centerX, groundY), new Vector2(width, 0.5f), new Color(0.6f, 0.45f, 0.3f, 0.5f), 0.35f);
+        }
 
         /// <summary>파이어 볼: 대상을 따라 휘어 날아가는 불덩이</summary>
-        public static void Homing(Transform parent, Vector2 origin, ICombatTarget target, float speed, Color color,
+        public static void Homing(Transform parent, GameDatabase db, ArtCatalog art, Vector2 origin, ICombatTarget target, float speed,
             Action<ICombatTarget> onHit, Func<ICombatTarget> retarget)
         {
-            var go = Quad(parent, "FxFireBall", origin, new Vector2(0.35f, 0.35f), color, 4f);
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.FireBall, origin, 0.35f, Order, 4f);
+            var go = fx != null ? fx.gameObject : Quad(parent, "FxFireBall", origin, new Vector2(0.35f, 0.35f), new Color(1f, 0.5f, 0.15f), 4f);
+            if (fx != null) fx.LoopFor(4f);
             go.AddComponent<HomingShot>().Launch(target, speed, onHit, retarget);
         }
     }
@@ -103,11 +115,6 @@ namespace DWH.InGame.Skills
                 sr.color = new Color(baseColor.r, baseColor.g, baseColor.b, baseColor.a * Mathf.Clamp01(1 - (age - fadeStart) / (lifetime - fadeStart)));
             if (age >= lifetime) Destroy(gameObject);
         }
-    }
-
-    public class FxSpin : MonoBehaviour
-    {
-        void Update() => transform.Rotate(0, 0, 900f * Time.deltaTime);
     }
 
     /// <summary>유도 투사체. 대상이 먼저 부서지면 다음 대상으로 바꾸고, 없으면 사라진다</summary>
@@ -143,6 +150,7 @@ namespace DWH.InGame.Skills
             direction = Quaternion.Euler(0, 0, Mathf.Clamp(angle, -TurnRate * Time.deltaTime, TurnRate * Time.deltaTime)) * direction;
             pos += direction * (speed * Time.deltaTime);
             transform.position = pos;
+            transform.right = direction;
 
             if (target.Hitbox.Contains(pos) || aim.magnitude < 0.2f)
             {

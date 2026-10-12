@@ -5,27 +5,22 @@ using NUnit.Framework;
 
 namespace DWH.Tests
 {
-    /// <summary>스테이지 스타터 게이지 난이도와 판정 (4.7)</summary>
+    /// <summary>스테이지 스타터 게이지 (starter_stage, starter_grade, 가이드 6.9)</summary>
     public class StarterGaugeTests
     {
         GameDatabase db;
 
         [OneTimeSetUp]
-        public void Load() => db = CsvImporter.LoadInMemory(CsvImporter.DefaultCsvFolder);
+        public void Load() => db = CsvImporter.LoadInMemory();
 
         [Test]
-        public void Difficulty_FollowsStageFormula()
+        public void Gauge_UsesStarterStageRow()
         {
-            var first = StarterGauge.ForStage(db.balance, 1);
+            var first = StarterGauge.ForStage(db.StarterStage("stg101"));
             Assert.AreEqual(0.8f, first.ZoneSpeed, 1e-5);
             Assert.AreEqual(1.2f, first.BarSpeed, 1e-5);
             Assert.AreEqual(0.15f, first.GreatWidth, 1e-5);
-            Assert.AreEqual(0.375f, first.GoodWidth, 1e-5, "Good = Great × 2.5");
-
-            var last = StarterGauge.ForStage(db.balance, 28);
-            Assert.AreEqual(0.8f + 0.05f * 27, last.ZoneSpeed, 1e-5);
-            Assert.AreEqual(1.2f + 0.05f * 27, last.BarSpeed, 1e-5);
-            Assert.AreEqual(0.069f, last.GreatWidth, 1e-5, "max(0.06, 0.15 - 0.003 × 27)");
+            Assert.AreEqual(0.375f, first.GoodWidth, 1e-5);
         }
 
         [Test]
@@ -41,7 +36,7 @@ namespace DWH.Tests
         [Test]
         public void Advance_KeepsZoneAndBarInsideGauge()
         {
-            var gauge = StarterGauge.ForStage(db.balance, 14);
+            var gauge = StarterGauge.ForStage(db.StarterStage("stg702"));
             for (int i = 0; i < 2000; i++)
             {
                 gauge.Advance(1f / 60);
@@ -51,14 +46,11 @@ namespace DWH.Tests
         }
 
         [Test]
-        public void StarterTable_GradesMatchDoc()
+        public void Grades_MatchTable()
         {
-            var great = db.stageStarter.rows.Find(r => r.grade == StarterGrade.Great);
-            var good = db.stageStarter.rows.Find(r => r.grade == StarterGrade.Good);
-            var fail = db.stageStarter.rows.Find(r => r.grade == StarterGrade.Fail);
-            Assert.AreEqual((2.0, 5), (great.damageMultiplier, great.sideCount));
-            Assert.AreEqual((1.3, 2), (good.damageMultiplier, good.sideCount));
-            Assert.AreEqual(0, fail.damageMultiplier);
+            Assert.AreEqual((200.0, 5), (db.StarterGrade(StarterGrade.Great).dmgPct, db.StarterGrade(StarterGrade.Great).sideCount));
+            Assert.AreEqual((130.0, 2), (db.StarterGrade(StarterGrade.Good).dmgPct, db.StarterGrade(StarterGrade.Good).sideCount));
+            Assert.AreEqual(0, db.StarterGrade(StarterGrade.Fail).dmgPct);
         }
     }
 }

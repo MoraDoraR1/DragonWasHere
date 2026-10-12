@@ -1,0 +1,224 @@
+key,ko,en
+active_skill_desc_1,메테오를 떨어뜨려 건물에 큰 피해를 줍니다.,Drops meteors that deal heavy damage to buildings.
+active_skill_desc_2,화면을 이동하며 충돌한 건물에 지속 피해를 줍니다.,"Sweeps across the screen, dealing continuous damage to buildings it hits."
+active_skill_desc_3,화면 안의 모든 건물에 지속 피해를 줍니다.,Deals continuous damage to every building on screen.
+active_skill_name_1,메테오,Meteor
+active_skill_name_2,허리케인,Hurricane
+active_skill_name_3,지진,Earthquake
+combo_praise_1,좋아!,Nice!
+combo_praise_2,멋져!!,Awesome!!
+combo_praise_3,파괴 본능!!!,Destroyer!!!
+combo_praise_4,도시 붕괴!!!!,City Crush!!!!
+combo_praise_5,대재앙!!!!!,Catastrophe!!!!!
+combo_praise_6,궁극의 재앙!!!!!!,Ultimate Disaster!!!!!!
+dragon_desc_101,보물이 곧 자신의 위상이라 믿는 작은 불 드래곤. 인간이 있는 곳에 보물이 따라온다며 원시부터 우주까지 도시를 부수고 다닌다.,"A little fire dragon who believes treasure is a measure of greatness. Wherever humans go, treasure follows, so it smashes cities from the Stone Age to outer space."
+dragon_name_101,불 드래곤,Fire Dragon
+effect_type_name_1,모든 공격력 증가,All Damage Up
+effect_type_name_10,콤보 골드 보너스,Combo Gold Bonus
+effect_type_name_11,최대 콤보,Max Combo
+effect_type_name_12,클리어 골드 보너스,Clear Gold Bonus
+effect_type_name_13,이동 속도 증가,Move Speed Up
+effect_type_name_14,점프 성능 증가,Jump Power Up
+effect_type_name_15,비행 시간 증가,Flight Time Up
+effect_type_name_16,치명타 확률,Critical Chance
+effect_type_name_17,치명타 피해 배율,Critical Damage
+effect_type_name_18,브레스 피해 증가,Breath Damage Up
+effect_type_name_19,화상 피해,Burn Damage
+effect_type_name_2,최대 기력 증가,Max Stamina Up
+effect_type_name_20,사거리 증가,Range Up
+effect_type_name_21,파이어 볼 피해 배율,Fireball Damage
+effect_type_name_22,동시 발사 수,Projectiles per Cast
+effect_type_name_23,충격파 피해 배율,Shockwave Damage
+effect_type_name_24,충격 범위,Shockwave Range
+effect_type_name_25,몸통 박치기 피해 증가,Body Slam Damage Up
+effect_type_name_26,돌진 주기,Charge Interval
+effect_type_name_27,회전 회오리 피해 배율,Spinning Whirlwind Damage
+effect_type_name_28,범위 증가,Area Up
+effect_type_name_29,지속 시간 증가,Duration Up
+effect_type_name_3,파괴 시 기력 회복,Stamina on Destroy
+effect_type_name_30,낙뢰 피해 배율,Lightning Damage
+effect_type_name_31,낙뢰 수,Lightning Bolts
+effect_type_name_32,모든 공격 쿨다운 감소,All Cooldowns Down
+effect_type_name_33,환생 시작 골드,Rebirth Starting Gold
+effect_type_name_34,업그레이드 비용 감소,Upgrade Cost Down
+effect_type_name_35,공격 스킬 자동 해금,Auto-Unlock Attack Skills
+effect_type_name_36,피해 배율,Damage
+effect_type_name_37,메테오 수,Meteors
+effect_type_name_38,지속 시간,Duration
+effect_type_name_4,최대 체력 증가,Max Health Up
+effect_type_name_5,초당 체력 회복,Health Regen per Second
+effect_type_name_6,클리어 시 기력 회복,Stamina on Clear
+effect_type_name_7,낮은 기력 공격력 증가,Low-Stamina Damage Up
+effect_type_name_8,골드 획득량 증가,Gold Gain Up
+effect_type_name_9,황금 건물 등장 확률,Golden Building Chance
+era_desc_1,공룡과 원시인이 사는 시대. 동굴과 움막에도 반짝이는 것이 숨어 있다.,The age of dinosaurs and cavemen. Even caves and huts hide something shiny.
+era_desc_2,피라미드와 신전의 시대. 신에게 바친 황금이 가득하다.,"The age of pyramids and temples, full of gold offered to the gods."
+era_desc_3,성과 대성당의 시대. 왕실 금고가 기다린다.,The age of castles and cathedrals. Royal vaults await.
+era_desc_4,증기와 강철의 시대. 공장마다 돈이 굴러 들어온다.,The age of steam and steel. Money rolls into every factory.
+era_desc_5,빌딩 숲의 시대. 도시 전체가 보물 창고다.,The age of skyscrapers. The whole city is a treasure vault.
+era_desc_6,드론과 로봇이 다니는 시대. 보물도 네온처럼 빛난다.,The age of drones and robots. Even the treasure glows like neon.
+era_desc_7,인류가 달과 화성까지 간 시대. 보물도 우주로 따라갔다.,"Humanity has reached the Moon and Mars, and the treasure followed."
+era_name_1,원시,Stone Age
+era_name_2,고대,Ancient
+era_name_3,중세,Medieval
+era_name_4,산업,Industrial
+era_name_5,현대,Modern
+era_name_6,미래,Future
+era_name_7,우주,Space
+growth_name_10101,해츨링,Hatchling
+growth_name_10102,청소년,Juvenile
+growth_name_10103,성체,Adult
+growth_name_10104,고룡,Ancient
+item_desc_101,가장 흔한 보물. 골드 코인 1개로 바뀐다.,The most common treasure. Worth 1 gold coin.
+item_desc_102,묵직한 금덩이. 골드 코인 5개로 바뀐다.,A heavy bar of gold. Worth 5 gold coins.
+item_desc_103,푸르게 빛나는 보석. 골드 코인 25개로 바뀐다.,A gem that shines blue. Worth 25 gold coins.
+item_desc_104,붉게 타오르는 보석. 골드 코인 100개로 바뀐다.,A gem that burns red. Worth 100 gold coins.
+item_desc_105,가장 단단하고 눈부신 보석. 골드 코인 500개로 바뀐다.,"The hardest, most dazzling gem. Worth 500 gold coins."
+item_desc_106,"최후의 보물. 골드 코인 1,000개로 바뀐다.","The ultimate treasure. Worth 1,000 gold coins."
+item_name_101,금 코인,Gold Coin
+item_name_102,금괴,Gold Bar
+item_name_103,사파이어,Sapphire
+item_name_104,루비,Ruby
+item_name_105,다이아몬드,Diamond
+item_name_106,왕관,Crown
+rebirth_trait_desc_1,모든 공격력을 영구히 높입니다.,Permanently increases all damage.
+rebirth_trait_desc_2,모든 골드 획득량을 영구히 높입니다.,Permanently increases all gold gain.
+rebirth_trait_desc_3,최대 기력을 영구히 높입니다.,Permanently increases max stamina.
+rebirth_trait_desc_4,환생 직후 보유하는 시작 골드를 늘립니다.,Increases the gold you start with after rebirth.
+rebirth_trait_desc_5,업그레이드 구매 비용을 줄입니다.,Reduces upgrade costs.
+rebirth_trait_desc_6,환생 직후 지정된 공격 스킬을 자동으로 해금합니다.,Automatically unlocks set attack skills right after rebirth.
+rebirth_trait_name_1,태고의 분노,Primordial Rage
+rebirth_trait_name_2,황금 혈통,Golden Bloodline
+rebirth_trait_name_3,영원의 심장,Eternal Heart
+rebirth_trait_name_4,고룡의 유산,Ancient Dragon's Legacy
+rebirth_trait_name_5,용의 지혜,Dragon's Wisdom
+rebirth_trait_name_6,자동 각성,Automatic Awakening
+stage_name_101,공룡 숲,Dino Forest
+stage_name_102,불타는 화산,Blazing Volcano
+stage_name_103,원시인 마을,Caveman Village
+stage_name_104,고인돌 언덕,Dolmen Hill
+stage_name_201,나일 강변,Nile Riverside
+stage_name_202,대피라미드,The Great Pyramid
+stage_name_203,로마 광장,Roman Forum
+stage_name_204,콜로세움,The Colosseum
+stage_name_301,파리 성곽,Walls of Paris
+stage_name_302,노트르담 대성당,Notre-Dame Cathedral
+stage_name_303,라인강 마을,Rhine Village
+stage_name_304,쾰른 대성당,Cologne Cathedral
+stage_name_401,런던 공업지대,London Works
+stage_name_402,빅벤,Big Ben
+stage_name_403,강철 도시,Steel City
+stage_name_404,브루클린 다리,Brooklyn Bridge
+stage_name_501,뉴욕 번화가,Downtown New York
+stage_name_502,자유의 여신상,Statue of Liberty
+stage_name_503,서울 골목,Seoul Alleys
+stage_name_504,남산타워,Namsan Tower
+stage_name_601,네오 도쿄,Neo Tokyo
+stage_name_602,네오 도쿄 타워,Neo Tokyo Tower
+stage_name_603,미래 상하이,Future Shanghai
+stage_name_604,상하이 타워,Shanghai Tower
+stage_name_701,달 기지,Lunar Base
+stage_name_702,우주정거장,Space Station
+stage_name_703,화성 개척지,Mars Colony
+stage_name_704,테라포밍 플랜트,Terraforming Plant
+starter_grade_name_1,Great,Great
+starter_grade_name_2,Good,Good
+starter_grade_name_3,Fail,Fail
+theme_name_11,공룡,Dinosaurs
+theme_name_12,원시인,Cavemen
+theme_name_21,이집트,Egypt
+theme_name_22,그리스,Greece
+theme_name_31,프랑스,France
+theme_name_32,독일,Germany
+theme_name_41,영국,Britain
+theme_name_42,미국,USA
+theme_name_51,미국,USA
+theme_name_52,한국,Korea
+theme_name_61,일본,Japan
+theme_name_62,중국,China
+theme_name_71,달,Moon
+theme_name_72,화성,Mars
+unit_name_111,볏 익룡,Crested Pterosaur
+unit_name_112,깃털 활공룡,Feathered Glider
+unit_name_121,박쥐 기수,Bat Rider
+unit_name_122,가죽 글라이더,Hide Glider
+unit_name_211,호루스 매,Horus Falcon
+unit_name_212,태양 스카라베,Sun Scarab
+unit_name_221,페가수스,Pegasus
+unit_name_222,청동 올빼미,Bronze Owl
+unit_name_311,왕실 그리핀,Royal Griffin
+unit_name_312,갑주 매,Armored Hawk
+unit_name_321,목조 날개비행기,Wooden Ornithopter
+unit_name_322,철갑 까마귀,Ironclad Crow
+unit_name_411,증기 비행선,Steam Airship
+unit_name_412,황동 자이로콥터,Brass Gyrocopter
+unit_name_421,복엽 정찰기,Biplane Scout
+unit_name_422,철갑 비행선,Armored Airship
+unit_name_511,공격 헬기,Attack Helicopter
+unit_name_512,쌍발 전투기,Twin-Engine Fighter
+unit_name_521,틸트로터 무인기,Tiltrotor Drone
+unit_name_522,스텔스 요격기,Stealth Interceptor
+unit_name_611,링 드론,Ring Drone
+unit_name_612,호버 건쉽,Hover Gunship
+unit_name_621,등롱 드론,Lantern Drone
+unit_name_622,제비 요격정,Swallow Interceptor
+unit_name_711,달 순찰정,Lunar Patrol Craft
+unit_name_712,궤도 방어구,Orbital Defender
+unit_name_721,화성 정찰 드론,Mars Recon Drone
+unit_name_722,화성 강습 셔틀,Mars Assault Shuttle
+upgrade_desc_101,모든 공격의 위력을 높입니다.,Increases the power of all attacks.
+upgrade_desc_201,최대 기력을 높여 더 오래 행동할 수 있습니다.,Increases max stamina so you can keep going longer.
+upgrade_desc_202,건물을 파괴할 때 기력을 회복합니다. 랜드마크는 5배 적용합니다.,Restores stamina when you destroy a building. Landmarks count 5 times.
+upgrade_desc_203,최대 체력을 높입니다.,Increases max health.
+upgrade_desc_204,전투 중 체력을 지속해서 회복합니다.,Restores health continuously during battle.
+upgrade_desc_205,스테이지 클리어 시 기력을 회복합니다.,Restores stamina when you clear a stage.
+upgrade_desc_206,기력이 25% 이하일 때 공격력이 증가합니다.,Increases damage while stamina is at 25% or less.
+upgrade_desc_301,모든 골드 획득량을 높입니다.,Increases all gold gain.
+upgrade_desc_302,황금 건물이 등장할 확률을 높입니다.,Increases the chance of golden buildings.
+upgrade_desc_303,연속 파괴 콤보에 따라 골드 보너스를 얻습니다.,Earn bonus gold based on your destruction combo.
+upgrade_desc_304,스테이지 클리어 시 추가 골드를 얻습니다.,Earn extra gold when you clear a stage.
+upgrade_desc_401,이동 속도를 높입니다.,Increases move speed.
+upgrade_desc_402,점프 성능과 비행 시간을 높입니다.,Increases jump power and flight time.
+upgrade_desc_403,치명타가 발생할 확률을 높입니다.,Increases the chance of critical hits.
+upgrade_desc_404,치명타 피해량을 높입니다.,Increases critical damage.
+upgrade_desc_501,브레스 공격의 피해량을 높입니다.,Increases breath damage.
+upgrade_desc_502,브레스에 화상 효과를 추가하고 사거리를 늘립니다.,Adds burn to your breath and extends its range.
+upgrade_desc_503,주변 건물에 유도 파이어 볼을 발사합니다.,Fires homing fireballs at nearby buildings.
+upgrade_desc_504,한 번에 발사하는 파이어 볼 수를 늘립니다.,Increases the number of fireballs per cast.
+upgrade_desc_505,꼬리로 땅을 내리쳐 주변 건물을 공격합니다. 맞은 공격 건물은 1초 동안 공격하지 못합니다.,Slams the ground with your tail to hit nearby buildings. Attack buildings that are hit stop attacking for 1 second.
+upgrade_desc_506,충격파가 닿는 범위를 드래곤 양옆 건물까지 넓힙니다.,Extends the shockwave to buildings on both sides of the dragon.
+upgrade_desc_507,몸통 박치기 공격의 피해량을 높입니다.,Increases body slam damage.
+upgrade_desc_508,주기적으로 돌진하여 건물을 관통합니다.,"Periodically charges forward, smashing through buildings."
+upgrade_desc_509,주변을 공격하고 날아오는 탄을 튕겨냅니다.,Attacks all around and deflects incoming shots.
+upgrade_desc_510,회전 회오리의 범위와 지속 시간을 늘립니다.,Increases the area and duration of Spinning Whirlwind.
+upgrade_desc_511,화면의 건물에 낙뢰를 떨어뜨립니다.,Calls lightning down on buildings on screen.
+upgrade_desc_512,동시에 발생하는 낙뢰 수를 늘립니다.,Increases the number of lightning bolts at once.
+upgrade_desc_513,모든 공격의 재사용 대기시간을 줄입니다.,Reduces the cooldown of all attacks.
+upgrade_name_101,용의 각성,Dragon's Awakening
+upgrade_name_201,지구력,Endurance
+upgrade_name_202,포식,Devour
+upgrade_name_203,강철 비늘,Steel Scales
+upgrade_name_204,용의 심장,Dragon's Heart
+upgrade_name_205,승전의 포효,Roar of Victory
+upgrade_name_206,광란,Frenzy
+upgrade_name_301,탐욕,Greed
+upgrade_name_302,황금 감별안,Eye for Gold
+upgrade_name_303,연쇄 파괴,Chain Destruction
+upgrade_name_304,보물 산더미,Treasure Hoard
+upgrade_name_401,맹렬한 질주,Furious Rush
+upgrade_name_402,날개 힘,Wing Strength
+upgrade_name_403,역린,Dragon's Reverse Scale
+upgrade_name_404,용의 분노,Dragon's Fury
+upgrade_name_501,파이어 브레스,Fire Breath
+upgrade_name_502,지옥불,Hellfire
+upgrade_name_503,파이어 볼,Fireball
+upgrade_name_504,연속 파이어 볼,Consecutive Fireballs
+upgrade_name_505,충격파,Shockwave
+upgrade_name_506,충격 범위,Shockwave Range
+upgrade_name_507,몸통 박치기,Body Slam
+upgrade_name_508,돌진,Charge
+upgrade_name_509,회전 회오리,Spinning Whirlwind
+upgrade_name_510,거대 회오리,Giant Whirlwind
+upgrade_name_511,낙뢰,Lightning
+upgrade_name_512,천둥 폭풍,Thunderstorm
+upgrade_name_513,종말의 용,Dragon of the Apocalypse

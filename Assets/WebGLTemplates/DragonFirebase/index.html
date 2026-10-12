@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+
+    <!-- ── DWH Analytics: Firebase(GA4) 연결 ── -->
+    <script src="firebase-config.js"></script>
+    <script>
+      // Unity가 Firebase 로딩보다 먼저 이벤트를 보내도 잃지 않도록 큐에 쌓아 둔다.
+      window.DwhAnalyticsBridge = (function () {
+        var queue = [], impl = null;
+        function call(method, args) {
+          if (impl) impl[method].apply(null, args);
+          else queue.push([method, args]);
+        }
+        return {
+          init: function () { call("init", arguments); },
+          log: function () { call("log", arguments); },
+          setUserProps: function () { call("setUserProps", arguments); },
+          _attach: function (i) {
+            impl = i;
+            for (var k = 0; k < queue.length; k++) impl[queue[k][0]].apply(null, queue[k][1]);
+            queue = [];
+          }
+        };
+      })();
+    </script>
+    <script type="module">
+      const FIREBASE_VERSION = "10.12.2";
+      const consoleOnly = {
+        init(uid, props, isDev) { console.log("[DWH] init (콘솔 전용)", uid, props, isDev); },
+        log(name, params) { console.log("[DWH]", name, params); },
+        setUserProps(props) { console.log("[DWH] user props", props); }
+      };
+      const bridge = window.DwhAnalyticsBridge;
+      const cfg = window.DWH_FIREBASE_CONFIG;
+
+      if (!cfg) {
+        console.warn("[DWH] firebase-config.js가 비어 있어 콘솔에만 기록합니다.");
+        bridge._attach(consoleOnly);
+      } else {
+        try {
+          const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
+          const { initializeApp } = await import(`${base}/firebase-app.js`);
+          const fa = await import(`${base}/firebase-analytics.js`);
+          if (!(await fa.isSupported())) throw new Error("이 브라우저 환경은 Firebase Analytics를 지원하지 않음");
+
+          const app = initializeApp(cfg);
+          // itch.io는 게임을 다른 도메인의 iframe에서 띄우므로 쿠키를 SameSite=None으로 둔다.
+          const analytics = fa.initializeAnalytics(app, {
+            config: { cookie_flags: "SameSite=None;Secure", send_page_view: false }
+          });
+
+          let isDev = false;
+          bridge._attach({
+            init(uid, props, dev) {
+              isDev = !!dev;
+              fa.setUserId(analytics, uid);
+              fa.setUserProperties(analytics, props);
+              console.log("[DWH] Firebase 연결됨", { uid, dev: isDev });
+            },
+            log(name, params) {
+              // debug_mode가 붙은 이벤트만 GA4 DebugView에 실시간으로 보인다.
+              if (isDev) params.debug_mode = true;
+              fa.logEvent(analytics, name, params);
+              if (isDev) console.log("[DWH]", name, params);
+            },
+            setUserProps(props) { fa.setUserProperties(analytics, props); }
+          });
+        } catch (e) {
+          console.warn("[DWH] Firebase 연결 실패, 콘솔에만 기록합니다:", e);
+          bridge._attach(consoleOnly);
+        }
+      }
+    </script>
+    <!-- ── /DWH Analytics ── -->
+  </head>
+  <body>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">{{{ PRODUCT_NAME }}}</div>
+      </div>
+    </div>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_THREADS
+        workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
+#endif
+#if USE_WASM
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        showBanner: unityShowBanner,
+      };
+
+      // 세이브(PlayerPrefs 외 파일)가 새로고침 뒤에도 남도록 한다.
+      config.autoSyncPersistentDataPath = true;
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        document.querySelector("#unity-container").className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        canvas.style.width = "{{{ WIDTH }}}px";
+        canvas.style.height = "{{{ HEIGHT }}}px";
+      }
+
+#if BACKGROUND_FILENAME
+      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+#endif
+      document.querySelector("#unity-loading-bar").style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          document.querySelector("#unity-loading-bar").style.display = "none";
+          document.querySelector("#unity-fullscreen-button").onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

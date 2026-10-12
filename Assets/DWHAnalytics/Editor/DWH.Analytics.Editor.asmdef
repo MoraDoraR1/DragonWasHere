@@ -1,0 +1,14 @@
+{
+    "name": "DWH.Analytics.Editor",
+    "rootNamespace": "DWH.Analytics.Editor",
+    "references": ["DWH.Analytics"],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

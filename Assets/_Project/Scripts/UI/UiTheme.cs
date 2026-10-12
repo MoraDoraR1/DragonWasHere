@@ -4,8 +4,8 @@ namespace DWH.UI
 {
     /// <summary>
     /// UI 디자인 토큰: 폰트, 9-slice 프레임 스프라이트, 아이콘, 색.
-    /// 2026-10-08부터 UI 디자인 패키지 v1(리소스/dragon_ui_unity_v1.zip)을 쓴다: 어두운 패널, 굵은 먹선, 금색·영혼색 버튼, Jua 폰트.
-    /// 패키지 스프라이트는 kit 배열에 이름(파일 이름) 그대로 담아 Kit("panel-normal")처럼 찾는다.
+    /// UI 에셋 V15(Fix_Resource/UI&amp;폰트/01_UI에셋)를 쓴다: 밝은 크림 패널, 먹색 테두리, 골드·보라 버튼. 폰트는 Noto Sans KR(OFL).
+    /// 스프라이트는 kit 배열에 이름(파일 이름) 그대로 담아 Kit("panel-normal")처럼 찾는다.
     /// DWH/Build All이 Assets/_Project/Data/UiTheme.asset으로 만든다. 없으면 UiFactory가 단색 그레이박스로 그린다.
     /// </summary>
     [CreateAssetMenu(menuName = "DWH/UI Theme", fileName = "UiTheme")]
@@ -15,12 +15,12 @@ namespace DWH.UI
         public static UiTheme Active { get; set; }
 
         [Header("폰트 (OFL)")]
-        [Tooltip("기본 글꼴 (Jua)")]
+        [Tooltip("기본 글꼴 (Noto Sans KR)")]
         public Font font;
-        [Tooltip("기본 글꼴에 없는 글자(×, →, · 등)를 채우는 글꼴 (Noto Sans KR)")]
+        [Tooltip("기본 글꼴에 없는 글자를 채우는 글꼴")]
         public Font fallbackFont;
 
-        [Header("UI 패키지 v1 스프라이트 (frames, icons, bars, overlays)")]
+        [Header("UI 에셋 V15 스프라이트")]
         public Sprite[] kit;
 
         System.Collections.Generic.Dictionary<string, Sprite> kitByName;
@@ -40,25 +40,12 @@ namespace DWH.UI
         /// <summary>현재 테마의 패키지 스프라이트 (테마가 없으면 null)</summary>
         public static Sprite KitSprite(string name) => Active != null ? Active.Kit(name) : null;
 
-        [Header("프레임 (9-slice)")]
-        public Sprite panelDark;
-        public Sprite panelCream;
-        public Sprite panelInk;
-        public Sprite buttonGold;
-        public Sprite buttonDark;
-        public Sprite buttonSoul;
-        public Sprite chipGold;
-        public Sprite chipCream;
-        public Sprite ring;
-        public Sprite barBack;
-        public Sprite barFill;
-
-        // 색 (UI 패키지 v1 design-tokens.json). 패널이 어두워져서 본문 글자(InkText)는 밝은 색이다
+        // 색 (UI 에셋 V15). 패널이 밝아서 본문 글자(InkText)는 먹색이다. 화면 위에 바로 쓰는 글자는 TextLight + 테두리
         public static readonly Color Cream = Hex(0xf5e6cc);
         public static readonly Color Chocolate = Hex(0x493638);
         public static readonly Color Ink = Hex(0x20191b);
-        public static readonly Color InkText = Hex(0xf5e6cc);
-        public static readonly Color InkDim = Hex(0xc8af99);
+        public static readonly Color InkText = Hex(0x3a2b27);
+        public static readonly Color InkDim = Hex(0x7d6a60);
         public static readonly Color Gold = Hex(0xefbc52);
         public static readonly Color GoldDeep = Hex(0xbd8d72);
         public static readonly Color Ember = Hex(0xdd8064);

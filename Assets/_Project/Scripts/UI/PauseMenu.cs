@@ -17,10 +17,10 @@ namespace DWH.UI
             dim.gameObject.AddComponent<Image>().color = new Color(0.1f, 0.06f, 0.05f, 0.82f);
             var card = UiFactory.Panel(root, "Card", UiFactory.Center, Vector2.zero, new Vector2(620, 380), FrameStyle.Cream);
             UiFactory.Text(card, "Title", UiFactory.TopCenter, new Vector2(0, -40), new Vector2(560, 80), 60, TextAlignmentOptions.Center,
-                UiTheme.InkText, bold: true).text = "일시정지";
+                UiTheme.InkText, bold: true).text = DWH.Data.UiText.Get("ui_pause");
             UiFactory.Text(card, "Hint", UiFactory.TopCenter, new Vector2(0, -126), new Vector2(560, 40), 24, TextAlignmentOptions.Center,
-                UiTheme.InkDim).text = "용이 잠깐 숨을 고르는 중이에요 · Esc / P로 계속";
-            UiFactory.Button(card, "Resume", UiFactory.BottomCenter, new Vector2(0, 44), new Vector2(380, 100), "계속하기", 38, onResume);
+                UiTheme.InkDim).text = DWH.Data.UiText.Get("ui_pause_hint");
+            UiFactory.Button(card, "Resume", UiFactory.BottomCenter, new Vector2(0, 44), new Vector2(380, 100), DWH.Data.UiText.Get("ui_resume"), 38, onResume);
 
             root.gameObject.SetActive(false);
             return menu;

@@ -7,8 +7,6 @@ namespace DWH.OutGame
 {
     public enum NodeStatus
     {
-        /// <summary>효과를 낼 시스템이 아직 없다 (예: 패시브 스킬은 M6 이후)</summary>
-        Unavailable,
         /// <summary>선행 노드가 1레벨 이상이 아니다</summary>
         Locked,
         /// <summary>최대 레벨</summary>
@@ -18,9 +16,10 @@ namespace DWH.OutGame
     }
 
     /// <summary>
-    /// 업그레이드 트리 (4.8). 비용 = ceil(초기 비용 × 배수^현재레벨). 선행 노드가 모두 1레벨 이상이어야 해금된다.
-    /// 레벨은 SaveData에 저장하고, 저장이 없으면 노드의 초기 레벨(몸통 박치기는 기본 보유라 1)을 쓴다.
-    /// 구매하면 골드 코인을 쓰고, 성장 단계 기준인 누적 사용 골드(4.1.4)를 늘린다.
+    /// 업그레이드 트리 28노드 (upgrade, 가이드 6.7).
+    /// - 해금: prereq_id_1, prereq_id_2가 모두 1레벨 이상. 최대 레벨 max_level(0 = 무제한).
+    /// - 비용: Formulas.UpgradeCost에 용의 지혜 감소율을 곱하고 올림.
+    /// - 구매하면 골드 코인을 쓰고, 성장 단계 기준인 이번 회차 누적 사용 골드를 늘린다.
     /// </summary>
     public class UpgradeTree
     {
@@ -33,45 +32,34 @@ namespace DWH.OutGame
             save = saveData;
         }
 
-        public UpgradeNodeRow Node(string name) => db.upgradeNodes.rows.First(n => n.node == name);
+        public int Level(UpgradeRow node) => save.GetNodeLevel(node.upgradeId);
+        public int Level(string upgradeId) => save.GetNodeLevel(upgradeId);
 
-        public int Level(UpgradeNodeRow node)
+        /// <summary>현재 레벨 → 다음 레벨 비용</summary>
+        public double Cost(UpgradeRow node) => CostAt(node, Level(node) + 1);
+
+        double CostAt(UpgradeRow node, int level) => Formulas.UpgradeCost(node, level, Rebirth.Discount(db, save));
+
+        public bool IsUnlocked(UpgradeRow node) => node.Prerequisites().All(p => Level(p) >= 1);
+
+        public bool IsMaxed(UpgradeRow node) => node.maxLevel > 0 && Level(node) >= node.maxLevel;
+
+        public NodeStatus Status(UpgradeRow node)
         {
-            var entry = save.nodeLevels.Find(e => e.key == node.node);
-            return entry?.level ?? node.initialLevel;
-        }
-
-        public double Cost(UpgradeNodeRow node) => CostAt(node, Level(node));
-
-        /// <summary>현재레벨 → 다음 레벨 비용. 용의 지혜(환생 특성)만큼 싸진다 (올림)</summary>
-        double CostAt(UpgradeNodeRow node, int level)
-        {
-            double cost = Formulas.UpgradeCost(node.initialCost, node.costMultiplier, level);
-            double discount = Rebirth.Discount(db, save);
-            return discount > 0 ? Math.Ceiling(cost * (1 - discount) - 1e-9) : cost;
-        }
-
-        public bool IsUnlocked(UpgradeNodeRow node) =>
-            node.prerequisites.All(p => Level(Node(p)) >= 1);
-
-        public bool IsMaxed(UpgradeNodeRow node) => node.maxLevel > 0 && Level(node) >= node.maxLevel;
-
-        public NodeStatus Status(UpgradeNodeRow node)
-        {
-            if (!node.available) return NodeStatus.Unavailable;
             if (!IsUnlocked(node)) return NodeStatus.Locked;
             if (IsMaxed(node)) return NodeStatus.Maxed;
             return save.goldCoin >= Cost(node) ? NodeStatus.Affordable : NodeStatus.TooExpensive;
         }
 
-        public bool TryBuy(UpgradeNodeRow node)
+        public bool TryBuy(UpgradeRow node)
         {
             if (Status(node) != NodeStatus.Affordable)
                 return false;
             double cost = Cost(node);
             save.goldCoin -= cost;
+            save.runSpentGold += cost;
             save.lifetimeSpentGold += cost;
-            save.SetNodeLevel(node.node, Level(node) + 1);
+            save.SetNodeLevel(node.upgradeId, Level(node) + 1);
             return true;
         }
 
@@ -81,14 +69,14 @@ namespace DWH.OutGame
         /// <summary>
         /// quantity만큼(최대 레벨·보유 골드 안에서) 살 때의 레벨 수와 총비용. 한 레벨도 못 사면 다음 1레벨의 비용을 돌려준다.
         /// </summary>
-        public (int levels, double cost) Quote(UpgradeNodeRow node, int quantity)
+        public (int levels, double cost) Quote(UpgradeRow node, int quantity)
         {
             int level = Level(node);
             int levels = 0;
             double total = 0;
             while (levels < quantity && (node.maxLevel <= 0 || level + levels < node.maxLevel))
             {
-                double next = CostAt(node, level + levels);
+                double next = CostAt(node, level + levels + 1);
                 if (total + next > save.goldCoin)
                 {
                     if (levels == 0) total = next;
@@ -101,18 +89,22 @@ namespace DWH.OutGame
         }
 
         /// <summary>quantity만큼 산다. 산 레벨 수를 돌려준다</summary>
-        public int BuyMany(UpgradeNodeRow node, int quantity)
+        public int BuyMany(UpgradeRow node, int quantity)
         {
             int bought = 0;
             while (bought < quantity && TryBuy(node)) bought++;
             return bought;
         }
 
-        public PlayerStats Stats()
-        {
-            var stats = PlayerStats.Compute(db, Level, t => save.GetTraitLevel(t.ToString()));
-            Growth.Apply(db, stats, save.lifetimeSpentGold);
-            return stats;
-        }
+        public PlayerStats Stats() => PlayerStats.Compute(db, Level, save.GetTraitLevel, save.runSpentGold);
+
+        /// <summary>노드 효과 n의 레벨 값 (UI 표시용). 0레벨이면 0</summary>
+        public static double EffectValue(UpgradeRow node, int effectIndex, int level) => effectIndex == 1
+            ? EffectMath.LevelValue(node.baseValue1, node.addValue1, level)
+            : EffectMath.LevelValue(node.baseValue2, node.addValue2, level);
+
+        public int AffordableCount() => db.upgrades.Count(n => Status(n) == NodeStatus.Affordable);
+
+        public static Func<string, int> LevelsOf(SaveData save) => save.GetNodeLevel;
     }
 }

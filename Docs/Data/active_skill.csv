@@ -1,0 +1,4 @@
+skill_id,name_str,desc_str,hotkey,prereq_upgrade_id,max_level,base_cost,add_cost,effect_type_1,base_value_1,add_value_1,value_op_1,effect_type_2,base_value_2,add_value_2,value_op_2,target_type,activation_type,res_id
+act1,active_skill_name_1,active_skill_desc_1,1,upg504,5,0,6,36,2.5,0.175,2,37,3,0.5,1,1,1,res6000097
+act2,active_skill_name_2,active_skill_desc_2,2,upg510,5,3,3,36,1.4,0.175,2,38,3,0.5,1,2,2,res6000095
+act3,active_skill_name_3,active_skill_desc_3,3,upg508,5,3,3,36,1.4,0.175,2,38,2,0.625,1,3,2,res6000092

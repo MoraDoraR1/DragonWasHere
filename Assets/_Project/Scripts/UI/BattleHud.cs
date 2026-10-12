@@ -14,10 +14,10 @@ using UnityEngine.UI;
 namespace DWH.UI
 {
     /// <summary>
-    /// 전투 HUD (4.12, 웹 프로토타입 v0.3 참고).
-    /// 좌상단: 골드 알약(+이번 판 획득)·체력·기력(낮으면 깜빡임)·피로 / 상단 중앙: 스테이지 박스와 파괴 진행 바 /
-    /// 우상단: 일시정지 / 좌하단: 이동 모드 / 오른쪽: 콤보 / 가운데: 배너 / 오른쪽 위: 황금 건물·랜드마크 골드 토스트.
-    /// 스킬 바와 대미지 팝업은 이후 마일스톤(M6·M9)에서 붙인다.
+    /// 전투 HUD (가이드 6.11, 임시unity제작.md 4.12, 웹 프로토타입 v0.3 참고). 문구는 string 테이블·UiText에서 읽는다.
+    /// 좌상단: 골드 알약(+이번 판 획득)·체력·기력(낮으면 깜빡임)·피로 / 상단 중앙: "{시대} | {테마}" + 스테이지 이름 + 남은 건물 /
+    /// 우상단: 일시정지 / 좌하단: 이동 모드 / 오른쪽: 콤보("N COMBO!! + 칭찬 문구") / 가운데: 배너 / 오른쪽 위: 골드 토스트 /
+    /// 하단: 패시브 스킬 바, 액티브 버튼(1·2·3).
     /// </summary>
     public class BattleHud : MonoBehaviour
     {
@@ -35,6 +35,8 @@ namespace DWH.UI
         }
 
         BattleController battle;
+        GameDatabase db;
+        ArtCatalog art;
         Func<double> ownedGold;
         double carriedGold;
         RectTransform root, hpFill, staminaFill, progressFill, toastLayer;
@@ -48,7 +50,7 @@ namespace DWH.UI
         CanvasGroup comboGroup;
         TMP_Text comboCount, comboBonus;
         RectTransform comboTimer;
-        int lastStacks;
+        int lastCombo;
         float comboPunch;
 
         RectTransform banner;
@@ -89,6 +91,8 @@ namespace DWH.UI
         {
             root = canvas;
             battle = target;
+            db = target.Database;
+            this.art = art;
             ownedGold = ownedGoldProvider;
 
             BuildGold(art);
@@ -102,16 +106,16 @@ namespace DWH.UI
             BuildHurtEdges();
             battle.Dragon.Hurt += _ => hurtFlash = 1f;
 
-            var mode = UiFactory.Panel(root, "Mode", UiFactory.BottomLeft, new Vector2(32, 28), new Vector2(220, 56), FrameStyle.ChipCream);
+            var mode = UiFactory.Panel(root, "Mode", UiFactory.BottomLeft, new Vector2(32, 28), new Vector2(240, 56), FrameStyle.ChipCream);
             bottomGroup.Add(mode.gameObject);
             modeChip = mode.GetComponent<Image>();
-            modeText = UiFactory.Text(mode, "Text", UiFactory.Center, Vector2.zero, new Vector2(220, 56), 26, TextAlignmentOptions.Center, bold: true);
+            modeText = UiFactory.Text(mode, "Text", UiFactory.Center, Vector2.zero, new Vector2(240, 56), 24, TextAlignmentOptions.Center, bold: true);
 
             if (onPause != null)
             {
                 var pause = UiFactory.Button(root, "Pause", UiFactory.TopRight, new Vector2(-28, -24), new Vector2(84, 84), "II", 40, onPause, FrameStyle.ButtonDark);
-                // UI 패키지의 일시정지 아이콘이 있으면 글자 대신 쓴다
-                if (UiFactory.Icon((RectTransform)pause.transform, "Icon", UiFactory.Center, new Vector2(0, 3), new Vector2(46, 46), "pause") != null)
+                // 일시정지 아이콘이 없어 설정 아이콘을 쓴다
+                if (UiFactory.Icon((RectTransform)pause.transform, "Icon", UiFactory.Center, Vector2.zero, new Vector2(52, 52), "icon-settings") != null)
                     pause.GetComponentInChildren<TMP_Text>().text = "";
             }
 
@@ -120,16 +124,16 @@ namespace DWH.UI
                 var tipPanel = UiFactory.Panel(root, "Tip", UiFactory.BottomCenter, new Vector2(0, 196), new Vector2(980, 80), FrameStyle.Ink);
                 bottomGroup.Add(tipPanel.gameObject);
                 tip = tipPanel.gameObject.AddComponent<CanvasGroup>();
-                var tipText = UiFactory.Text(tipPanel, "Text", UiFactory.Center, Vector2.zero, new Vector2(940, 80), 26, TextAlignmentOptions.Center);
-                tipText.text = "커서를 움직이면 용이 그쪽으로 달려가요 · 가만히 두면 알아서 날뛰어요";
+                var tipText = UiFactory.Text(tipPanel, "Text", UiFactory.Center, Vector2.zero, new Vector2(940, 80), 26, TextAlignmentOptions.Center, UiTheme.TextLight);
+                tipText.text = UiText.Get("ui_hud_tip_move");
             }
 
             if (battle.Mode == BattleMode.Bonus)
-                ShowBanner("보너스 스테이지!", $"기력이 2배로 빨리 줄고 회복도 없어요 · 황금 건물 {battle.Buildings.Count}채를 아껴 부수세요");
+                ShowBanner(UiText.Get("ui_hud_bonus"), UiText.Get("ui_hud_bonus_hint"));
             else
                 // 스테이지 스타터가 있으면 "Game Start!"와 겹치지 않게 스타터가 끝난 뒤에 띄운다
-                pendingBanner = ($"{battle.Stage.stageId} {battle.Stage.themeName}",
-                    battle.Stage.stageId.EndsWith("-1") && battle.Stage.era > 1 ? $"새 시대 진입! {battle.Stage.eraName}" : battle.Stage.eraName);
+                pendingBanner = ($"{db.StageLabel(battle.Stage)} {db.Text(battle.Stage.nameStr)}",
+                    (db.IsBoss(battle.Stage) ? UiText.Get("ui_hud_boss") + " · " : "") + EraTheme());
 
             battle.Drops.Burst += OnBurst;
             battle.Drops.AirBurst += OnAirBurst;
@@ -140,7 +144,7 @@ namespace DWH.UI
             var pill = UiFactory.Panel(root, "GoldPill", UiFactory.TopLeft, new Vector2(28, -24), new Vector2(360, 72), FrameStyle.Ink);
             var left = new Vector2(0, 0.5f);
             var coin = UiFactory.Rect(pill, "Coin", left, new Vector2(12, 0), new Vector2(52, 52)).gameObject.AddComponent<Image>();
-            coin.sprite = UiTheme.KitSprite("coin") ?? (art != null ? art.Drop(DropResource.GoldCoin) : null);
+            coin.sprite = UiTheme.KitSprite("icon-gold");
             coin.color = coin.sprite != null ? Color.white : UiTheme.Gold;
             coin.preserveAspect = true;
             coin.raycastTarget = false;
@@ -154,19 +158,19 @@ namespace DWH.UI
 
         void BuildVitals()
         {
-            hpFill = VitalBar("Hp", "체력", -110, UiTheme.Hp, out hpChip, out hpFillImage, out hpText);
-            staminaFill = VitalBar("Stamina", "기력", -170, UiTheme.Energy, out staminaChip, out staminaFillImage, out staminaText);
+            hpFill = VitalBar("Hp", "icon-heart", -110, UiTheme.Hp, out hpChip, out hpFillImage, out hpText);
+            staminaFill = VitalBar("Stamina", "icon-energy", -170, UiTheme.Energy, out staminaChip, out staminaFillImage, out staminaText);
 
             var fatigue = UiFactory.Panel(root, "Fatigue", UiFactory.TopLeft, new Vector2(28, -230), new Vector2(300, 46), FrameStyle.ChipCream);
             fatigueText = UiFactory.Text(fatigue, "Text", UiFactory.Center, Vector2.zero, new Vector2(290, 46), 22, TextAlignmentOptions.Center,
                 UiTheme.InkText, bold: true);
         }
 
-        RectTransform VitalBar(string name, string label, float y, Color color, out Image chip, out Image fillImage, out TMP_Text value)
+        RectTransform VitalBar(string name, string icon, float y, Color color, out Image chip, out Image fillImage, out TMP_Text value)
         {
             var chipRect = UiFactory.Panel(root, $"{name}Chip", UiFactory.TopLeft, new Vector2(28, y), new Vector2(96, 50), FrameStyle.ChipCream, color);
             chip = chipRect.GetComponent<Image>();
-            UiFactory.Text(chipRect, "Label", UiFactory.Center, Vector2.zero, new Vector2(96, 50), 24, TextAlignmentOptions.Center, bold: true, outline: true).text = label;
+            UiFactory.Icon(chipRect, "Icon", UiFactory.Center, Vector2.zero, new Vector2(44, 44), icon);
 
             var fill = UiFactory.Bar(root, $"{name}Bar", UiFactory.TopLeft, new Vector2(132, y - 3), new Vector2(420, 44), color);
             fillImage = fill.GetComponent<Image>();
@@ -177,31 +181,37 @@ namespace DWH.UI
 
         void BuildStageBox()
         {
-            var box = UiFactory.Panel(root, "StageBox", UiFactory.TopCenter, new Vector2(0, -20), new Vector2(620, 116));
+            var box = UiFactory.Panel(root, "StageBox", UiFactory.TopCenter, new Vector2(0, -20), new Vector2(660, 132));
             bool bonus = battle.Mode == BattleMode.Bonus;
-            var chip = UiFactory.Panel(box, "Chip", UiFactory.TopLeft, new Vector2(18, -16), new Vector2(110, 48), FrameStyle.ChipGold);
-            UiFactory.Text(chip, "Id", UiFactory.Center, Vector2.zero, new Vector2(110, 48), 28, TextAlignmentOptions.Center,
-                UiFactory.LabelColorFor(FrameStyle.ChipGold), bold: true).text = battle.Stage.stageId;
-            var name = UiFactory.Text(box, "Name", UiFactory.TopLeft, new Vector2(142, -14), new Vector2(460, 52), 30, TextAlignmentOptions.Left, bold: true);
+            bool boss = db.IsBoss(battle.Stage);
+            var chip = UiFactory.Panel(box, "Chip", UiFactory.TopLeft, new Vector2(18, -16), new Vector2(110, 52), boss ? FrameStyle.ButtonSoul : FrameStyle.ChipGold);
+            UiFactory.Text(chip, "Id", UiFactory.Center, Vector2.zero, new Vector2(110, 52), 30, TextAlignmentOptions.Center,
+                UiFactory.LabelColorFor(boss ? FrameStyle.ButtonSoul : FrameStyle.ChipGold), bold: true).text = db.StageLabel(battle.Stage);
+            // "{시대 이름} | {테마 이름}"을 작게, 스테이지 이름을 크게 (가이드 6.5)
+            UiFactory.Text(box, "EraTheme", UiFactory.TopLeft, new Vector2(142, -10), new Vector2(500, 30), 20, TextAlignmentOptions.Left, UiTheme.InkDim).text =
+                (boss ? UiText.Get("ui_hud_boss") + " · " : "") + EraTheme();
+            var name = UiFactory.Text(box, "Name", UiFactory.TopLeft, new Vector2(142, -36), new Vector2(500, 40), 30, TextAlignmentOptions.Left, bold: true);
             name.text = bonus
-                ? $"<color=#{UiTheme.HexString(UiTheme.Gold)}>보너스 스테이지</color>"
-                : $"{battle.Stage.themeName} <size=22><color=#{UiTheme.HexString(UiTheme.LineIdle)}>{battle.Stage.eraName}</color></size>";
+                ? $"<color=#{UiTheme.HexString(UiTheme.GoldDeep)}>{UiText.Get("ui_hud_bonus")}</color>"
+                : db.Text(battle.Stage.nameStr);
 
-            progressFill = UiFactory.Bar(box, "Progress", UiFactory.BottomCenter, new Vector2(0, 14), new Vector2(584, 38), bonus ? UiTheme.Gold : UiTheme.Jade);
+            progressFill = UiFactory.Bar(box, "Progress", UiFactory.BottomCenter, new Vector2(0, 14), new Vector2(624, 38), bonus ? UiTheme.Gold : UiTheme.Jade);
             progressFillImage = progressFill.GetComponent<Image>();
-            progressText = UiFactory.Text((RectTransform)progressFill.parent, "Text", UiFactory.Center, Vector2.zero, new Vector2(560, 38), 22,
+            progressText = UiFactory.Text((RectTransform)progressFill.parent, "Text", UiFactory.Center, Vector2.zero, new Vector2(600, 38), 22,
                 TextAlignmentOptions.Center, bold: true, outline: true);
         }
 
+        string EraTheme() => $"{db.Text(db.Era(battle.Stage).nameStr)} | {db.Text(db.Theme(battle.Stage).nameStr)}";
+
         void BuildCombo()
         {
-            combo = UiFactory.Rect(root, "Combo", new Vector2(1, 0.5f), new Vector2(-60, 120), new Vector2(360, 230));
+            combo = UiFactory.Rect(root, "Combo", new Vector2(1, 0.5f), new Vector2(-60, 120), new Vector2(460, 230));
             comboGroup = combo.gameObject.AddComponent<CanvasGroup>();
             comboGroup.alpha = 0;
-            comboCount = UiFactory.Text(combo, "Count", UiFactory.TopCenter, Vector2.zero, new Vector2(360, 130), 120, TextAlignmentOptions.Center,
+            comboCount = UiFactory.Text(combo, "Count", UiFactory.TopCenter, Vector2.zero, new Vector2(460, 100), 72, TextAlignmentOptions.Center,
                 UiTheme.Gold, bold: true, outline: true);
-            comboBonus = UiFactory.Text(combo, "Bonus", UiFactory.TopCenter, new Vector2(0, -126), new Vector2(360, 50), 32, TextAlignmentOptions.Center,
-                bold: true, outline: true);
+            comboBonus = UiFactory.Text(combo, "Praise", UiFactory.TopCenter, new Vector2(0, -100), new Vector2(460, 76), 40, TextAlignmentOptions.Center,
+                UiTheme.TextLight, bold: true, outline: true);
             var timer = UiFactory.Bar(combo, "Timer", UiFactory.TopCenter, new Vector2(0, -182), new Vector2(240, 22), UiTheme.Ember);
             comboTimer = timer;
         }
@@ -211,7 +221,7 @@ namespace DWH.UI
         {
             var skills = battle.Skills != null ? battle.Skills.Skills : null;
             if (skills == null || skills.Count == 0) return;
-            kitSlots = UiTheme.KitSprite("slot-normal") != null;
+            kitSlots = UiTheme.KitSprite("skill-slot-normal") != null;
             // UI 패키지: 112×112 슬롯 + 아이콘 + 아래 이름 (02-battle-hud 시안). 없으면 예전 이름 칩
             float width = kitSlots ? 112 : 150, height = kitSlots ? 112 : 84, gap = kitSlots ? 24 : 12;
             float total = skills.Count * width + (skills.Count - 1) * gap;
@@ -222,20 +232,19 @@ namespace DWH.UI
                 var slot = UiFactory.Panel(bar, $"Skill{i}", UiFactory.BottomLeft, new Vector2(i * (width + gap), 0), new Vector2(width, height), FrameStyle.ChipCream);
                 if (kitSlots)
                 {
-                    slot.GetComponent<Image>().sprite = UiTheme.KitSprite("slot-normal");
-                    UiFactory.Icon(slot, "Icon", UiFactory.Center, new Vector2(0, 3), new Vector2(72, 72), skills[i].row.icon);
+                    slot.GetComponent<Image>().sprite = UiTheme.KitSprite("skill-slot-normal");
+                    UiFactory.Icon(slot, "Icon", UiFactory.Center, new Vector2(0, 3), new Vector2(80, 80), art != null ? art.SpriteOrNull(skills[i].icon) : null);
                 }
                 // 쿨타임 덮개: 슬롯 안에서만 보이게 마스크하고 아래에서 위로 줄어든다
                 var clip = UiFactory.Stretch(slot, "CooldownClip", kitSlots ? 8 : 4);
                 clip.gameObject.AddComponent<RectMask2D>();
                 var shade = UiFactory.Stretch(clip, "Cooldown");
                 var shadeImage = shade.gameObject.AddComponent<Image>();
-                shadeImage.sprite = UiTheme.KitSprite("cooldown");
-                shadeImage.color = shadeImage.sprite != null ? Color.white : new Color(0.15f, 0.1f, 0.08f, 0.7f);
+                shadeImage.color = new Color(0.15f, 0.1f, 0.08f, 0.65f);
                 shadeImage.raycastTarget = false;
                 var label = kitSlots
                     ? UiFactory.Text(slot, "Name", UiFactory.BottomCenter, new Vector2(0, -30), new Vector2(width + 30, 28), 20,
-                        TextAlignmentOptions.Center, UiTheme.InkText, outline: true)
+                        TextAlignmentOptions.Center, UiTheme.TextLight, outline: true)
                     : UiFactory.Text(slot, "Name", UiFactory.Center, Vector2.zero, new Vector2(width - 12, height), 24,
                         TextAlignmentOptions.Center, UiTheme.InkText, bold: true);
                 label.text = skills[i].displayName;
@@ -259,19 +268,12 @@ namespace DWH.UI
                     () => battle.Actives.Use(skill), FrameStyle.ButtonGold);
                 bottomGroup.Add(button.gameObject);
                 var rect = (RectTransform)button.transform;
-                var icon = UiFactory.Icon(rect, "Icon", UiFactory.Center, new Vector2(0, 10), new Vector2(64, 64), battle.Stage != null ? ActiveIcon(id) : null);
+                var icon = UiFactory.Icon(rect, "Icon", UiFactory.Center, new Vector2(0, 10), new Vector2(72, 72), art != null ? art.SpriteOrNull(db.Active(id).resId) : null);
                 activeIcons.Add(icon);
                 activeButtons.Add((id, button, button.GetComponentInChildren<TMP_Text>()));
                 i++;
             }
         }
-
-        static string ActiveIcon(ActiveSkillId id) => id switch
-        {
-            ActiveSkillId.Meteor => "meteor",
-            ActiveSkillId.Hurricane => "upgrade-tailspinSize",
-            _ => "upgrade-apocalypse",
-        };
 
         /// <summary>피격 연출: 화면 네 가장자리에 붉은 띠</summary>
         void BuildHurtEdges()
@@ -307,14 +309,14 @@ namespace DWH.UI
             {
                 var (id, button, label) = activeButtons[i];
                 int level = actives.Level(id), left = actives.UsesLeft(id);
-                string name = id switch { ActiveSkillId.Meteor => "메테오", ActiveSkillId.Hurricane => "허리케인", _ => "지진" };
+                string name = db.Text(db.Active(id).nameStr);
                 bool usable = actives.CanUse(id);
                 button.interactable = usable;
                 var icon = activeIcons[i];
                 if (icon != null)
                 {
                     // UI 패키지 슬롯: 잠김 / 사용 가능(준비) / 0회(비활성). 아이콘 아래에 남은 횟수와 키
-                    var slot = UiTheme.KitSprite(level == 0 ? "slot-locked" : usable ? "slot-ready" : "slot-disabled");
+                    var slot = UiTheme.KitSprite(level == 0 || !usable ? "skill-slot-disabled" : "skill-slot-normal");
                     if (button.targetGraphic is Image image && image.sprite != slot)
                     {
                         button.transition = Selectable.Transition.ColorTint;
@@ -323,7 +325,7 @@ namespace DWH.UI
                     icon.color = usable ? Color.white : new Color(0.5f, 0.45f, 0.47f, 1f);
                     label.color = UiTheme.InkText;
                     label.alignment = TextAlignmentOptions.Bottom;
-                    label.text = level == 0 ? "<size=18>잠김</size>" : $"<size=22>×{left}</size> <size=14>[{ActiveKeys[i]}]</size>";
+                    label.text = level == 0 ? $"<size=18>{UiText.Get("ui_locked")}</size>" : $"<size=22>×{left}</size> <size=14>[{ActiveKeys[i]}]</size>";
                     continue;
                 }
                 var style = level == 0 ? FrameStyle.ButtonDark : FrameStyle.ButtonGold;
@@ -332,7 +334,7 @@ namespace DWH.UI
                     UiFactory.Frame(button.gameObject, style);
                     label.color = UiFactory.LabelColorFor(style);
                 }
-                label.text = level == 0 ? $"{name}\n<size=18>잠김</size>"
+                label.text = level == 0 ? $"{name}\n<size=18>{UiText.Get("ui_locked")}</size>"
                     : $"{name}\n<size=30>×{left}</size>\n<size=16>[{ActiveKeys[i]}]</size>";
             }
 
@@ -351,7 +353,7 @@ namespace DWH.UI
                 if (kitSlots)
                 {
                     // 발동 중 > 쿨다운 > 준비 완료 (UI 패키지 상태 우선순위)
-                    frame.sprite = UiTheme.KitSprite(state.active ? "slot-active" : state.CooldownRatio > 0.001f ? "slot-normal" : "slot-ready");
+                    frame.sprite = UiTheme.KitSprite(state.active ? "skill-slot-pressed" : state.CooldownRatio > 0.001f ? "skill-slot-normal" : "skill-slot-hover");
                 }
                 else
                 {
@@ -373,7 +375,7 @@ namespace DWH.UI
             bannerGroup.blocksRaycasts = false;
             bannerTitle = UiFactory.Text(banner, "Title", UiFactory.TopCenter, new Vector2(0, -14), new Vector2(860, 90), 70, TextAlignmentOptions.Center,
                 UiTheme.Gold, bold: true, outline: true);
-            bannerSub = UiFactory.Text(banner, "Sub", UiFactory.BottomCenter, new Vector2(0, 16), new Vector2(860, 50), 30, TextAlignmentOptions.Center);
+            bannerSub = UiFactory.Text(banner, "Sub", UiFactory.BottomCenter, new Vector2(0, 16), new Vector2(860, 50), 30, TextAlignmentOptions.Center, UiTheme.TextLight);
         }
 
         public void ShowBanner(string title, string sub)
@@ -385,19 +387,18 @@ namespace DWH.UI
 
         void OnBurst(Building building, double gold)
         {
-            bool golden = building.IsGilded || building.Type == BuildingType.Golden;
-            if (!golden && building.Type != BuildingType.Landmark) return;
-            string what = building.Type == BuildingType.Landmark ? "랜드마크 파괴!" : "황금 건물!";
+            if (!building.LooksGolden && building.Type != BuildingType.Landmark) return;
+            string what = UiText.Get(building.Type == BuildingType.Landmark ? "ui_hud_landmark" : "ui_hud_golden");
             ShowToast($"{what} <color=#{UiTheme.HexString(UiTheme.Gold)}>+{NumberFormat.ToKorean(gold)}</color>");
         }
 
         void OnAirBurst(AirUnit unit, double gold) =>
-            ShowToast($"{unit.UnitName} 격추! <color=#{UiTheme.HexString(UiTheme.Gold)}>+{NumberFormat.ToKorean(gold)}</color>");
+            ShowToast(UiText.Format("ui_hud_air_down", unit.UnitName, $"<color=#{UiTheme.HexString(UiTheme.Gold)}>{NumberFormat.ToKorean(gold)}</color>"));
 
         public void ShowToast(string text)
         {
             var rect = UiFactory.Panel(toastLayer, "Toast", UiFactory.TopRight, Vector2.zero, new Vector2(460, 52), FrameStyle.Ink);
-            UiFactory.Text(rect, "Text", UiFactory.Center, Vector2.zero, new Vector2(440, 52), 26, TextAlignmentOptions.Right, bold: true).text = text;
+            UiFactory.Text(rect, "Text", UiFactory.Center, Vector2.zero, new Vector2(440, 52), 26, TextAlignmentOptions.Right, UiTheme.TextLight, bold: true).text = text;
             toasts.Add(new Toast { rect = rect, group = rect.gameObject.AddComponent<CanvasGroup>() });
         }
 
@@ -443,22 +444,19 @@ namespace DWH.UI
             staminaText.text = $"{NumberFormat.ToKorean(v.Stamina)} / {NumberFormat.ToKorean(v.MaxStamina)}";
             Blink(hpChip, hpFillImage, UiTheme.Hp, hpRatio < LowHp && battle.State == BattleState.Playing, blink);
             Blink(staminaChip, staminaFillImage, UiTheme.Energy, staminaRatio < LowStamina && battle.State == BattleState.Playing, blink);
-            fatigueText.text = v.DrainMultiplier > 1
-                ? $"피로 ×{v.Fatigue:0} · 기력 <color=#{UiTheme.HexString(UiTheme.Hp)}>-{v.StaminaDrainPerSecond:0}/초</color>"
-                : $"피로 ×{v.Fatigue:0} · 기력 -{v.Fatigue:0}/초";
+            fatigueText.text = UiText.Format("ui_hud_fatigue", v.Fatigue.ToString("0"),
+                v.DrainMultiplier > 1 ? $"<color=#{UiTheme.HexString(UiTheme.Hp)}>{v.StaminaDrainPerSecond:0}</color>" : v.StaminaDrainPerSecond.ToString("0"));
 
             int destroyed = battle.DestroyedCount, total = battle.Buildings.Count;
             UiFactory.SetFill(progressFill, total > 0 ? (double)destroyed / total : 0);
-            progressText.text = battle.Mode == BattleMode.Bonus
-                ? $"황금 건물 {destroyed}/{total}채 · 기력 소모 ×2 · 회복 없음"
-                : $"파괴 {destroyed} / {total}";
+            progressText.text = UiText.Format("ui_hud_remaining", total - destroyed);
             if (battle.Mode == BattleMode.Bonus)
                 progressFillImage.color = Color.Lerp(UiTheme.Gold, UiTheme.Cream, Mathf.PingPong(Time.unscaledTime * 1.5f, 1f) * 0.6f);
 
             bool guided = battle.Dragon.IsGuided;
             UiFactory.Frame(modeChip.gameObject, guided ? FrameStyle.ChipGold : FrameStyle.ChipCream);
             modeText.color = UiFactory.LabelColorFor(guided ? FrameStyle.ChipGold : FrameStyle.ChipCream);
-            modeText.text = guided ? "유도 중" : "자동 이동";
+            modeText.text = UiText.Get(guided ? "ui_hud_mode_guided" : "ui_hud_mode_auto");
 
             UpdateSkillBar();
             UpdateActiveBar();
@@ -486,16 +484,22 @@ namespace DWH.UI
 
         void UpdateCombo(float dt)
         {
+            // 콤보 (가이드 6.9): combo.min_combo 이상이면 "N COMBO!! + 칭찬 문구"를 text_color로. 끊기면 사라진다
             var drops = battle.Drops;
-            bool active = drops.ChainActive;
-            if (active && drops.ChainStacks > lastStacks) comboPunch = 1f;
-            lastStacks = active ? drops.ChainStacks : 0;
+            int count = drops.Combo;
+            var tier = db.Combo(count);
+            bool active = tier != null;
+            if (active && count > lastCombo) comboPunch = 1f;
+            lastCombo = count;
 
             comboGroup.alpha = Mathf.MoveTowards(comboGroup.alpha, active ? 1f : 0f, dt * (active ? 8f : 2.5f));
             if (!active) return;
-            comboCount.text = $"{drops.ChainStacks + 1}<size=48> 콤보</size>";
-            comboBonus.text = drops.ChainGoldBonus > 0 ? $"골드 +{drops.ChainGoldBonus * 100:0.#}%" : "연쇄 파괴!";
-            UiFactory.SetFill(comboTimer, drops.ChainTimeLeft);
+            var color = ColorUtility.TryParseHtmlString(tier.textColor, out var c) ? c : UiTheme.Gold;
+            comboCount.text = UiText.Format("ui_hud_combo", count);
+            comboCount.color = color;
+            comboBonus.text = db.Text(tier.praiseStr) + (drops.ComboGoldBonus > 0 ? $"\n<size=26>{UiText.Get("ui_gold")} +{drops.ComboGoldBonus * 100:0.#}%</size>" : "");
+            comboBonus.color = color;
+            UiFactory.SetFill(comboTimer, drops.ComboTimeLeft);
             comboPunch = Mathf.Max(0, comboPunch - dt * 5f);
             combo.localScale = Vector3.one * (1f + 0.25f * comboPunch);
         }
@@ -507,14 +511,14 @@ namespace DWH.UI
             var stats = battle.Stats;
             if (battle.State == BattleState.Cleared)
             {
-                string sub = battle.Mode == BattleMode.Bonus ? "황금 마을을 다 털었어요"
-                    : stats.StaminaOnClear > 0 ? $"승전보! 기력 +{stats.StaminaOnClear:0}" : "마을을 다녀갔어요";
-                ShowBanner("다녀가용!", sub);
+                string sub = battle.Mode == BattleMode.Bonus ? UiText.Get("ui_hud_clear_bonus_sub")
+                    : stats.StaminaOnClear > 0 ? UiText.Format("ui_hud_clear_stamina", stats.StaminaOnClear.ToString("0.#")) : UiText.Get("ui_hud_clear_sub");
+                ShowBanner(UiText.Get("ui_hud_clear"), sub);
             }
             else if (battle.State == BattleState.Failed)
             {
                 bool dead = battle.Dragon.Vitals.IsDead;
-                ShowBanner(dead ? "쓰러졌다!" : "기력 고갈!", dead ? "체력이 바닥났어요" : "용이 지쳐 버렸어요");
+                ShowBanner(UiText.Get(dead ? "ui_result_defeated" : "ui_result_exhausted"), UiText.Get(dead ? "ui_hud_dead_sub" : "ui_hud_exhausted_sub"));
             }
         }
 

@@ -1,0 +1,7 @@
+combo_id,min_combo,praise_str,text_color,res_id
+cmb1,3,combo_praise_1,#FFFFFF,
+cmb2,5,combo_praise_2,#FFE066,
+cmb3,10,combo_praise_3,#FFB000,
+cmb4,20,combo_praise_4,#FF7A00,
+cmb5,30,combo_praise_5,#FF3B3B,
+cmb6,45,combo_praise_6,#B04BFF,

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DWH.Core;
 using DWH.Data;
 using DWH.InGame.AirUnits;
@@ -19,7 +20,6 @@ namespace DWH.InGame.Dragon
     /// </summary>
     public class DragonController : MonoBehaviour
     {
-        DragonSpeciesData species;
         PlayerStats stats;
         IGuideInput input;
         IReadOnlyList<Building> buildings;
@@ -39,7 +39,9 @@ namespace DWH.InGame.Dragon
         const float LandingRadius = 0.5f;
 
         // 점프 물리 (웹 프로토타입 v0.3 값을 1 unit = 100 px로 옮김) [임시]
-        const float Gravity = 15f;           // 1500 px/s²
+        const float BaseGravity = 15f;       // 1500 px/s²
+        /// <summary>비행 시간 증가(효과 15)만큼 중력을 줄여 오래 뜬다 [임시 해석]</summary>
+        float Gravity => BaseGravity / (float)(stats.AirTimeMultiplier * stats.AirTimeMultiplier);
         const float JumpClearance = 0.45f;   // 지붕 위 여유 높이 (× 크기)
         const float MinJumpHeight = 0.5f;    // 최소 점프 높이 (× 크기)
         const float MaxJumpVx = 9f;
@@ -81,12 +83,19 @@ namespace DWH.InGame.Dragon
 
         public PlayerStats Stats => stats;
 
+        /// <summary>몸집 배율 (1단계 = 1). 연출(점프 여유, 먼지 크기)에 쓴다. 성장 단계 그림 높이로 구한다</summary>
+        public float SizeScale => Rig == null ? 1f : Mathf.Max(1f, Rig.LocalBounds.height / BaseHeight);
+        /// <summary>1단계 드래곤 그림 높이(unit) 근사값</summary>
+        const float BaseHeight = 2f;
+
+        /// <summary>현재 기력에 맞는 공격력 (광란 포함)</summary>
+        public double AttackPower => stats.AttackAt(Vitals.Stamina, Vitals.MaxStamina);
+
         /// <param name="playerStats">업그레이드가 반영된 능력치 (4.8)</param>
         /// <param name="carriedVitals">보너스 스테이지처럼 이전 전투의 상태를 이어받을 때. null이면 능력치로 새로 만든다</param>
         public void Init(GameDatabase db, ArtCatalog art, PlayerStats playerStats, IGuideInput guideInput, IReadOnlyList<Building> stageBuildings,
             int randomSeed, DragonVitals carriedVitals = null)
         {
-            species = db.dragon;
             stats = playerStats;
             input = guideInput;
             buildings = stageBuildings;
@@ -94,21 +103,20 @@ namespace DWH.InGame.Dragon
             groundY = transform.position.y;
 
             Vitals = carriedVitals ?? new DragonVitals(stats.MaxHp, stats.HpRegenPerSecond, stats.MaxStamina,
-                species.fatigueStart, species.fatigueInterval, species.fatigueStep);
+                stats.FatigueStart, stats.FatigueInterval, Tuning.FatigueStep);
 
+            // 성장 단계의 파츠 세트로 조립한다. 단계별 그림이 이미 커져 있어 크기 배율은 없다 (가이드 5장)
             Rig = new GameObject("Rig").AddComponent<DragonRig>();
             Rig.transform.SetParent(transform, false);
-            // 성장 단계 크기 (4.1.4). 조립 전에 키워 두면 충돌 박스도 같이 커진다
-            Rig.transform.localScale = Vector3.one * (float)stats.SizeScale;
-            Rig.Build(db.dragonParts.rows, art, (float)db.balance.mirrorPartTint, db.balance.dragonSortingBase);
+            Rig.Build(db.Parts(stats.Growth.growthId).ToList(), art);
 
             var b = Rig.LocalBounds;
-            float w = b.width * (float)db.balance.colliderScaleX;
-            float h = b.height * (float)db.balance.colliderScaleY;
+            float w = b.width * Tuning.ColliderScaleX;
+            float h = b.height * Tuning.ColliderScaleY;
             localHitbox = new Rect(b.center.x - w / 2f, b.yMin, w, h);
 
             Animator = gameObject.AddComponent<DragonAnimator>();
-            Animator.Init(Rig, groundY, (float)stats.SizeScale);
+            Animator.Init(Rig, groundY, SizeScale);
         }
 
         /// <summary>점프 중 몸통으로 칠 수 있는 공중 유닛 목록 (8.6)</summary>
@@ -146,7 +154,7 @@ namespace DWH.InGame.Dragon
             if (knockbackTimer > 0)
             {
                 knockbackTimer -= dt;
-                Move(-facing * (float)(species.knockbackDistance / species.knockbackDuration) * dt);
+                Move(-facing * (float)(Tuning.KnockbackDistance / stats.KnockbackSeconds) * dt);
                 IsAttacking = false;
                 return;
             }
@@ -158,7 +166,7 @@ namespace DWH.InGame.Dragon
                 return;
             }
 
-            float tolerance = (float)species.contactTolerance;
+            float tolerance = Tuning.ContactTolerance;
             var box = Hitbox;
             float direction = targetX > box.xMax ? 1f : targetX < box.xMin ? -1f : 0f;
             IsAttacking = false;
@@ -193,7 +201,7 @@ namespace DWH.InGame.Dragon
         void Strike(Building target)
         {
             bool critical = Damage.RollCritical(stats.CritChance, random.NextDouble());
-            double amount = Damage.Compute(stats.AttackPower, stats.BodySlamMultiplier, critical, stats.CritMultiplier);
+            double amount = Damage.Compute(AttackPower, stats.BodySlamMultiplier, critical, stats.CritMultiplier);
             target.TakeDamage(amount, critical);
             HitBuilding?.Invoke(target, amount, critical);
             Animator.Kick();
@@ -206,7 +214,7 @@ namespace DWH.InGame.Dragon
                 return;
             }
             if (target.IsAlive)
-                knockbackTimer = (float)species.knockbackDuration;
+                knockbackTimer = (float)stats.KnockbackSeconds;
         }
 
         /// <summary>
@@ -223,12 +231,12 @@ namespace DWH.InGame.Dragon
             knockbackTimer = 0;
             hitThisJump.Clear();
             jumpTarget = target;
-            float size = (float)stats.SizeScale;
+            float size = SizeScale;
             float feet = transform.position.y;
             if (target != null)
             {
                 float top = target.Hitbox.yMax;
-                float clear = JumpClearance * size;
+                float clear = JumpClearance * size * (float)stats.JumpPowerMultiplier;
                 float h = Mathf.Max(MinJumpHeight * size, top - feet) + clear;
                 float vy = Mathf.Sqrt(2f * Gravity * h);
                 float t = vy / Gravity + Mathf.Sqrt(2f * clear / Gravity);
@@ -274,7 +282,7 @@ namespace DWH.InGame.Dragon
             velocity = Vector2.zero;
             IsAirborne = false;
             jumpTarget = null;
-            jumpCooldownTimer = (float)species.jumpCooldown;
+            jumpCooldownTimer = Tuning.JumpCooldown;
             // 착지 타격: 착지 지점 0.5 unit 안의 건물에 공격력 × 착지 대미지 (중량 강화). 살짝 내려앉을 때는 없다
             if (impact >= LandingImpactMin)
             {
@@ -285,7 +293,7 @@ namespace DWH.InGame.Dragon
                     float gap = Mathf.Max(b.Left - box.xMax, box.xMin - b.Right);
                     if (gap > LandingRadius) continue;
                     bool critical = Damage.RollCritical(stats.CritChance, random.NextDouble());
-                    double amount = Damage.Compute(stats.AttackPower, stats.LandingDamage, critical, stats.CritMultiplier);
+                    double amount = Damage.Compute(AttackPower, stats.LandingDamage, critical, stats.CritMultiplier);
                     b.TakeDamage(amount, critical);
                     HitBuilding?.Invoke(b, amount, critical);
                 }
@@ -320,7 +328,7 @@ namespace DWH.InGame.Dragon
                     if (CooldownReady(b, StompCooldown))
                     {
                         bool critical = Damage.RollCritical(stats.CritChance, random.NextDouble());
-                        double amount = Damage.Compute(stats.AttackPower, stats.BodySlamMultiplier * StompMultiplier * stats.LandingDamage, critical, stats.CritMultiplier);
+                        double amount = Damage.Compute(AttackPower, stats.BodySlamMultiplier * StompMultiplier * stats.LandingDamage, critical, stats.CritMultiplier);
                         b.TakeDamage(amount, critical);
                         HitBuilding?.Invoke(b, amount, critical);
                         Stomped?.Invoke(b);
@@ -330,7 +338,7 @@ namespace DWH.InGame.Dragon
                     var p = transform.position;
                     p.y += top - feet;
                     transform.position = p;
-                    velocity.y = BounceSpeed * Mathf.Sqrt((float)stats.SizeScale);
+                    velocity.y = BounceSpeed * Mathf.Sqrt(SizeScale);
                     jumpTarget = null;
                     continue;
                 }
@@ -344,7 +352,7 @@ namespace DWH.InGame.Dragon
                 if (CooldownReady(b, SideHitCooldown))
                 {
                     bool critical = Damage.RollCritical(stats.CritChance, random.NextDouble());
-                    double amount = Damage.Compute(stats.AttackPower, stats.BodySlamMultiplier, critical, stats.CritMultiplier);
+                    double amount = Damage.Compute(AttackPower, stats.BodySlamMultiplier, critical, stats.CritMultiplier);
                     b.TakeDamage(amount, critical);
                     HitBuilding?.Invoke(b, amount, critical);
                     Animator.Kick();
@@ -385,7 +393,7 @@ namespace DWH.InGame.Dragon
                 if (!unit.IsAlive || hitThisJump.Contains(unit) || !unit.Hitbox.Overlaps(box)) continue;
                 hitThisJump.Add(unit);
                 bool critical = Damage.RollCritical(stats.CritChance, random.NextDouble());
-                double amount = Damage.Compute(stats.AttackPower, 1.0, critical, stats.CritMultiplier);
+                double amount = Damage.Compute(AttackPower, 1.0, critical, stats.CritMultiplier);
                 unit.TakeDamage(amount, critical);
                 HitAirUnit?.Invoke(unit, amount, critical);
             }

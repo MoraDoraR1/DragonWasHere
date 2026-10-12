@@ -1,4 +1,3 @@
-using DWH.Data;
 using UnityEngine;
 
 namespace DWH.InGame.Drops
@@ -8,13 +7,13 @@ namespace DWH.InGame.Drops
     {
         SpriteRenderer spriteRenderer;
         Vector2 velocity;
-        float groundY, gravity, absorbDelay, absorbSpeed, collectDistance, age;
+        float groundY, absorbDelay, age;
 
-        public DropResource Resource { get; private set; }
+        /// <summary>drop_item.item_id</summary>
+        public string ItemId { get; private set; }
         public double Gold { get; private set; }
 
-        public void Launch(DropResource resource, Sprite sprite, double gold, Vector2 origin, Vector2 initialVelocity,
-            float ground, float gravityAccel, float delay, float speed, float distance)
+        public void Launch(string itemId, Sprite sprite, double gold, Vector2 origin, Vector2 initialVelocity, float ground, float delay)
         {
             if (spriteRenderer == null)
             {
@@ -22,15 +21,12 @@ namespace DWH.InGame.Drops
                 spriteRenderer.sortingOrder = SortingOrders.Drop;
             }
             spriteRenderer.sprite = sprite;
-            Resource = resource;
+            ItemId = itemId;
             Gold = gold;
             transform.position = origin;
             velocity = initialVelocity;
             groundY = ground;
-            gravity = gravityAccel;
             absorbDelay = delay;
-            absorbSpeed = speed;
-            collectDistance = distance;
             age = 0;
         }
 
@@ -42,9 +38,9 @@ namespace DWH.InGame.Drops
 
             if (age < absorbDelay)
             {
-                velocity.y -= gravity * dt;
+                velocity.y -= Data.Tuning.DropGravity * dt;
                 pos += velocity * dt;
-                float floor = groundY + spriteRenderer.bounds.extents.y;
+                float floor = groundY + (spriteRenderer.sprite != null ? spriteRenderer.bounds.extents.y : 0);
                 if (pos.y < floor)
                 {
                     pos.y = floor;
@@ -53,11 +49,11 @@ namespace DWH.InGame.Drops
             }
             else
             {
-                pos = Vector2.MoveTowards(pos, target, absorbSpeed * dt);
+                pos = Vector2.MoveTowards(pos, target, Data.Tuning.DropAbsorbSpeed * dt);
             }
 
             transform.position = pos;
-            return age >= absorbDelay && Vector2.Distance(pos, target) <= collectDistance;
+            return age >= absorbDelay && Vector2.Distance(pos, target) <= Data.Tuning.DropCollectDistance;
         }
     }
 }

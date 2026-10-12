@@ -1,5 +1,0 @@
-growth_stage,name_ko,required_spent_gold,size_scale_from_previous,stat_multiplier
-Hatchling,해츨링,0,1,1
-Juvenile,청소년,1000,1.55,1
-Adult,성체,100000,1.45,1
-Ancient,고룡,100000000,1.25,1

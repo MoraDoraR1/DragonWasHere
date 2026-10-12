@@ -5,8 +5,8 @@ using DWH.Data;
 namespace DWH.Core
 {
     /// <summary>
-    /// 드래곤 기본 능력치(4.1.1)에 업그레이드(4.8)와 환생 보너스(4.9)를 반영한 최종 능력치.
-    /// 효과 적용 방식: Add = 기본 + 값 × 레벨 / AddPercent = 기본 × (1 + 값 × 레벨) / Multiply = 기본 × 값^레벨
+    /// 드래곤 기본 능력치(dragon)에 업그레이드(upgrade)와 환생 특성(rebirth_trait) 효과를 반영한 최종 능력치.
+    /// 효과 코드별 적용은 MVP 제작 가이드 6.7 표를 따른다. 거리·속도는 unit 단위로 바꿔 둔다.
     /// </summary>
     public class PlayerStats
     {
@@ -15,125 +15,160 @@ namespace DWH.Core
         public double MaxHp;
         public double HpRegenPerSecond;
         public double MaxStamina;
+        public double FatigueStart;
+        public double FatigueInterval;
+        /// <summary>건물 1개 파괴마다 기력 회복 (랜드마크 ×5)</summary>
         public double StaminaOnDestroy;
         public double StaminaOnClear;
+        /// <summary>기력 25% 이하일 때 공격력 증가율 (효과 7)</summary>
+        public double LowStaminaAttack;
+        /// <summary>unit/s</summary>
         public double MoveSpeed;
+        /// <summary>unit</summary>
         public double JumpHeight;
+        /// <summary>점프 성능 배율 (효과 14) [임시 해석]: 지붕 위로 뛰는 여유 높이에 곱한다</summary>
+        public double JumpPowerMultiplier = 1;
+        /// <summary>체공 시간 배율 (효과 15) [임시 해석]</summary>
+        public double AirTimeMultiplier = 1;
         public double JumpChance;
-        /// <summary>점프 착지 타격 배율. 기본 1.0, 중량 강화 레벨당 +0.2 (8.6)</summary>
+        /// <summary>착지 타격 배율 (dragon.landing_dmg_pct)</summary>
         public double LandingDamage;
         public double CritChance;
         public double CritMultiplier;
+        public double KnockbackSeconds;
 
-        /// <summary>골드 획득 배율 = (1 + 탐욕) × (1 + 황금 혈통) (환생 특성, 4.9)</summary>
-        public double GoldMultiplier;
-        /// <summary>감별안: 일반 스테이지 건물이 황금화될 확률</summary>
+        /// <summary>골드 획득 배율 = (1 + 탐욕) × (1 + 황금 혈통)</summary>
+        public double GoldMultiplier = 1;
+        /// <summary>일반 스테이지 건물이 황금화될 확률 (효과 9)</summary>
         public double GoldenChance;
-        /// <summary>연쇄 파괴: 스택당 보너스 골드 비율</summary>
-        public double ChainGoldPerStack;
-        /// <summary>보물 더미: 클리어 시 획득 골드에 더하는 비율</summary>
+        /// <summary>콤보 1스택마다 골드 보너스율 (효과 10)</summary>
+        public double ComboGoldPerStack;
+        /// <summary>콤보 골드 스택 상한 (효과 11)</summary>
+        public int MaxComboStacks;
+        /// <summary>클리어 시 이번 스테이지 골드 × 이 값 추가 (효과 12)</summary>
         public double ClearGoldBonus;
-        /// <summary>몸통 박치기 대미지 배율 (스킬 배율 × 레벨 강화)</summary>
-        public double BodySlamMultiplier;
+        /// <summary>모든 패시브 쿨타임 배율 = 1 - 감소율 (효과 32)</summary>
+        public double CooldownMultiplier = 1;
 
-        /// <summary>성장 단계와 해츨링 대비 크기 (4.1.4). Growth.Apply가 채운다</summary>
-        public GrowthStage GrowthStage = GrowthStage.Hatchling;
-        public double SizeScale = 1;
+        // ───── 패시브 스킬 (6.8) ─────
+        /// <summary>해금된 패시브 (몸통 박치기는 기본 보유)</summary>
+        public readonly HashSet<PassiveSkillId> Skills = new() { PassiveSkillId.BodySlam };
+        public double BodySlamMultiplier = 1;
+        public double BreathMultiplier = 1;
+        /// <summary>화상: 초당 공격력 × 이 값, 3초 (효과 19). 0이면 없음</summary>
+        public double BurnRate;
+        public double BreathRangeMultiplier = 1;
+        public double FireBallMultiplier = 1;
+        public int FireBallExtra;
+        public double ShockwaveMultiplier = 1;
+        /// <summary>충격파가 닿는 양옆 건물 수 (효과 24). 0이면 맞닿은 1개만</summary>
+        public int ShockwaveSides;
+        /// <summary>돌진 쿨타임(초) (효과 26)</summary>
+        public double DashCooldown;
+        public double WhirlwindMultiplier = 1;
+        public double WhirlwindRangeMultiplier = 1;
+        public double WhirlwindExtraSeconds;
+        public double LightningMultiplier = 1;
+        public int LightningExtra;
 
-        public readonly Dictionary<PassiveSkillId, int> SkillLevels = new();
-        /// <summary>스킬별 하위 업그레이드 단계 (돌진, 개수 증가, 화상 …)</summary>
-        public readonly Dictionary<PassiveSkillId, int> SubLevels = new();
+        /// <summary>성장 단계 (외형만 바뀐다)</summary>
+        public DragonGrowthRow Growth;
 
-        public int SkillLevel(PassiveSkillId skill) => SkillLevels.TryGetValue(skill, out int l) ? l : 0;
-        public int SubLevel(PassiveSkillId skill) => SubLevels.TryGetValue(skill, out int l) ? l : 0;
+        public bool Has(PassiveSkillId skill) => Skills.Contains(skill);
 
-        /// <param name="nodeLevel">노드 이름 → 현재 레벨 (초기 레벨 포함)</param>
-        /// <param name="traitLevel">환생 특성 → 레벨. null이면 모두 0</param>
-        public static PlayerStats Compute(GameDatabase db, Func<UpgradeNodeRow, int> nodeLevel, Func<RebirthTraitId, int> traitLevel = null)
+        /// <param name="upgradeLevel">upgrade_id → 현재 레벨</param>
+        /// <param name="traitLevel">trait_id → 레벨. null이면 모두 0</param>
+        /// <param name="growthGold">성장 단계 기준 골드(이번 회차 업그레이드 누적 사용 골드)</param>
+        public static PlayerStats Compute(GameDatabase db, Func<string, int> upgradeLevel, Func<string, int> traitLevel = null, double growthGold = 0)
         {
-            double Trait(RebirthTraitEffect effect)
-            {
-                if (traitLevel == null || db.rebirthTraits == null) return 0;
-                double sum = 0;
-                foreach (var t in db.rebirthTraits.rows)
-                    if (t.effect == effect) sum += t.effectValue * traitLevel(t.trait);
-                return sum;
-            }
+            var effects = Effects(db, upgradeLevel, traitLevel);
+            var d = db.Dragon;
+            double E(EffectType t) => effects.Get(t);
 
-            var b = db.dragon;
-            var values = new Dictionary<UpgradeEffect, double>
+            var s = new PlayerStats
             {
-                [UpgradeEffect.AttackPower] = b.attackPower,
-                [UpgradeEffect.MaxHp] = b.maxHp,
-                [UpgradeEffect.MaxStamina] = b.maxStamina,
-                [UpgradeEffect.StaminaOnDestroy] = b.staminaOnDestroy,
-                [UpgradeEffect.StaminaOnClear] = b.staminaOnClear,
-                [UpgradeEffect.HpRegenPercent] = 0,
-                [UpgradeEffect.MoveSpeed] = b.moveSpeed,
-                [UpgradeEffect.JumpHeight] = b.jumpHeight,
-                [UpgradeEffect.CritChance] = b.critChance,
-                [UpgradeEffect.CritMultiplier] = b.critMultiplier,
-                [UpgradeEffect.GoldBonus] = 0,
-                [UpgradeEffect.GoldenChance] = 0,
-                [UpgradeEffect.ChainGoldBonus] = 0,
-                [UpgradeEffect.ClearGoldBonus] = 0,
-                [UpgradeEffect.LandingDamage] = 1,
+                AttackPower = d.atk * (1 + E(EffectType.AttackPower)),
+                AttacksPerSecond = d.atkSpeed,
+                MaxHp = d.hp * (1 + E(EffectType.MaxHp)),
+                MaxStamina = d.stamina + E(EffectType.MaxStamina),
+                FatigueStart = d.fatigueStart,
+                FatigueInterval = d.fatigueIntervalSec,
+                StaminaOnDestroy = d.staminaOnKill + E(EffectType.StaminaOnDestroy),
+                StaminaOnClear = d.staminaOnClear + E(EffectType.StaminaOnClear),
+                LowStaminaAttack = E(EffectType.LowStaminaAttack),
+                MoveSpeed = Tuning.Px(d.moveSpeed) * (1 + E(EffectType.MoveSpeed)),
+                JumpHeight = Tuning.Px(d.jumpHeight) * (1 + E(EffectType.JumpPower)),
+                JumpPowerMultiplier = 1 + E(EffectType.JumpPower),
+                AirTimeMultiplier = 1 + E(EffectType.AirTime),
+                JumpChance = d.jumpRate,
+                LandingDamage = d.landingDmgPct / 100.0,
+                CritChance = Math.Min(1.0, d.critRate + E(EffectType.CritChance)),
+                CritMultiplier = effects.Has(EffectType.CritDamage) ? E(EffectType.CritDamage) : d.critDmgPct / 100.0,
+                KnockbackSeconds = d.knockbackSec,
+                GoldMultiplier = 1 + E(EffectType.GoldGain),
+                GoldenChance = E(EffectType.GoldenChance),
+                ComboGoldPerStack = E(EffectType.ComboGold),
+                MaxComboStacks = (int)Math.Floor(E(EffectType.MaxCombo)),
+                ClearGoldBonus = E(EffectType.ClearGold),
+                CooldownMultiplier = 1 - E(EffectType.CooldownReduction),
+                BodySlamMultiplier = PassiveSpecs.BodySlam.damage * (1 + E(EffectType.BodySlamDamage)),
+                BreathMultiplier = PassiveSpecs.FireBreath.damage * (1 + E(EffectType.BreathDamage)),
+                BurnRate = E(EffectType.BurnDamage),
+                BreathRangeMultiplier = 1 + E(EffectType.BreathRange),
+                FireBallMultiplier = PassiveSpecs.FireBall.damage * effects.Get(EffectType.FireBallDamage, 1),
+                FireBallExtra = (int)Math.Floor(E(EffectType.FireBallCount)),
+                ShockwaveMultiplier = PassiveSpecs.Shockwave.damage * effects.Get(EffectType.ShockwaveDamage, 1),
+                ShockwaveSides = (int)Math.Floor(E(EffectType.ShockwaveRange)),
+                DashCooldown = E(EffectType.DashCooldown),
+                WhirlwindMultiplier = PassiveSpecs.Whirlwind.damage * effects.Get(EffectType.WhirlwindDamage, 1),
+                WhirlwindRangeMultiplier = 1 + E(EffectType.WhirlwindRange),
+                WhirlwindExtraSeconds = E(EffectType.WhirlwindDuration),
+                LightningMultiplier = PassiveSpecs.Lightning.damage * effects.Get(EffectType.LightningDamage, 1),
+                LightningExtra = (int)Math.Floor(E(EffectType.LightningCount)),
             };
+            s.HpRegenPerSecond = d.hpRegen + s.MaxHp * E(EffectType.HpRegen);
 
-            var stats = new PlayerStats();
-            foreach (var node in db.upgradeNodes.rows)
+            // 패시브 해금: 그 스킬의 노드(효과 1번이 스킬 효과)가 1레벨 이상 (가이드 6.8)
+            foreach (var spec in PassiveSpecs.All)
             {
-                int level = nodeLevel(node);
-                if (node.effect == UpgradeEffect.SkillLevel)
-                {
-                    stats.SkillLevels[(PassiveSkillId)Enum.Parse(typeof(PassiveSkillId), node.target)] = level;
-                    continue;
-                }
-                if (node.effect == UpgradeEffect.SubUpgradeLevel)
-                {
-                    stats.SubLevels[(PassiveSkillId)Enum.Parse(typeof(PassiveSkillId), node.target)] = level;
-                    continue;
-                }
-                if (level == 0)
-                    continue;
-                values[node.effect] = Apply(values[node.effect], node.effectMode, node.effectValue, level);
+                if (spec.id == PassiveSkillId.BodySlam) continue;
+                var node = db.UpgradeByEffect(spec.unlockEffect);
+                if (node != null && upgradeLevel(node.upgradeId) >= 1) s.Skills.Add(spec.id);
             }
 
-            // 태고의 분노: 모든 공격력 영구 강화 (트리 효과 위에 곱한다)
-            stats.AttackPower = values[UpgradeEffect.AttackPower] * (1 + Trait(RebirthTraitEffect.AttackPercent));
-            stats.AttacksPerSecond = b.attacksPerSecond;
-            stats.MaxHp = values[UpgradeEffect.MaxHp];
-            stats.HpRegenPerSecond = b.hpRegenPerSecond + stats.MaxHp * values[UpgradeEffect.HpRegenPercent];
-            stats.MaxStamina = values[UpgradeEffect.MaxStamina] + Trait(RebirthTraitEffect.MaxStamina);
-            stats.StaminaOnDestroy = values[UpgradeEffect.StaminaOnDestroy];
-            stats.StaminaOnClear = values[UpgradeEffect.StaminaOnClear];
-            stats.MoveSpeed = values[UpgradeEffect.MoveSpeed];
-            stats.JumpHeight = values[UpgradeEffect.JumpHeight];
-            stats.CritChance = Math.Min(1.0, values[UpgradeEffect.CritChance]);
-            stats.CritMultiplier = values[UpgradeEffect.CritMultiplier];
-            stats.GoldMultiplier = (1 + values[UpgradeEffect.GoldBonus]) * (1 + Trait(RebirthTraitEffect.GoldPercent));
-            stats.GoldenChance = values[UpgradeEffect.GoldenChance];
-            stats.ChainGoldPerStack = values[UpgradeEffect.ChainGoldBonus];
-            stats.ClearGoldBonus = values[UpgradeEffect.ClearGoldBonus];
-            stats.LandingDamage = values[UpgradeEffect.LandingDamage];
-
-            // 몸통 박치기: 기본 보유(1레벨). 2레벨부터 레벨당 공격력 +50%, 점프 확률 +5% (4.3)
-            var bodySlam = db.passiveSkills.rows.Find(s => s.skill == PassiveSkillId.BodySlam);
-            int bodySlamLevel = stats.SkillLevels.TryGetValue(PassiveSkillId.BodySlam, out int l) ? Math.Max(1, l) : 1;
-            stats.BodySlamMultiplier = bodySlam.damageMultiplier * (1 + bodySlam.perLevelDamageBonus * (bodySlamLevel - 1));
-            stats.JumpChance = Math.Min(b.jumpChanceMax, b.jumpChance + bodySlam.perLevelExtra * (bodySlamLevel - 1));
-            return stats;
+            s.Growth = Core.Growth.Stage(db, growthGold);
+            return s;
         }
 
-        public static double Apply(double baseValue, EffectMode mode, double value, int level) => mode switch
+        /// <summary>업그레이드·환생 특성 효과를 효과 코드별로 합친다 (가이드 6.7)</summary>
+        public static EffectTotals Effects(GameDatabase db, Func<string, int> upgradeLevel, Func<string, int> traitLevel = null)
         {
-            EffectMode.Add => baseValue + value * level,
-            EffectMode.AddPercent => baseValue * (1 + value * level),
-            EffectMode.Multiply => baseValue * Math.Pow(value, level),
-            _ => throw new ArgumentOutOfRangeException(nameof(mode)),
-        };
+            var effects = new EffectTotals(db);
+            foreach (var u in db.upgrades)
+            {
+                int level = upgradeLevel(u.upgradeId);
+                if (level <= 0) continue;
+                effects.Add(u.effectType1, u.baseValue1, u.addValue1, level);
+                if (u.effectType2 != EffectType.None) effects.Add(u.effectType2, u.baseValue2, u.addValue2, level);
+            }
+            if (traitLevel != null)
+            {
+                foreach (var t in db.rebirthTraits)
+                {
+                    int level = traitLevel(t.traitId);
+                    if (level > 0) effects.Add(t.effectType, t.baseValue, t.addValue, level);
+                }
+            }
+            return effects;
+        }
 
         /// <summary>업그레이드가 없는 기본 능력치</summary>
-        public static PlayerStats Base(GameDatabase db) => Compute(db, n => n.initialLevel);
+        public static PlayerStats Base(GameDatabase db) => Compute(db, _ => 0);
+
+        /// <summary>현재 기력 비율에 맞는 공격력 (광란: 기력 25% 이하이면 증가)</summary>
+        public double AttackAt(double stamina, double maxStamina) =>
+            LowStaminaAttack > 0 && maxStamina > 0 && stamina <= maxStamina * Tuning.LowStaminaRatio
+                ? AttackPower * (1 + LowStaminaAttack)
+                : AttackPower;
     }
 }

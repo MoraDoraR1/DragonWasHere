@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DWH.Editor
 {
     /// <summary>
-    /// 아트 카테고리별 스프라이트 임포트 설정 (임시unity제작.md 9.3).
+    /// 아트 카테고리별 스프라이트 임포트 설정 (MVP 제작 가이드 5장 "표시 크기"). 값은 [임시]이며 화면을 보고 여기서만 조정한다.
     /// 원본 크기가 카테고리마다 달라 Pixels Per Unit으로 표시 크기를 맞춘다. 코드에서 scale을 곱하지 않는다.
     /// </summary>
     [CreateAssetMenu(menuName = "DWH/Art Scale Settings", fileName = "ArtScaleSettings")]
@@ -14,6 +14,8 @@ namespace DWH.Editor
     {
         public const string AssetPath = "Assets/_Project/Settings/ArtScaleSettings.asset";
         public const string ArtRoot = "Assets/_Project/Art/";
+        /// <summary>리소스 폴더(Fix_Resource)를 그대로 복사한 곳. resource.res_path = Art/ 기준 경로</summary>
+        public const string FixRoot = "Fix_Resource/";
 
         [Serializable]
         public class Rule
@@ -26,14 +28,17 @@ namespace DWH.Editor
             public int sliceBorder;
             [Tooltip("UI 스프라이트는 압축하지 않는다 (테두리 번짐 방지)")]
             public bool uncompressed;
+            [Tooltip("알파가 이 값 이하인 옅은 픽셀을 투명으로 지운다 (0이면 그대로)")]
+            public int clearAlphaAtOrBelow;
 
-            public Rule(string pathPrefix, float pixelsPerUnit, SpriteAlignment pivot, int sliceBorder = 0, bool uncompressed = false)
+            public Rule(string pathPrefix, float pixelsPerUnit, SpriteAlignment pivot, int sliceBorder = 0, bool uncompressed = false, int clearAlphaAtOrBelow = 0)
             {
                 this.pathPrefix = pathPrefix;
                 this.pixelsPerUnit = pixelsPerUnit;
                 this.pivot = pivot;
                 this.sliceBorder = sliceBorder;
                 this.uncompressed = uncompressed;
+                this.clearAlphaAtOrBelow = clearAlphaAtOrBelow;
             }
         }
 
@@ -41,38 +46,27 @@ namespace DWH.Editor
         public TextureImporterCompression compression = TextureImporterCompression.Compressed;
         public FilterMode filterMode = FilterMode.Bilinear;
 
+        /// <summary>건물·유닛·자원 PNG의 옅은 픽셀(알파 1~8)을 지우는 기준 (가이드 5장)</summary>
+        public const int FaintAlpha = 8;
+
         public List<Rule> rules = new()
         {
-            new Rule("Backgrounds/", 100f, SpriteAlignment.BottomCenter),
-            new Rule("Buildings/Normal/", 240f, SpriteAlignment.BottomCenter),
-            new Rule("Buildings/Golden/", 240f, SpriteAlignment.BottomCenter),
-            new Rule("Buildings/Attack/", 240f, SpriteAlignment.BottomCenter),
-            new Rule("Buildings/GoldenAttack/", 240f, SpriteAlignment.BottomCenter),
-            new Rule("Buildings/Landmark/", 140f, SpriteAlignment.BottomCenter),
-            // 드래곤 파츠 피벗(회전점)은 파츠마다 달라서 M2의 조립 코드에서 지정한다
-            new Rule("Dragon/", 700f, SpriteAlignment.Center),
-            new Rule("AirUnits/", 200f, SpriteAlignment.Center),
-            new Rule("Drops/", 500f, SpriteAlignment.Center),
-            // UI 프레임 (Tools/make_ui_frames.py). 48px 원본의 가장자리 12px를 9-slice로 고정한다
-            new Rule("UI/", 100f, SpriteAlignment.Center, 12, true),
-            // UI 디자인 패키지 v1 (리소스/dragon_ui_unity_v1.zip). 9-slice 경계는 UIKit/sprite-manifest.csv의 border_LBRT를 쓴다
-            new Rule("UIKit/", 100f, SpriteAlignment.Center, 0, true),
+            // 배경 19.2 × 10.8 unit (바닥 19.2 × 2.44)
+            new Rule(FixRoot + "배경/", 100f, SpriteAlignment.BottomCenter),
+            // 일반·공격 건물 높이 2.4(180px) 또는 4.4(330px) unit, 랜드마크 약 8.7 unit
+            new Rule(FixRoot + "건물/", 75f, SpriteAlignment.BottomCenter, clearAlphaAtOrBelow: FaintAlpha),
+            // 공중 유닛 1 × 1 unit
+            new Rule(FixRoot + "적 유닛/", 200f, SpriteAlignment.Center, clearAlphaAtOrBelow: FaintAlpha),
+            // 드래곤 1단계 약 2.3 unit 폭 → 4단계 약 5 unit. 파츠는 절대 잘라 내지 않는다(좌표가 어긋남). 회전점은 조립 코드에서 맞춘다
+            new Rule(FixRoot + "드래곤/", 300f, SpriteAlignment.Center),
+            // 드랍 자원 0.4 × 0.4 unit
+            new Rule(FixRoot + "UI&폰트/03_자원/", 1350f, SpriteAlignment.Center, clearAlphaAtOrBelow: FaintAlpha),
+            // UI(V15): 둥근 사각형 프레임이라 경계 20px로 9-slice한다. 아이콘은 Simple로 그리므로 경계가 있어도 그대로다
+            new Rule(FixRoot + "UI&폰트/01_UI에셋/", 100f, SpriteAlignment.Center, 20, true),
+            // 스킬·피격 이펙트 540px 프레임 → 2.7 unit [임시]
+            new Rule(FixRoot + "스킬 이펙트/", 200f, SpriteAlignment.Center),
+            new Rule(FixRoot + "피격 이펙트/", 200f, SpriteAlignment.Center),
         };
-
-        /// <summary>코드의 기본 규칙 중 저장된 에셋에 없는 것을 추가한다. 규칙이 늘어났을 때 기존 에셋을 갱신한다.</summary>
-        public bool AddMissingDefaultRules()
-        {
-            var defaults = CreateInstance<ArtScaleSettings>();
-            bool changed = false;
-            foreach (var rule in defaults.rules)
-            {
-                if (rules.Exists(r => r.pathPrefix == rule.pathPrefix)) continue;
-                rules.Add(rule);
-                changed = true;
-            }
-            DestroyImmediate(defaults);
-            return changed;
-        }
 
         public Rule FindRule(string artRelativePath)
         {
@@ -91,6 +85,17 @@ namespace DWH.Editor
         {
             var settings = AssetDatabase.LoadAssetAtPath<ArtScaleSettings>(AssetPath);
             return settings != null ? settings : CreateInstance<ArtScaleSettings>();
+        }
+
+        /// <summary>에셋이 없으면 기본값으로 만든다</summary>
+        public static ArtScaleSettings LoadOrCreate()
+        {
+            var settings = AssetDatabase.LoadAssetAtPath<ArtScaleSettings>(AssetPath);
+            if (settings != null) return settings;
+            settings = CreateInstance<ArtScaleSettings>();
+            AssetDatabase.CreateAsset(settings, AssetPath);
+            AssetDatabase.SaveAssets();
+            return settings;
         }
     }
 }

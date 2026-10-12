@@ -1,0 +1,4 @@
+grade_id,grade,name_str,dmg_pct,side_count,gauge_color,res_id
+sgr1,1,starter_grade_name_1,200,5,,res6000133
+sgr2,2,starter_grade_name_2,130,2,,res6000132
+sgr3,3,starter_grade_name_3,0,0,,res6000131

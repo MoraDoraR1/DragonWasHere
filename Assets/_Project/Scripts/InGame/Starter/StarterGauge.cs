@@ -34,16 +34,9 @@ namespace DWH.InGame.Starter
             Advance(0);
         }
 
-        /// <summary>스테이지 순번 n(1..28)의 난이도 (4.7 공식)</summary>
-        public static StarterGauge ForStage(BalanceSettings b, int stageIndex)
-        {
-            int k = Math.Max(0, stageIndex - 1);
-            float great = (float)Math.Max(b.starterGreatWidthMin, b.starterGreatWidthBase - b.starterGreatWidthPerStage * k);
-            return new StarterGauge(
-                (float)(b.starterZoneSpeedBase + b.starterZoneSpeedPerStage * k),
-                (float)(b.starterBarSpeedBase + b.starterBarSpeedPerStage * k),
-                great, great * (float)b.starterGoodWidthRatio);
-        }
+        /// <summary>스테이지별 게이지 속도·폭 (starter_stage, 가이드 6.9)</summary>
+        public static StarterGauge ForStage(StarterStageRow row) =>
+            new((float)row.zoneSpeed, (float)row.barSpeed, (float)row.greatWidth, (float)row.goodWidth);
 
         public void Advance(float deltaTime)
         {

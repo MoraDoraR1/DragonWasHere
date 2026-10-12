@@ -17,21 +17,20 @@ namespace DWH.Core
     public enum GameState { OutGame, Stage, Bonus, Result }
 
     /// <summary>
-    /// 게임 상태 머신 (5장). OutGame → Stage → (Bonus) → Result → OutGame.
-    /// 일반 스테이지를 클리어하고 기력이 10 이상 남으면 보너스로 간다 (1.1). 스테이지 스타터(M10)는 Stage 앞에 들어간다.
-    /// 저장 시점: 세션 정산 직후, 업그레이드·환생 특성·액티브 스킬 구매 직후, 환생 직후, 앱 종료 시 (4.11).
+    /// 게임 상태 머신. OutGame → Stage(스타터 포함) → (Bonus) → Result → OutGame.
+    /// 일반 스테이지를 클리어한 순간 기력이 const.bonus_min_stamina 이상이면 보너스로 간다 (가이드 6.6).
+    /// 저장 시점 (가이드 6.12): 정산 직후, 구매 직후, 환생 직후, "바로 다시 출격" 직전, 언어 변경.
     /// </summary>
     public class GameManager : MonoBehaviour
     {
         public GameDatabase database;
         public ArtCatalog art;
         public UiTheme uiTheme;
-        /// <summary>일반 스테이지 앞의 스테이지 스타터(4.7). 자동 진행 테스트와 봇은 끈다</summary>
+        /// <summary>일반 스테이지 앞의 스테이지 스타터. 자동 진행 테스트와 봇은 끈다</summary>
         public bool enableStarter = true;
 
         ISaveStorage storage;
         Func<Camera, IGuideInput> inputFactory;
-        string[] stageOrder;
         Camera view;
         OutGameScreen outGame;
         ResultScreen resultScreen;
@@ -39,6 +38,7 @@ namespace DWH.Core
         PauseMenu pauseMenu;
         float timeScaleBeforePause = 1f;
         double goldAtDeparture;
+        float departTime;
         PlayerStats sessionStats;
         Dictionary<ActiveSkillId, int> activeLevels = new();
         Dictionary<ActiveSkillId, int> sessionUses = new();
@@ -51,6 +51,7 @@ namespace DWH.Core
         public UpgradeTree Upgrades { get; private set; }
         public bool IsInitialized => Save != null;
         public bool IsPaused { get; private set; }
+        public OutGameScreen OutGame => outGame;
 
         public event Action<GameState> StateChanged;
 
@@ -59,7 +60,7 @@ namespace DWH.Core
         void Start()
         {
             if (!IsInitialized)
-                Initialize(SaveSystem.DefaultStorage(), cam => new MouseGuideInput(cam, (float)database.dragon.autoMoveIdleSeconds));
+                Initialize(SaveSystem.DefaultStorage(), cam => new MouseGuideInput(cam, (float)database.Const("mouse_idle_sec")));
         }
 
         /// <summary>저장소와 입력을 바꿔 끼울 수 있게 분리했다. 테스트는 메모리 저장소와 자동 입력을 넣는다.</summary>
@@ -67,45 +68,64 @@ namespace DWH.Core
         {
             storage = saveStorage;
             inputFactory = guideInputFactory;
-            stageOrder = database.stages.rows.Select(s => s.stageId).ToArray();
-            Save = SaveSystem.Load(storage, stageOrder[0]);
+            UiText.Database = database;
+            Save = SaveSystem.Load(storage, database.StageOrder[0]);
+            if (database.OrderIndex(Save.currentStage) < 0) Save.currentStage = database.StageOrder[0];
+            if (database.OrderIndex(Save.highestStage) < 0) Save.highestStage = Save.currentStage;
+            Localization.Current = Localization.Parse(Save.language);
             view = Camera.main != null ? Camera.main : new GameObject("Main Camera") { tag = "MainCamera" }.AddComponent<Camera>();
 
             if (uiTheme != null) UiTheme.Active = uiTheme;
             Upgrades = new UpgradeTree(database, Save);
+            BuildScreens();
+            Analytics.SessionStart(database, Save);
+            EnterOutGame();
+        }
+
+        void BuildScreens()
+        {
+            if (outGame != null) Destroy(outGame.gameObject);
+            if (resultScreen != null) Destroy(resultScreen.gameObject);
+            if (pauseMenu != null) Destroy(pauseMenu.gameObject);
             outGame = OutGameScreen.Create(database, art, Upgrades, new OutGameActions
             {
                 Depart = StartStage,
-                BuyNode = (node, quantity) => BuyUpgrade(node, quantity),
+                BuyNode = BuyUpgrade,
                 Rebirth = PerformRebirth,
                 BuyTrait = BuyTrait,
                 BuyActive = BuyActive,
-                RebirthUnlocked = () => Rebirth.IsUnlocked(database, Save, stageOrder),
+                RebirthUnlocked = () => Rebirth.IsUnlocked(database, Save),
+                ToggleLanguage = ToggleLanguage,
             });
             resultScreen = ResultScreen.Create(database, ConfirmResult, RetryFromResult);
             pauseMenu = PauseMenu.Create(() => SetPaused(false));
-            EnterOutGame();
         }
 
         void EnterOutGame()
         {
             resultScreen.Hide();
             outGame.Show(Save);
+            Analytics.OutgameEnter();
             SetState(GameState.OutGame);
         }
 
-        /// <summary>"출발": 현재 도전 스테이지로 간다 (1.1)</summary>
-        public void StartStage()
+        /// <summary>"출격": 현재 도전 스테이지로 간다. 스테이지를 골라서 다시 하는 기능은 없다 (가이드 1장)</summary>
+        public void StartStage() => StartStage(false);
+
+        /// <param name="retry">결과 화면 "바로 다시 출격"으로 왔는지 (지표 entry)</param>
+        void StartStage(bool retry)
         {
             if (State != GameState.OutGame) return;
+            if (!retry) Analytics.OutgameExit(database, Save, Upgrades.AffordableCount());
             outGame.Hide();
             goldAtDeparture = Save.goldCoin;
+            departTime = Time.time;
             sessionStats = Upgrades.Stats();
-            // 액티브 스킬 사용 횟수는 세션마다 최대치로 충전한다. 보너스 스테이지는 이어서 쓴다 (4.4)
-            activeLevels = Enum.GetValues(typeof(ActiveSkillId)).Cast<ActiveSkillId>()
-                .ToDictionary(id => id, id => Rebirth.ActiveLevel(Save, id));
-            sessionUses = ActiveSkillSystem.FullUses(database, activeLevels);
+            // 액티브 스킬 사용 횟수는 출격할 때마다 채운다. 보너스 스테이지는 이어서 쓴다 (가이드 6.10)
+            activeLevels = database.activeSkills.ToDictionary(a => a.Id, a => Rebirth.ActiveLevel(Save, a));
+            sessionUses = ActiveSkillSystem.FullUses(activeLevels);
             StartBattle(Save.currentStage, BattleMode.Normal, null, 0);
+            Analytics.RunStart(database, Save, retry);
             SetState(GameState.Stage);
         }
 
@@ -117,7 +137,6 @@ namespace DWH.Core
             Battle.Actives.Configure(activeLevels, sessionUses);
             // 정산 후에는 보유 골드에 세션 골드가 더해지므로, HUD는 출발 시점 보유량 + 앞 구간 골드 + 현재 구간 획득량으로 표시한다
             double shown = goldAtDeparture + goldBefore;
-            // 첫 두 판은 조작 안내를 띄운다
             hud = BattleHud.Create(Battle, () => shown, art, TogglePause, mode == BattleMode.Normal && Save.playCount < 2, goldBefore);
         }
 
@@ -127,20 +146,30 @@ namespace DWH.Core
 
             if (battle.Mode == BattleMode.Normal)
             {
+                bool cleared = battle.State == BattleState.Cleared;
                 LastResult = new SessionResult
                 {
                     stageId = battle.Stage.stageId,
-                    cleared = battle.State == BattleState.Cleared,
-                    end = battle.State == BattleState.Cleared ? SessionEnd.Cleared
-                        : battle.Dragon.Vitals.IsDead ? SessionEnd.Defeated : SessionEnd.Exhausted,
+                    cleared = cleared,
+                    end = cleared ? SessionEnd.Cleared : battle.Dragon.Vitals.IsDead ? SessionEnd.Defeated : SessionEnd.Exhausted,
                     earnedGold = battle.Drops.CollectedGold,
                     destroyedBuildings = battle.DestroyedCount,
                     totalBuildings = battle.Buildings.Count,
+                    maxCombo = battle.Drops.MaxCombo,
+                    hpLeft = battle.Dragon.Vitals.Hp,
+                    staminaLeft = battle.Dragon.Vitals.Stamina,
                 };
+
+                // 보물 산더미: 클리어 시 이번 스테이지 골드 × v 추가 (효과 12)
+                if (cleared && sessionStats.ClearGoldBonus > 0)
+                {
+                    LastResult.clearBonusGold = LastResult.earnedGold * sessionStats.ClearGoldBonus;
+                    LastResult.earnedGold += LastResult.clearBonusGold;
+                }
 
                 if (battle.BonusEligible)
                 {
-                    // 보너스 스테이지: 체력·기력·피로를 이어받는다 (3.5, 8.1)
+                    // 보너스 스테이지: 체력·기력·피로를 이어받는다
                     LastResult.bonusEntered = true;
                     var vitals = battle.Dragon.Vitals;
                     CloseBattle();
@@ -154,25 +183,23 @@ namespace DWH.Core
                 LastResult.bonusGold = battle.Drops.CollectedGold;
                 LastResult.bonusDestroyed = battle.DestroyedCount;
                 LastResult.bonusTotal = battle.Buildings.Count;
+                LastResult.maxCombo = Math.Max(LastResult.maxCombo, battle.Drops.MaxCombo);
                 LastResult.earnedGold += LastResult.bonusGold;
             }
 
-            // 보물 더미: 클리어 시 획득 골드의 일정 비율을 더 준다 (4.8)
-            if (LastResult.cleared && sessionStats.ClearGoldBonus > 0)
-            {
-                LastResult.clearBonusGold = LastResult.earnedGold * sessionStats.ClearGoldBonus;
-                LastResult.earnedGold += LastResult.clearBonusGold;
-            }
-
-            Progression.Settle(Save, LastResult, stageOrder);
+            LastResult.playSeconds = Time.time - departTime;
+            bool rebirthBefore = Rebirth.IsUnlocked(database, Save);
+            Progression.Settle(database, Save, LastResult);
             Save.playCount++;
             SaveSystem.Save(storage, Save);
 
-            resultScreen.Show(LastResult, Save, AffordableUpgradeCount());
+            Analytics.RunEnd(database, Save, LastResult);
+            if (!rebirthBefore && Rebirth.IsUnlocked(database, Save)) Analytics.RebirthUnlocked(database, Save);
+            if (LastResult.gameCompleted) Analytics.GameComplete(database, Save);
+
+            resultScreen.Show(LastResult, Save, Upgrades.AffordableCount(), Save.playCount > 1);
             SetState(GameState.Result);
         }
-
-        int AffordableUpgradeCount() => database.upgradeNodes.rows.Count(n => Upgrades.Status(n) == NodeStatus.Affordable);
 
         void CloseBattle()
         {
@@ -182,47 +209,40 @@ namespace DWH.Core
             Battle = null;
         }
 
-        /// <summary>업그레이드 구매. 구매 직후 저장한다 (4.11)</summary>
-        public bool BuyUpgrade(UpgradeNodeRow node) => BuyUpgrade(node, 1) > 0;
-
-        /// <summary>구매 수량 ×1 / ×10 / 최대(UpgradeTree.MaxQuantity). 산 레벨 수를 돌려준다</summary>
-        public int BuyUpgrade(UpgradeNodeRow node, int quantity)
+        /// <summary>업그레이드 구매. 구매 수량 ×1 / ×10 / 최대. 산 레벨 수를 돌려준다. 구매 직후 저장한다</summary>
+        public int BuyUpgrade(UpgradeRow node, int quantity)
         {
             if (State != GameState.OutGame) return 0;
-            var before = Growth.Stage(database, Save.lifetimeSpentGold);
+            var before = Growth.Stage(database, Save.runSpentGold);
+            double goldBefore = Save.goldCoin;
             int bought = Upgrades.BuyMany(node, quantity);
             if (bought == 0) return 0;
             SaveSystem.Save(storage, Save);
+            Analytics.UpgradePurchase(database, Save, node, bought, goldBefore - Save.goldCoin);
             outGame.Refresh();
-            // 누적 사용 골드로 성장 단계가 오르면 알린다 (4.1.4)
-            var after = Growth.Stage(database, Save.lifetimeSpentGold);
+            // 누적 사용 골드로 성장 단계가 오르면 외형이 바뀐다 (가이드 6.11)
+            var after = Growth.Stage(database, Save.runSpentGold);
             if (after.growthStage != before.growthStage)
-                outGame.Celebrate($"{after.nameKo}{Ro(after.nameKo)} 성장!", $"용이 {after.sizeScaleFromPrevious:0.##}배 커졌어요. 다음 출격부터 더 크게 날뛰어요");
+                outGame.Celebrate(UiText.Format("ui_hud_growth", database.Text(after.nameStr)), "", art != null ? art.SpriteOrNull(after.resId) : null);
             return bought;
         }
 
-        /// <summary>조사 '로/으로': 받침이 없거나 ㄹ 받침이면 '로'</summary>
-        static string Ro(string word)
-        {
-            char last = word[^1];
-            if (last < 0xAC00 || last > 0xD7A3) return "(으)로";
-            int jong = (last - 0xAC00) % 28;
-            return jong == 0 || jong == 8 ? "로" : "으로";
-        }
+        public bool BuyUpgrade(UpgradeRow node) => BuyUpgrade(node, 1) > 0;
 
-        /// <summary>환생 (4.9). 받은 포인트를 돌려준다. 아웃게임에서만, 해금된 뒤에만 된다</summary>
+        /// <summary>환생. 받은 포인트를 돌려준다. 아웃게임에서만, 해금된 뒤에만 된다</summary>
         public double PerformRebirth()
         {
-            if (State != GameState.OutGame || !Rebirth.IsUnlocked(database, Save, stageOrder)) return 0;
-            double points = Rebirth.Perform(database, Save, stageOrder);
+            if (State != GameState.OutGame || !Rebirth.IsUnlocked(database, Save)) return 0;
+            double points = Rebirth.Perform(database, Save);
             SaveSystem.Save(storage, Save);
+            Analytics.RebirthPerformed(database, Save, points);
             outGame.Show(Save);
             return points;
         }
 
-        public bool BuyTrait(RebirthTraitId id)
+        public bool BuyTrait(string traitId)
         {
-            if (State != GameState.OutGame || !Rebirth.BuyTrait(database, Save, id)) return false;
+            if (State != GameState.OutGame || !Rebirth.BuyTrait(database, Save, traitId)) return false;
             SaveSystem.Save(storage, Save);
             outGame.Refresh();
             return true;
@@ -236,7 +256,20 @@ namespace DWH.Core
             return true;
         }
 
-        /// <summary>결과 화면 "확인": 전투를 정리하고 아웃게임으로 돌아간다</summary>
+        /// <summary>한/영 전환. 화면을 다시 만든다</summary>
+        public void ToggleLanguage()
+        {
+            if (State != GameState.OutGame) return;
+            Localization.Current = Localization.Current == Language.Ko ? Language.En : Language.Ko;
+            Save.language = Localization.Code(Localization.Current);
+            SaveSystem.Save(storage, Save);
+            int tab = outGame.Tab;
+            BuildScreens();
+            outGame.Show(Save);
+            outGame.SetTab(tab);
+        }
+
+        /// <summary>결과 화면 "둥지로": 전투를 정리하고 아웃게임으로 돌아간다</summary>
         public void ConfirmResult()
         {
             if (State != GameState.Result) return;
@@ -244,12 +277,15 @@ namespace DWH.Core
             EnterOutGame();
         }
 
-        /// <summary>결과 화면 "바로 다시 출격": 아웃게임을 거치지 않고 도전 스테이지로 출발한다</summary>
+        /// <summary>결과 화면 "바로 다시 출격": 저장한 뒤 아웃게임을 거치지 않고 도전 스테이지로 출발한다 (첫 판에서는 비활성)</summary>
         public void RetryFromResult()
         {
-            if (State != GameState.Result) return;
-            ConfirmResult();
-            StartStage();
+            if (State != GameState.Result || Save.playCount <= 1) return;
+            SaveSystem.Save(storage, Save);
+            CloseBattle();
+            resultScreen.Hide();
+            SetState(GameState.OutGame);
+            StartStage(true);
         }
 
         /// <summary>일시정지는 전투 중에만 걸 수 있다. 종료 슬로모션 중에는 걸지 않는다</summary>
@@ -281,7 +317,6 @@ namespace DWH.Core
 
         void Update()
         {
-            // 키보드 단축키: Space / Enter로 출발·확인
             var keyboard = Keyboard.current;
             if (keyboard == null) return;
             if (keyboard.escapeKey.wasPressedThisFrame || keyboard.pKey.wasPressedThisFrame)
@@ -296,18 +331,18 @@ namespace DWH.Core
             if (keyboard.rKey.wasPressedThisFrame && State == GameState.Result)
                 RetryFromResult();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            // 개발용: 아웃게임에서 PageUp/PageDown으로 도전 스테이지를 바꾼다 (게임에는 스테이지 선택이 없다. 1.1)
+            // 개발용: 아웃게임에서 PageUp/PageDown으로 도전 스테이지를 바꾸고, G로 골드를 받는다
             if (State == GameState.OutGame)
             {
                 int step = keyboard.pageUpKey.wasPressedThisFrame ? 1 : keyboard.pageDownKey.wasPressedThisFrame ? -1 : 0;
                 if (step != 0) DebugShiftStage(step);
                 if (keyboard.gKey.wasPressedThisFrame)
-                    DebugAddGold(keyboard.shiftKey.isPressed ? 100000 : 1000);
+                    DebugAddGold(keyboard.ctrlKey.isPressed ? 100000000 : keyboard.shiftKey.isPressed ? 100000 : 1000);
             }
 #endif
         }
 
-        /// <summary>개발용 골드 지급. 밸런스 확인용이며 회차 누적 획득 골드(환생 포인트 기준)는 늘리지 않는다.</summary>
+        /// <summary>개발용 골드 지급. 회차 누적 획득 골드(환생 포인트 기준)는 늘리지 않는다.</summary>
         public void DebugAddGold(double amount)
         {
             Save.goldCoin += amount;
@@ -315,11 +350,13 @@ namespace DWH.Core
             outGame.Refresh();
         }
 
-        /// <summary>개발용 도전 스테이지 이동. 진행 기록(클리어 목록·최고 스테이지)은 바꾸지 않는다.</summary>
+        /// <summary>개발용 도전 스테이지 이동. 최고 스테이지는 도달한 만큼 갱신한다(환생 해금 확인용).</summary>
         public void DebugShiftStage(int step)
         {
-            int index = Array.IndexOf(stageOrder, Save.currentStage);
-            Save.currentStage = stageOrder[Mathf.Clamp(index + step, 0, stageOrder.Length - 1)];
+            var order = database.StageOrder;
+            int index = database.OrderIndex(Save.currentStage);
+            Save.currentStage = order[Mathf.Clamp(index + step, 0, order.Count - 1)];
+            if (database.OrderIndex(Save.currentStage) > database.OrderIndex(Save.highestStage)) Save.highestStage = Save.currentStage;
             outGame.Show(Save);
         }
 

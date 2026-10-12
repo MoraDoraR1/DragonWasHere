@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace DWH.UI
 {
-    public enum FrameStyle { Dark, Cream, Ink, ButtonGold, ButtonDark, ButtonSoul, ChipGold, ChipCream, Ring, BarBack, BarFill }
+    public enum FrameStyle { Dark, Cream, Ink, ButtonGold, ButtonDark, ButtonSoul, ButtonGreen, ButtonRed, Card, ChipGold, ChipCream, Ring, BarBack, BarFill }
 
     /// <summary>
     /// 코드로 uGUI를 만드는 도우미. UiTheme(프레임 스프라이트·폰트)이 있으면 그것으로, 없으면 단색 그레이박스로 그린다.
@@ -70,27 +70,35 @@ namespace DWH.UI
         }
 
         /// <summary>
-        /// 프레임 스타일 → UI 패키지 v1 스프라이트 이름 (기본 상태). 패키지가 없으면 예전 프레임(UI/*.png)을 쓴다.
-        /// 패널은 모두 어두운 panel/well이고, 금색 = primary, 어두운 버튼 = secondary, 영혼색 = soul.
+        /// 프레임 스타일 → UI 에셋 V15(Fix_Resource/UI&amp;폰트/01_UI에셋) 스프라이트 이름 (기본 상태).
+        /// 패널·카드는 밝은 크림색, Ink(어두운 바탕)는 게이지 바탕, 금색 = 골드 버튼, 어두운 버튼 = 기본 버튼, 영혼색 = 환생(보라) 버튼.
         /// </summary>
         static string KitName(FrameStyle style) => style switch
         {
-            FrameStyle.Dark or FrameStyle.Cream => "panel-normal",
-            FrameStyle.Ink or FrameStyle.ChipCream => "well-normal",
-            FrameStyle.ButtonGold or FrameStyle.ChipGold => "primary-normal",
-            FrameStyle.ButtonDark => "secondary-normal",
-            FrameStyle.ButtonSoul => "soul-normal",
-            FrameStyle.BarBack => "fill-empty",
-            FrameStyle.BarFill => "fill-progress",
+            FrameStyle.Dark => "panel-normal",
+            FrameStyle.Cream => "popup-normal",
+            FrameStyle.Ink => "gauge-track",
+            FrameStyle.ChipCream => "hud-normal",
+            FrameStyle.ButtonGold or FrameStyle.ChipGold => "button-gold-normal",
+            FrameStyle.ButtonDark => "button-neutral-normal",
+            FrameStyle.ButtonSoul => "button-purple-normal",
+            FrameStyle.ButtonGreen => "button-green-normal",
+            FrameStyle.ButtonRed => "button-red-normal",
+            FrameStyle.Card => "card-normal",
+            FrameStyle.BarBack => "gauge-track",
+            FrameStyle.BarFill => "gauge-fill-goal",
             _ => null,
         };
 
-        /// <summary>버튼 상태 스프라이트 접두어 (Sprite Swap). 버튼이 아닌 스타일은 null</summary>
+        /// <summary>버튼 상태 스프라이트 접두어 (Sprite Swap: -normal/-hover/-pressed/-disabled). 버튼이 아닌 스타일은 null</summary>
         static string ButtonPrefix(FrameStyle style) => style switch
         {
-            FrameStyle.ButtonGold => "primary",
-            FrameStyle.ButtonDark => "secondary",
-            FrameStyle.ButtonSoul => "soul",
+            FrameStyle.ButtonGold => "button-gold",
+            FrameStyle.ButtonDark => "button-neutral",
+            FrameStyle.ButtonSoul => "button-purple",
+            FrameStyle.ButtonGreen => "button-green",
+            FrameStyle.ButtonRed => "button-red",
+            FrameStyle.Card => "card",
             _ => null,
         };
 
@@ -98,23 +106,7 @@ namespace DWH.UI
         {
             var t = UiTheme.Active;
             if (t == null) return null;
-            var kit = t.Kit(KitName(style));
-            if (kit != null) return kit;
-            return style switch
-            {
-                FrameStyle.Dark => t.panelDark,
-                FrameStyle.Cream => t.panelCream,
-                FrameStyle.Ink => t.panelInk,
-                FrameStyle.ButtonGold => t.buttonGold,
-                FrameStyle.ButtonDark => t.buttonDark,
-                FrameStyle.ButtonSoul => t.buttonSoul,
-                FrameStyle.ChipGold => t.chipGold,
-                FrameStyle.ChipCream => t.chipCream,
-                FrameStyle.Ring => t.ring,
-                FrameStyle.BarBack => t.barBack,
-                FrameStyle.BarFill => t.barFill,
-                _ => null,
-            };
+            return t.Kit(KitName(style));
         }
 
         /// <summary>테마가 없을 때 쓰는 단색 (패키지 색과 같은 계열)</summary>
@@ -122,8 +114,11 @@ namespace DWH.UI
         {
             FrameStyle.ButtonGold or FrameStyle.ChipGold => UiTheme.Gold,
             FrameStyle.ButtonSoul => UiTheme.Soul,
-            FrameStyle.ButtonDark => UiTheme.Hex(0x6b4e46),
-            FrameStyle.ChipCream or FrameStyle.Ink or FrameStyle.BarBack => UiTheme.Well,
+            FrameStyle.ButtonGreen => UiTheme.Jade,
+            FrameStyle.ButtonRed => UiTheme.Hp,
+            FrameStyle.ButtonDark => UiTheme.Hex(0xe8dcc4),
+            FrameStyle.Ink or FrameStyle.BarBack => UiTheme.Well,
+            FrameStyle.ChipCream or FrameStyle.Card => UiTheme.Cream,
             FrameStyle.Ring or FrameStyle.BarFill => Color.white,
             _ => UiTheme.Panel,
         };
@@ -184,10 +179,13 @@ namespace DWH.UI
             return k;
         }
 
-        /// <summary>패키지 아이콘 이미지 (Simple + 비율 유지). 아이콘이 없으면 만들지 않는다</summary>
-        public static Image Icon(RectTransform parent, string name, Vector2 anchor, Vector2 position, Vector2 size, string sprite)
+        /// <summary>UI 에셋 아이콘 이미지 (Simple + 비율 유지). 아이콘이 없으면 만들지 않는다</summary>
+        public static Image Icon(RectTransform parent, string name, Vector2 anchor, Vector2 position, Vector2 size, string sprite) =>
+            Icon(parent, name, anchor, position, size, UiTheme.KitSprite(sprite));
+
+        /// <summary>스프라이트 아이콘 (테이블 res_id로 찾은 업그레이드·스킬 아이콘 등). null이면 만들지 않는다</summary>
+        public static Image Icon(RectTransform parent, string name, Vector2 anchor, Vector2 position, Vector2 size, Sprite kit)
         {
-            var kit = UiTheme.KitSprite(sprite);
             if (kit == null) return null;
             var rect = Rect(parent, name, anchor, position, size);
             var image = rect.gameObject.AddComponent<Image>();
@@ -213,7 +211,8 @@ namespace DWH.UI
             text.font = KoreanFont.Get();
             text.fontSize = fontSize;
             text.alignment = alignment;
-            text.color = color ?? UiTheme.TextLight;
+            // 밝은 패널 위 본문은 먹색, 테두리를 두른 글자(화면 위에 바로 쓰는 글자)는 밝은 색
+            text.color = color ?? (outline ? UiTheme.TextLight : UiTheme.InkText);
             text.raycastTarget = false;
             text.textWrappingMode = TextWrappingModes.Normal;
             if (bold) text.fontStyle = FontStyles.Bold;
@@ -225,11 +224,11 @@ namespace DWH.UI
             return text;
         }
 
-        /// <summary>프레임 위 글자색: 금색 버튼·칩은 먹색, 나머지(어두운 패널·영혼색 버튼)는 밝은 색</summary>
+        /// <summary>프레임 위 글자색: 영혼색·초록·빨강 버튼과 어두운 바탕은 밝은 색, 나머지(밝은 패널·금색)는 먹색</summary>
         public static Color LabelColorFor(FrameStyle style) => style switch
         {
-            FrameStyle.ButtonGold or FrameStyle.ChipGold => UiTheme.Ink,
-            _ => UiTheme.TextLight,
+            FrameStyle.ButtonSoul or FrameStyle.ButtonRed or FrameStyle.Ink or FrameStyle.BarBack => UiTheme.TextLight,
+            _ => UiTheme.Ink,
         };
 
         public static Button Button(RectTransform parent, string name, Vector2 anchor, Vector2 position, Vector2 size,
@@ -255,11 +254,10 @@ namespace DWH.UI
         static string FillSpriteFor(Color c)
         {
             static bool Near(Color a, Color b) => Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b) < 0.08f;
-            if (Near(c, UiTheme.Hp)) return "fill-hp";
-            if (Near(c, UiTheme.Energy)) return "fill-energy";
-            if (Near(c, UiTheme.Soul)) return "fill-soul";
-            if (Near(c, UiTheme.Jade)) return "fill-progress";
-            return null;
+            if (Near(c, UiTheme.Hp)) return "gauge-fill-health";
+            if (Near(c, UiTheme.Energy)) return "gauge-fill-energy";
+            if (Near(c, UiTheme.Jade)) return "gauge-fill-growth";
+            return "gauge-fill-goal";
         }
 
         /// <summary>게이지. 반환값은 채움 RectTransform (anchorMax.x로 비율 조절). 패키지 채움 스프라이트가 있으면 그 색 그대로 쓴다</summary>
@@ -320,7 +318,7 @@ namespace DWH.UI
             bool on = button.interactable;
             if (lastInteractable == on) return;
             lastInteractable = on;
-            label.color = on ? active : UiTheme.InkText;
+            label.color = on ? active : UiTheme.InkDim;
         }
     }
 

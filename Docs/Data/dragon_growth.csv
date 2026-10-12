@@ -1,0 +1,5 @@
+growth_id,dragon_id,growth_stage,name_str,req_gold,size_pct,res_id
+grw10101,drg101,1,growth_name_10101,0,100,res4010001
+grw10102,drg101,2,growth_name_10102,1000,100,res4020001
+grw10103,drg101,3,growth_name_10103,100000,100,res4030001
+grw10104,drg101,4,growth_name_10104,100000000,100,res4040001

@@ -6,7 +6,8 @@ using UnityEngine;
 namespace DWH.InGame.Dragon
 {
     /// <summary>
-    /// 드래곤 파츠 8종을 11개 레이어로 조립한다 (4.1.5, 9.4).
+    /// 드래곤 파츠 8종을 11개 레이어로 조립한다 (dragon_part, 가이드 5장). 성장 단계가 바뀌면 그 단계의 파츠 세트로 통째로 다시 만든다.
+    /// 노드 이름은 파츠 종류(Body, Neck, UpHead …)이고 반대편은 _B를 붙인다.
     /// 계층: Visual(방향 뒤집기) → Body → 파츠 노드(원점 = 회전점) → 스프라이트.
     /// 조립이 끝나면 그림의 바닥 가운데가 이 오브젝트의 원점에 오도록 Body를 옮긴다.
     /// </summary>
@@ -27,37 +28,37 @@ namespace DWH.InGame.Dragon
         /// <summary>파츠의 스프라이트 렌더러 (입 위치 계산 등)</summary>
         public SpriteRenderer PartRenderer(string part) => nodes[part].GetComponentInChildren<SpriteRenderer>();
 
-        public void Build(IReadOnlyList<DragonPartRow> parts, ArtCatalog art, float mirrorTint, int sortingBase)
+        public void Build(IReadOnlyList<DragonPartRow> parts, ArtCatalog art)
         {
             visual = new GameObject("Visual").transform;
             visual.SetParent(transform, false);
 
-            var byName = parts.ToDictionary(p => p.part);
+            var byName = parts.ToDictionary(p => p.partId);
             foreach (var part in parts.OrderBy(p => Depth(p, byName)))
             {
-                var sprite = art.DragonPart(part.sprite);
+                var sprite = art.Sprite(part.resId);
                 float ppu = sprite.pixelsPerUnit;
 
-                var node = new GameObject(part.part).transform;
-                var parentRow = string.IsNullOrEmpty(part.parent) ? null : byName[part.parent];
-                node.SetParent(parentRow == null ? visual : nodes[parentRow.part], false);
+                var node = new GameObject(part.NodeName).transform;
+                var parentRow = part.IsRoot ? null : byName[part.parentPartId];
+                node.SetParent(parentRow == null ? visual : nodes[parentRow.NodeName], false);
                 node.localPosition = DragonRigLayout.NodeLocalPosition(part, parentRow, ppu);
-                nodes[part.part] = node;
+                nodes[part.NodeName] = node;
 
                 var spriteObject = new GameObject("Sprite");
                 spriteObject.transform.SetParent(node, false);
                 spriteObject.transform.localPosition = DragonRigLayout.SpriteLocalPosition(part, sprite.rect.size, ppu);
                 var sr = spriteObject.AddComponent<SpriteRenderer>();
                 sr.sprite = sprite;
-                sr.sortingOrder = sortingBase - part.layerOrder;
-                if (part.mirror)
-                    sr.color = new Color(mirrorTint, mirrorTint, mirrorTint);
+                sr.sortingOrder = Tuning.DragonSortingBase - part.layerOrder;
+                if (part.isBack)
+                    sr.color = new Color(Tuning.BackPartTint, Tuning.BackPartTint, Tuning.BackPartTint);
             }
 
             // 원본 그림은 왼쪽을 바라본다. 진행 방향(오른쪽)을 보게 뒤집는다 (9.4)
             SetFacing(1);
             var bounds = WorldBounds();
-            var body = nodes[parts.First(p => string.IsNullOrEmpty(p.parent)).part];
+            var body = nodes[parts.First(p => p.IsRoot).NodeName];
             body.position += new Vector3(transform.position.x - bounds.center.x, transform.position.y - bounds.min.y, 0);
 
             bounds = WorldBounds();
@@ -82,6 +83,6 @@ namespace DWH.InGame.Dragon
         }
 
         static int Depth(DragonPartRow p, Dictionary<string, DragonPartRow> byName) =>
-            string.IsNullOrEmpty(p.parent) ? 0 : 1 + Depth(byName[p.parent], byName);
+            p.IsRoot ? 0 : 1 + Depth(byName[p.parentPartId], byName);
     }
 }

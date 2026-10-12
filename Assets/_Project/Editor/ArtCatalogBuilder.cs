@@ -1,23 +1,32 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DWH.Data;
+using DWH.Editor.Data;
 using DWH.InGame;
 using UnityEditor;
 using UnityEngine;
 
 namespace DWH.Editor
 {
-    /// <summary>Tools/import_art.py가 만든 Assets/_Project/Art 구조를 읽어 ArtCatalog 에셋을 만든다.</summary>
+    /// <summary>
+    /// resource 테이블로 ArtCatalog 에셋을 만든다 (가이드 5장). 파일 위치 = Assets/_Project/Art/ + res_path.
+    /// 이펙트(type 80)는 시트 대신 낱장을 쓴다: sheet.png면 같은 폴더의 frames/, frame_00.png면 그 폴더의 PNG를 이름순으로 frame_count장.
+    /// 영상(90)·폰트(91)·사운드(70·71)는 스프라이트가 아니라서 넣지 않는다.
+    /// </summary>
     public static class ArtCatalogBuilder
     {
         public const string CatalogPath = "Assets/_Project/Data/ArtCatalog.asset";
-        const string Art = "Assets/_Project/Art";
-        const int ThemeCount = 14;
-        const int EraCount = 7;
+        const string SpriteFxShaderPath = "Assets/_Project/Art/Shaders/SpriteFx.shader";
+        const string SpriteFxMaterialPath = "Assets/_Project/Art/Shaders/SpriteFx.mat";
+
+        static readonly ResType[] NotSprites = { ResType.Video, ResType.Font, ResType.Bgm, ResType.Sfx };
 
         [MenuItem("DWH/Build Art Catalog")]
         public static ArtCatalog Build()
         {
+            var db = AssetDatabase.LoadAssetAtPath<GameDatabase>(CsvImporter.DatabasePath)
+                     ?? throw new FileNotFoundException("GameDatabase가 없습니다. DWH/Import Data를 먼저 실행하세요");
             var catalog = AssetDatabase.LoadAssetAtPath<ArtCatalog>(CatalogPath);
             if (catalog == null)
             {
@@ -26,43 +35,53 @@ namespace DWH.Editor
                 AssetDatabase.CreateAsset(catalog, CatalogPath);
             }
 
-            catalog.themes = Enumerable.Range(1, ThemeCount).Select(t => new ArtCatalog.ThemeArt
+            var missing = new List<string>();
+            catalog.entries = new List<ArtCatalog.Entry>();
+            foreach (var res in db.resources)
             {
-                normal = SpritesIn($"{Art}/Buildings/Normal/theme{t:00}"),
-                attack = SpritesIn($"{Art}/Buildings/Attack/theme{t:00}"),
-                golden = SpritesIn($"{Art}/Buildings/Golden/theme{t:00}"),
-                goldenAttack = SpritesIn($"{Art}/Buildings/GoldenAttack/theme{t:00}"),
-                landmark = Load($"{Art}/Buildings/Landmark/theme{t:00}.png"),
-                airUnits = new[] { Load($"{Art}/AirUnits/theme{t:00}_unit1.png"), Load($"{Art}/AirUnits/theme{t:00}_unit2.png") },
-            }).ToArray();
+                if (NotSprites.Contains(res.type)) continue;
+                var frames = res.type == ResType.Vfx ? LoadFrames(res) : new[] { Load(res.resPath) };
+                if (frames.Length == 0 || frames.Any(f => f == null))
+                {
+                    missing.Add($"{res.resId} {res.resPath}");
+                    continue;
+                }
+                catalog.entries.Add(new ArtCatalog.Entry { resId = res.resId, frames = frames });
+            }
 
-            catalog.eras = Enumerable.Range(1, EraCount).Select(e => new ArtCatalog.EraArt
-            {
-                far = Load($"{Art}/Backgrounds/era{e}/far.png"),
-                mid = Load($"{Art}/Backgrounds/era{e}/mid.png"),
-                ground = Load($"{Art}/Backgrounds/era{e}/ground.png"),
-            }).ToArray();
-
-            catalog.dragonParts = AssetDatabase.FindAssets("t:Sprite", new[] { $"{Art}/Dragon/Parts" })
-                .Select(AssetDatabase.GUIDToAssetPath).OrderBy(p => p)
-                .Select(p => new ArtCatalog.NamedSprite { name = Path.GetFileNameWithoutExtension(p), sprite = Load(p) })
-                .ToArray();
-
-            var dropNames = new[] { "gold_coin", "gold_bars", "sapphire", "ruby", "diamond", "crown" };
-            Debug.Assert(dropNames.Length == System.Enum.GetValues(typeof(DropResource)).Length);
-            catalog.drops = dropNames.Select(n => Load($"{Art}/Drops/{n}.png")).ToArray();
-
+            catalog.spriteFx = SpriteFxMaterial();
             EditorUtility.SetDirty(catalog);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[DWH] 아트 카탈로그 생성: 테마 {catalog.themes.Length}, 시대 {catalog.eras.Length}, 드래곤 파츠 {catalog.dragonParts.Length}");
+            if (missing.Count > 0)
+                Debug.LogError($"[DWH] 리소스 {missing.Count}개를 찾지 못했습니다:\n{string.Join("\n", missing)}");
+            Debug.Log($"[DWH] 아트 카탈로그 생성: {catalog.entries.Count}개");
             return catalog;
         }
 
-        static Sprite[] SpritesIn(string folder) =>
-            AssetDatabase.FindAssets("t:Sprite", new[] { folder })
-                .Select(AssetDatabase.GUIDToAssetPath).OrderBy(p => p).Select(Load).ToArray();
+        static Material SpriteFxMaterial()
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(SpriteFxMaterialPath);
+            if (material != null) return material;
+            var shader = AssetDatabase.LoadAssetAtPath<Shader>(SpriteFxShaderPath) ?? throw new FileNotFoundException(SpriteFxShaderPath);
+            material = new Material(shader);
+            AssetDatabase.CreateAsset(material, SpriteFxMaterialPath);
+            return material;
+        }
 
-        static Sprite Load(string path) =>
-            AssetDatabase.LoadAssetAtPath<Sprite>(path) ?? throw new FileNotFoundException($"스프라이트가 없습니다: {path}");
+        /// <summary>Art 폴더 기준 전체 경로</summary>
+        public static string AssetPathOf(string resPath) => ArtScaleSettings.ArtRoot + resPath;
+
+        static Sprite Load(string resPath) => AssetDatabase.LoadAssetAtPath<Sprite>(AssetPathOf(resPath));
+
+        static Sprite[] LoadFrames(ResourceRow res)
+        {
+            string folder = Path.GetDirectoryName(AssetPathOf(res.resPath)).Replace('\\', '/');
+            if (Path.GetFileName(res.resPath) == "sheet.png") folder += "/frames";
+            var paths = Directory.Exists(folder)
+                ? Directory.GetFiles(folder, "*.png").Select(p => p.Replace('\\', '/')).OrderBy(p => p, System.StringComparer.Ordinal).ToList()
+                : new List<string>();
+            if (res.frameCount > 0) paths = paths.Take(res.frameCount).ToList();
+            return paths.Select(p => AssetDatabase.LoadAssetAtPath<Sprite>(p)).ToArray();
+        }
     }
 }

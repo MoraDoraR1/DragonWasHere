@@ -1,0 +1,23 @@
+const_key,value,value_type,unit,desc
+bonus_min_stamina,10,int,,스테이지 클리어 시 기력이 이 값 이상이면 보너스 스테이지 진입
+bonus_stamina_drain_mult,2,float,배,보너스 스테이지 기력 감소 배율
+building_spacing_px,150,int,px,건물 간격
+building_break_state_1_pct,75,int,%,체력이 이 % 이하가 되면 1차 파괴 이미지(_s1)
+building_break_state_2_pct,50,int,%,2차 파괴 이미지(_s2) 전환 체력 %
+building_break_state_3_pct,25,int,%,3차 파괴 이미지(_s3) 전환 체력 %
+building_break_state_4_pct,0,int,%,완전 파괴 이미지(_s4) 전환 체력 %
+drop_absorb_delay_sec,0.5,float,sec,드랍 자원이 쏟아진 뒤 드래곤에게 흡수되기까지
+end_slowmo_sec,0.5,float,sec,체력·기력 0일 때 슬로모션 시간
+motion_queue_interval_sec,0.3,float,sec,같은 모션 슬롯 스킬의 순차 발동 간격
+mouse_idle_sec,3,float,sec,커서가 이 시간 멈추면 가장 가까운 건물로 자동 이동
+damage_popup_sec,0.75,float,sec,대미지 숫자 표시 시간
+combo_keep_sec,3,float,sec,다음 파괴까지 이 시간이 지나면 콤보 끊김. 업그레이드 '연쇄 파괴' 판정 시간과 같게
+starter_intro_sec,1.2,float,sec,'Game Start!' 표시 시간
+starter_zoom_sec,0.8,float,sec,전체 맵 줌아웃 시간
+starter_fly_lap_sec,4,float,sec,조준 단계 드래곤 1회 왕복 시간
+starter_alert_sec,0.5,float,sec,판정 후 '!!' 표시 시간
+starter_result_sec,0.5,float,sec,판정(Great/Good/Fail) 표시 시간
+starter_leave_sec,0.5,float,sec,드래곤이 화면 위로 이탈하는 시간
+starter_drop_sec,0.25,float,sec,드래곤이 표적으로 수직 낙하하는 시간
+mvp_mode,1,bool,,1 = MVP 빌드. stage.mvp_order가 있는 14개(각 시대 앞 테마 x-1·x-2)만 mvp_next_stage_id 순서로 진행하고 x-2를 보스로 처리. 0 = 28스테이지 전체 (CBT)
+rebirth_rp_divisor,10,float,,환생 포인트 = floor(√(이번 회차 누적 획득 골드) ÷ 이 값)

@@ -1,0 +1,2 @@
+dragon_id,name_str,desc_str,hp,hp_regen,stamina,fatigue_start,fatigue_interval_sec,stamina_on_kill,stamina_on_clear,atk,atk_speed,move_speed,jump_height,jump_rate,landing_dmg_pct,crit_rate,crit_dmg_pct,knockback_sec,res_id
+drg101,dragon_name_101,dragon_desc_101,100,0,100,1,10,0,0,20,2,300,200,0,100,0,150,0.2,res4010001

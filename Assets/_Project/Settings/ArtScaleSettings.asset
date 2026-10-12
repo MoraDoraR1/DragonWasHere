@@ -16,58 +16,51 @@ MonoBehaviour:
   compression: 1
   filterMode: 1
   rules:
-  - pathPrefix: Backgrounds/
+  - pathPrefix: "Fix_Resource/\uBC30\uACBD/"
     pixelsPerUnit: 100
     pivot: 7
     sliceBorder: 0
     uncompressed: 0
-  - pathPrefix: Buildings/Normal/
-    pixelsPerUnit: 240
+    clearAlphaAtOrBelow: 0
+  - pathPrefix: "Fix_Resource/\uAC74\uBB3C/"
+    pixelsPerUnit: 75
     pivot: 7
     sliceBorder: 0
     uncompressed: 0
-  - pathPrefix: Buildings/Golden/
-    pixelsPerUnit: 240
-    pivot: 7
-    sliceBorder: 0
-    uncompressed: 0
-  - pathPrefix: Buildings/Attack/
-    pixelsPerUnit: 240
-    pivot: 7
-    sliceBorder: 0
-    uncompressed: 0
-  - pathPrefix: Buildings/GoldenAttack/
-    pixelsPerUnit: 240
-    pivot: 7
-    sliceBorder: 0
-    uncompressed: 0
-  - pathPrefix: Buildings/Landmark/
-    pixelsPerUnit: 140
-    pivot: 7
-    sliceBorder: 0
-    uncompressed: 0
-  - pathPrefix: Dragon/
-    pixelsPerUnit: 700
-    pivot: 0
-    sliceBorder: 0
-    uncompressed: 0
-  - pathPrefix: AirUnits/
+    clearAlphaAtOrBelow: 8
+  - pathPrefix: "Fix_Resource/\uC801 \uC720\uB2DB/"
     pixelsPerUnit: 200
     pivot: 0
     sliceBorder: 0
     uncompressed: 0
-  - pathPrefix: Drops/
-    pixelsPerUnit: 500
+    clearAlphaAtOrBelow: 8
+  - pathPrefix: "Fix_Resource/\uB4DC\uB798\uACE4/"
+    pixelsPerUnit: 300
     pivot: 0
     sliceBorder: 0
     uncompressed: 0
-  - pathPrefix: UI/
-    pixelsPerUnit: 100
-    pivot: 0
-    sliceBorder: 12
-    uncompressed: 1
-  - pathPrefix: UIKit/
-    pixelsPerUnit: 100
+    clearAlphaAtOrBelow: 0
+  - pathPrefix: "Fix_Resource/UI&\uD3F0\uD2B8/03_\uC790\uC6D0/"
+    pixelsPerUnit: 1350
     pivot: 0
     sliceBorder: 0
+    uncompressed: 0
+    clearAlphaAtOrBelow: 8
+  - pathPrefix: "Fix_Resource/UI&\uD3F0\uD2B8/01_UI\uC5D0\uC14B/"
+    pixelsPerUnit: 100
+    pivot: 0
+    sliceBorder: 20
     uncompressed: 1
+    clearAlphaAtOrBelow: 0
+  - pathPrefix: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/"
+    pixelsPerUnit: 200
+    pivot: 0
+    sliceBorder: 0
+    uncompressed: 0
+    clearAlphaAtOrBelow: 0
+  - pathPrefix: "Fix_Resource/\uD53C\uACA9 \uC774\uD399\uD2B8/"
+    pixelsPerUnit: 200
+    pivot: 0
+    sliceBorder: 0
+    uncompressed: 0
+    clearAlphaAtOrBelow: 0

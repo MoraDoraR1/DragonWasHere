@@ -48,37 +48,45 @@ namespace DWH.Tests
 
     public class DragonRigLayoutTests
     {
-        static DragonPartRow Part(string name, string parent, double px, double py, double ax, double ay) =>
-            new() { part = name, parent = parent, pivotX = px, pivotY = py, attachX = ax, attachY = ay };
+        static DragonPartRow Part(string id, DragonPartType type, string parent, int px, int py, int ax, int ay) =>
+            new() { partId = id, partType = type, parentPartId = parent, pivotX = px, pivotY = py, attachX = ax, attachY = ay };
 
-        // 4.1.5 표 일부
-        static readonly DragonPartRow Body = Part("Body", "", 0, 0, 0, 0);
-        static readonly DragonPartRow Neck = Part("Neck", "Body", 190, 510, 148, 282);
-        static readonly DragonPartRow UpHead = Part("UpHead", "Neck", 330, 290, 203, 110);
-        static readonly DragonPartRow DownHead = Part("DownHead", "UpHead", 285, 35, 290, 357);
-        static readonly DragonPartRow BackLeg = Part("BackLeg", "Body", 135, 100, 584, 387);
+        // 1단계 location.txt 일부 (dragon_part와 같은 값)
+        static readonly DragonPartRow Body = Part("body", DragonPartType.Body, "", 0, 0, 0, 0);
+        static readonly DragonPartRow Neck = Part("neck", DragonPartType.Neck, "body", 150, 300, 102, 177);
+        static readonly DragonPartRow UpHead = Part("up", DragonPartType.UpHead, "neck", 250, 170, 138, 120);
+        static readonly DragonPartRow DownHead = Part("down", DragonPartType.DownHead, "up", 200, 20, 213, 191);
+        static readonly DragonPartRow Wing = Part("wing", DragonPartType.Wing, "body", 32, 165, 192, 125);
 
         [Test]
         public void ImageOrigins_FollowGuideFormula()
         {
-            var origins = DragonRigLayout.ImageOrigins(new[] { Body, Neck, UpHead, DownHead, BackLeg });
-            Assert.AreEqual(Vector2.zero, origins["Body"]);
-            Assert.AreEqual(new Vector2(449, 287), origins["BackLeg"]);    // (584-135, 387-100)
-            Assert.AreEqual(new Vector2(-42, -228), origins["Neck"]);
-            Assert.AreEqual(new Vector2(-169, -408), origins["UpHead"]);
-            Assert.AreEqual(new Vector2(-164, -86), origins["DownHead"]);
+            // child.origin = parent.origin + attach - child.pivot (가이드 5장)
+            var origins = DragonRigLayout.ImageOrigins(new[] { Body, Neck, UpHead, DownHead, Wing });
+            Assert.AreEqual(Vector2.zero, origins["body"]);
+            Assert.AreEqual(new Vector2(160, -40), origins["wing"]);
+            Assert.AreEqual(new Vector2(-48, -123), origins["neck"]);
+            Assert.AreEqual(new Vector2(-160, -173), origins["up"]);
+            Assert.AreEqual(new Vector2(-147, -2), origins["down"]);
         }
 
         [Test]
         public void NodeAndSpritePositions_ConvertPixelsToUnitsWithFlippedY()
         {
             var node = DragonRigLayout.NodeLocalPosition(UpHead, Neck, 100);
-            Assert.AreEqual(0.13f, node.x, 1e-5f);    // (203 - 190) / 100
-            Assert.AreEqual(4.0f, node.y, 1e-5f);     // -(110 - 510) / 100
+            Assert.AreEqual(-0.12f, node.x, 1e-5f);   // (138 - 150) / 100
+            Assert.AreEqual(1.8f, node.y, 1e-5f);     // -(120 - 300) / 100
 
             var sprite = DragonRigLayout.SpriteLocalPosition(Neck, new Vector2(400, 600), 100);
-            Assert.AreEqual(0.1f, sprite.x, 1e-5f);   // (200 - 190) / 100
-            Assert.AreEqual(2.1f, sprite.y, 1e-5f);   // -(300 - 510) / 100
+            Assert.AreEqual(0.5f, sprite.x, 1e-5f);   // (200 - 150) / 100
+            Assert.AreEqual(0f, sprite.y, 1e-5f);     // -(300 - 300) / 100
+        }
+
+        [Test]
+        public void NodeName_BackPartsGetSuffix()
+        {
+            Assert.AreEqual("FrontLeg", new DragonPartRow { partType = DragonPartType.FrontLeg }.NodeName);
+            Assert.AreEqual("FrontLeg_B", new DragonPartRow { partType = DragonPartType.FrontLeg, isBack = true }.NodeName);
         }
     }
 

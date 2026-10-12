@@ -1,9 +1,10 @@
 using System;
+using DWH.Data;
 
 namespace DWH.Core
 {
     /// <summary>
-    /// 게임 공식 모음. 수치는 받지 않고 인자로만 받는다 (값은 데이터 에셋에 있다).
+    /// 게임 공식 모음. 수치는 인자나 데이터 행으로만 받는다 (값은 데이터 테이블에 있다).
     /// 반올림은 기획 엑셀과 같게 0.5에서 올림(ROUND)을 쓴다.
     /// </summary>
     public static class Formulas
@@ -19,35 +20,26 @@ namespace DWH.Core
 
         public static double Floor(double value) => Math.Floor(Math.Round(value, NoiseDigits));
 
-        /// <summary>건물 1개 골드 = round(원본HP × 골드계수 × 유형배율) (3.4)</summary>
-        public static double BuildingGold(double rawHp, double goldPerHp, double typeMultiplier) =>
-            Round(rawHp * goldPerHp * typeMultiplier);
+        /// <summary>
+        /// 업그레이드 n레벨 비용 (가이드 6.7). cost_mult가 있으면 base × mult^(n-1), 없으면 base + add × (n-1).
+        /// 용의 지혜(비용 감소율)를 곱하고 올림한다.
+        /// </summary>
+        public static double UpgradeCost(UpgradeRow row, int level, double discount = 0)
+        {
+            double cost = !double.IsNaN(row.costMult)
+                ? row.baseCost * Math.Pow(row.costMult, level - 1)
+                : row.baseCost + (double.IsNaN(row.addCost) ? 0 : row.addCost) * (level - 1);
+            return Ceil(cost * (1 - discount));
+        }
 
-        /// <summary>실제 인게임 HP = round(원본HP × 허들배율) (3.3)</summary>
-        public static double ActualHp(double rawHp, double hurdleMultiplier) =>
-            Round(rawHp * hurdleMultiplier);
+        /// <summary>환생 특성·액티브 n레벨 비용 = base + add × (n-1) (가이드 6.10)</summary>
+        public static double LinearCost(double baseCost, double addCost, int level) => baseCost + addCost * (level - 1);
 
-        /// <summary>목표 반복 횟수 = min(최대, 기본 + 시대당 추가 × (시대-1)) (3.3)</summary>
-        public static double TargetRepeat(double baseRepeat, double perEra, double max, int era) =>
-            Math.Min(max, baseRepeat + perEra * (era - 1));
-
-        /// <summary>드랍 개수 = round(기준 × (1+스테이지 증가율)^(순번-1) × (1+시대 증가율)^(시대-1)) (4.6)</summary>
-        public static int DropCount(double baseCount, double growthPerStage, double growthPerEra, int stageIndex, int era) =>
-            (int)Round(baseCount * Math.Pow(1 + growthPerStage, stageIndex - 1) * Math.Pow(1 + growthPerEra, era - 1));
-
-        /// <summary>공중 유닛 골드 = round(일반 골드 + (공격 골드 - 일반 골드) × 비율) (4.5)</summary>
-        public static double AirUnitGold(double normalGold, double attackGold, double ratio) =>
-            Round(normalGold + (attackGold - normalGold) * ratio);
-
-        /// <summary>업그레이드 비용 = ceil(초기 비용 × 배수^현재레벨) (4.8)</summary>
-        public static double UpgradeCost(double initialCost, double multiplier, int currentLevel) =>
-            Ceil(initialCost * Math.Pow(multiplier, currentLevel));
-
-        /// <summary>환생 포인트 = floor(sqrt(회차 누적 획득 골드) / 나누는 값) (4.9)</summary>
+        /// <summary>환생 포인트 = floor(√(회차 누적 획득 골드) ÷ 나누는 값) (가이드 6.10)</summary>
         public static double RebirthPoints(double runGold, double divisor) =>
             runGold <= 0 ? 0 : Floor(Math.Sqrt(runGold) / divisor);
 
-        /// <summary>피로(t) = 시작값 + floor(t / 간격) × 증가량 (8.1). 초당 기력 감소량과 같다.</summary>
+        /// <summary>피로(t) = 시작값 + floor(t / 간격) × 증가량 (임시unity제작.md 8.1). 초당 기력 감소량과 같다.</summary>
         public static double Fatigue(double elapsed, double start, double interval, double step) =>
             start + Math.Floor(elapsed / interval) * step;
 

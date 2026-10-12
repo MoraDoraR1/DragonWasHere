@@ -5,7 +5,7 @@ using UnityEngine;
 namespace DWH.InGame.Dragon
 {
     /// <summary>
-    /// 드래곤 파츠 조립 좌표 계산 (4.1.5, 9.4).
+    /// 드래곤 파츠 조립 좌표 계산 (dragon_part, 가이드 5장 드래곤 조립). child.origin = parent.origin + attach - child.pivot.
     /// 이미지 좌표(px, 왼쪽 위 원점, Y 아래로 증가)를 Unity 로컬 좌표(unit, Y 위로 증가)로 바꾼다.
     /// 각 파츠 노드의 원점은 그 파츠의 회전점이고, 몸통 노드의 원점은 몸통 이미지의 왼쪽 위다.
     /// </summary>
@@ -16,7 +16,7 @@ namespace DWH.InGame.Dragon
         {
             if (parent == null)
                 return Vector2.zero;
-            var offsetPx = new Vector2((float)(part.attachX - parent.pivotX), (float)(part.attachY - parent.pivotY));
+            var offsetPx = new Vector2(part.attachX - parent.pivotX, part.attachY - parent.pivotY);
             return ToUnits(offsetPx, pixelsPerUnit);
         }
 
@@ -26,7 +26,7 @@ namespace DWH.InGame.Dragon
         public static Vector2 SpriteLocalPosition(DragonPartRow part, Vector2 spriteSizePx, float pixelsPerUnit)
         {
             var centerPx = spriteSizePx / 2f;
-            var offsetPx = new Vector2(centerPx.x - (float)part.pivotX, centerPx.y - (float)part.pivotY);
+            var offsetPx = new Vector2(centerPx.x - part.pivotX, centerPx.y - part.pivotY);
             return ToUnits(offsetPx, pixelsPerUnit);
         }
 
@@ -37,16 +37,16 @@ namespace DWH.InGame.Dragon
         public static Dictionary<string, Vector2> ImageOrigins(IReadOnlyList<DragonPartRow> parts)
         {
             var byName = new Dictionary<string, DragonPartRow>();
-            foreach (var p in parts) byName[p.part] = p;
+            foreach (var p in parts) byName[p.partId] = p;
 
             var origins = new Dictionary<string, Vector2>();
             Vector2 Origin(DragonPartRow p)
             {
-                if (origins.TryGetValue(p.part, out var cached)) return cached;
-                Vector2 result = string.IsNullOrEmpty(p.parent)
+                if (origins.TryGetValue(p.partId, out var cached)) return cached;
+                Vector2 result = p.IsRoot
                     ? Vector2.zero
-                    : Origin(byName[p.parent]) + new Vector2((float)p.attachX, (float)p.attachY) - new Vector2((float)p.pivotX, (float)p.pivotY);
-                origins[p.part] = result;
+                    : Origin(byName[p.parentPartId]) + new Vector2(p.attachX, p.attachY) - new Vector2(p.pivotX, p.pivotY);
+                origins[p.partId] = result;
                 return result;
             }
             foreach (var p in parts) Origin(p);

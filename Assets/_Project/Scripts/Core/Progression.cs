@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using DWH.Data;
 
 namespace DWH.Core
 {
@@ -20,18 +20,26 @@ namespace DWH.Core
         public double bonusGold;
         public int bonusDestroyed;
         public int bonusTotal;
-        /// <summary>보물 더미: 클리어 시 획득 골드에 더해 준 골드 (earnedGold에 포함)</summary>
+        /// <summary>보물 산더미: 클리어 시 더해 준 골드 (earnedGold에 포함)</summary>
         public double clearBonusGold;
+        public int maxCombo;
+        /// <summary>일반 스테이지가 끝난 순간의 체력·기력 (지표 run_end)</summary>
+        public double hpLeft;
+        public double staminaLeft;
+        public float playSeconds;
+        /// <summary>이 판으로 마지막 스테이지를 클리어했다 (엔딩)</summary>
+        public bool gameCompleted;
     }
 
     /// <summary>
-    /// 판 사이 진행 규칙 (1.1, 4.6 결과 정산).
-    /// - 클리어하면 다음 스테이지가 도전 스테이지가 된다. 실패하면 그대로다. "출발"은 항상 도전 스테이지로 간다.
-    /// - 획득 골드는 클리어와 패배 모두 보유량에 더한다. [임시]
+    /// 판 사이 진행 규칙 (가이드 1장 고정 규칙, 6.4, 6.5).
+    /// - "출발"은 항상 현재 도전 스테이지다. 클리어하면 다음 스테이지(MVP: mvp_next_stage_id)가 도전 스테이지가 된다.
+    /// - 다음 스테이지가 빈칸이면 엔딩이다. 도전 스테이지는 마지막 스테이지에 머문다.
+    /// - 실패해도 그때까지 얻은 골드는 지급한다.
     /// </summary>
     public static class Progression
     {
-        public static void Settle(SaveData save, SessionResult result, IReadOnlyList<string> stageOrder)
+        public static void Settle(GameDatabase db, SaveData save, SessionResult result)
         {
             save.goldCoin += result.earnedGold;
             save.runEarnedGold += result.earnedGold;
@@ -42,20 +50,17 @@ namespace DWH.Core
             if (!save.clearedStages.Contains(result.stageId))
                 save.clearedStages.Add(result.stageId);
 
-            int index = IndexOf(stageOrder, result.stageId);
-            if (index > IndexOf(stageOrder, save.highestStage))
-                save.highestStage = result.stageId;
+            string next = db.NextStageId(db.Stage(result.stageId));
+            if (string.IsNullOrEmpty(next))
+            {
+                result.gameCompleted = !save.gameCompleted;
+                save.gameCompleted = true;
+            }
+            else if (save.currentStage == result.stageId)
+                save.currentStage = next;
 
-            // 마지막 스테이지를 클리어하면 그 스테이지에 머문다 (이후 환생으로 다시 등반)
-            if (index >= 0 && index + 1 < stageOrder.Count && save.currentStage == result.stageId)
-                save.currentStage = stageOrder[index + 1];
-        }
-
-        static int IndexOf(IReadOnlyList<string> order, string stageId)
-        {
-            for (int i = 0; i < order.Count; i++)
-                if (order[i] == stageId) return i;
-            return -1;
+            if (db.OrderIndex(save.currentStage) > db.OrderIndex(save.highestStage))
+                save.highestStage = save.currentStage;
         }
     }
 }

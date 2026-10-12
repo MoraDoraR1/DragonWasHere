@@ -9,7 +9,7 @@ namespace DWH.UI
     /// </summary>
     public class TreeViewport : MonoBehaviour, IBeginDragHandler, IDragHandler, IScrollHandler
     {
-        const float MinZoom = 0.45f;
+        const float MinZoom = 0.3f;
         const float MaxZoom = 1.6f;
         const float WheelStep = 1.12f;
         const float FitPadding = 60f;

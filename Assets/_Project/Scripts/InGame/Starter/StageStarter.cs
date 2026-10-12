@@ -6,6 +6,7 @@ using DWH.Data;
 using DWH.InGame.Buildings;
 using DWH.InGame.Combat;
 using DWH.InGame.Dragon;
+using DWH.InGame.Fx;
 using DWH.InGame.Skills;
 using DWH.InGame.Stage;
 using DWH.UI;
@@ -54,21 +55,19 @@ namespace DWH.InGame.Starter
     public enum StarterPhase { Intro, Aiming, Gauge, Result, Drop, Done }
 
     /// <summary>
-    /// 스테이지 스타터 (4.7). 일반 스테이지를 시작할 때마다 전투 전에 한 번 진행한다.
+    /// 스테이지 스타터 (가이드 6.9, 임시unity제작.md 4.7). 일반 스테이지를 시작할 때마다 전투 전에 한 번 진행한다.
+    /// 시간은 const.starter_*, 게이지는 starter_stage, 판정 배율·범위·표시 이미지는 starter_grade.
     /// 1) "Game Start!"와 함께 맵 전체가 보이게 줌아웃 2) 드래곤이 상공에서 맵 양 끝을 왕복하고 아래로 빨간 표적이 따라온다 → 클릭
     /// 3) 게이지(판정 영역과 판정 바가 다른 속도로 왕복) → 클릭해 판정 4) 결과 표시 0.5초 → 화면 위로 이탈 0.5초 → 같은 x로 낙하 타격.
-    /// Great는 공격력 200%로 표적과 양옆 5개씩, Good은 130%로 양옆 2개씩, Fail은 대미지 없음. 연출 중에는 전투가 멈춰 있다.
+    /// 연출 중에는 전투가 멈춰 있다.
     /// </summary>
     public class StageStarter : MonoBehaviour
     {
-        const float IntroSeconds = 1.2f;
-        const float ZoomSeconds = 0.8f;
-        const float ResultSeconds = 0.5f;
-        const float LeaveSeconds = 0.5f;
-        const float DropSeconds = 0.25f;
-        const float FlyLapSeconds = 4f;
+        float IntroSeconds, ZoomSeconds, AlertSeconds, ResultSeconds, LeaveSeconds, DropSeconds, FlyLapSeconds;
 
         GameDatabase db;
+        ArtCatalog art;
+        Image judgement;
         BattleController battle;
         Camera view;
         BattleCamera follow;
@@ -95,16 +94,24 @@ namespace DWH.InGame.Starter
         public float JudgedBar { get; private set; }
         public event Action<StageStarter> Finished;
 
-        public void Init(GameDatabase database, BattleController owner, Camera camera, BattleCamera followCamera, IStarterInput starterInput)
+        public void Init(GameDatabase database, ArtCatalog catalog, BattleController owner, Camera camera, BattleCamera followCamera, IStarterInput starterInput)
         {
             db = database;
+            art = catalog;
+            IntroSeconds = (float)db.Const("starter_intro_sec");
+            ZoomSeconds = (float)db.Const("starter_zoom_sec");
+            FlyLapSeconds = (float)db.Const("starter_fly_lap_sec");
+            AlertSeconds = (float)db.Const("starter_alert_sec");
+            ResultSeconds = (float)db.Const("starter_result_sec");
+            LeaveSeconds = (float)db.Const("starter_leave_sec");
+            DropSeconds = (float)db.Const("starter_drop_sec");
             battle = owner;
             view = camera;
             follow = followCamera;
             input = starterInput;
             normalSize = camera.orthographicSize;
-            groundY = (float)db.balance.groundHeight;
-            Gauge = StarterGauge.ForStage(db.balance, battle.Stage.index);
+            groundY = Tuning.GroundHeight;
+            Gauge = StarterGauge.ForStage(db.StarterStage(battle.Stage.stageId));
             BuildUi();
             StartCoroutine(Run());
         }
@@ -132,6 +139,12 @@ namespace DWH.InGame.Starter
             barImage = barRect.gameObject.AddComponent<Image>();
             barImage.color = Color.white;
             gaugeRoot.gameObject.SetActive(false);
+
+            // 판정 표시 이미지 (starter_grade.res_id)
+            judgement = UiFactory.Rect(canvas, "Judgement", UiFactory.Center, new Vector2(0, 40), new Vector2(576, 216)).gameObject.AddComponent<Image>();
+            judgement.preserveAspect = true;
+            judgement.raycastTarget = false;
+            judgement.gameObject.SetActive(false);
         }
 
         IEnumerator Run()
@@ -144,7 +157,7 @@ namespace DWH.InGame.Starter
 
             // 1) Game Start! + 줌아웃. 드래곤은 처음부터 땅이 아닌 화면 상공 정중앙에 있다
             Phase = StarterPhase.Intro;
-            title.text = "Game Start!";
+            title.text = UiText.Get("ui_starter_start");
             float scale = zoomSize / normalSize;
             var normalScale = dragon.transform.localScale;
             dragon.Rig.SetFacing(1);
@@ -164,7 +177,7 @@ namespace DWH.InGame.Starter
 
             // 2) 상공 왕복 + 표적 → 클릭. 정중앙에서 출발한다
             Phase = StarterPhase.Aiming;
-            hint.text = "클릭해서 낙하 지점을 정하세요!";
+            hint.text = UiText.Get("ui_starter_aim");
             float flyY = SkyY(zoomSize);
             // 표적은 건물을 가리지 않게 지면 아래 흙 띠에 둔다
             marker = Quad("StarterTarget", new Vector2(0.9f * scale, Mathf.Min(0.35f * scale, groundY * 0.8f)), new Color(0.95f, 0.15f, 0.15f, 0.9f));
@@ -191,7 +204,7 @@ namespace DWH.InGame.Starter
 
             // 3) 게이지 → 클릭해 판정
             Phase = StarterPhase.Gauge;
-            hint.text = "클릭해서 바를 멈추세요!   <color=#9fd4ac>가운데 초록 Great</color>  ·  <color=#efc15a>양옆 금색 Good</color>";
+            hint.text = UiText.Get("ui_starter_gauge");
             gaugeRoot.gameObject.SetActive(true);
             DrawGauge();
             yield return null;
@@ -205,15 +218,30 @@ namespace DWH.InGame.Starter
             Grade = Gauge.Judge();
             JudgedBar = Gauge.Bar;
 
-            // 4) 결과: 바를 멈춘 채 판정 색으로 보여 준다 → 이탈 → 낙하 타격
+            // 4) "!!" → 결과: 바를 멈춘 채 판정 색과 판정 이미지를 보여 준다 → 이탈 → 낙하 타격
             Phase = StarterPhase.Result;
             barImage.color = Grade switch { StarterGrade.Great => UiTheme.Jade, StarterGrade.Good => UiTheme.Gold, _ => UiTheme.Hp };
             barRect.sizeDelta = new Vector2(18, barRect.sizeDelta.y);
             DrawGauge();
             hint.text = "";
-            title.text = Grade switch { StarterGrade.Great => "Great!!", StarterGrade.Good => "Good!!", _ => "Fail..." };
-            title.color = Grade == StarterGrade.Fail ? UiTheme.LineIdle : UiTheme.Gold;
+            title.text = "!!";
+            title.color = UiTheme.Gold;
+            yield return new WaitForSeconds(AlertSeconds);
+            var gradeRow = db.StarterGrade(Grade.Value);
+            var gradeSprite = art != null ? art.SpriteOrNull(gradeRow.resId) : null;
+            if (gradeSprite != null)
+            {
+                title.text = "";
+                judgement.sprite = gradeSprite;
+                judgement.gameObject.SetActive(true);
+            }
+            else
+            {
+                title.text = db.Text(gradeRow.nameStr) + (Grade == StarterGrade.Fail ? "..." : "!!");
+                title.color = Grade == StarterGrade.Fail ? UiTheme.LineIdle : UiTheme.Gold;
+            }
             yield return new WaitForSeconds(ResultSeconds);
+            judgement.gameObject.SetActive(false);
 
             Phase = StarterPhase.Drop;
             gaugeRoot.gameObject.SetActive(false);
@@ -294,22 +322,23 @@ namespace DWH.InGame.Starter
         /// <summary>표적 = 낙하 x 아래(또는 가장 가까운) 건물. 그 건물과 양옆 N개씩을 공격력 × 배율로 친다. 맵 끝이면 있는 건물만 (T-12)</summary>
         void Impact()
         {
-            var row = db.stageStarter.rows.First(r => r.grade == Grade);
+            var row = db.StarterGrade(Grade.Value);
+            double multiplier = row.dmgPct / 100.0;
             var alive = battle.Buildings.Where(b => b.IsAlive).OrderBy(b => b.CenterX).ToList();
             if (alive.Count > 0)
             {
                 Target = alive.OrderBy(b => b.Left <= TargetX && TargetX <= b.Right ? 0 : Mathf.Abs(b.CenterX - TargetX)).First();
-                if (row.damageMultiplier > 0)
+                if (multiplier > 0)
                 {
                     int i = alive.IndexOf(Target);
                     var hits = alive.Skip(Math.Max(0, i - row.sideCount)).Take(Math.Min(alive.Count, i + row.sideCount + 1) - Math.Max(0, i - row.sideCount)).ToList();
-                    double amount = Damage.Compute(battle.Stats.AttackPower, row.damageMultiplier, false, 1);
+                    double amount = Damage.Compute(battle.Stats.AttackPower, multiplier, false, 1);
                     foreach (var b in hits) b.TakeDamage(amount, false);
                     HitCount = hits.Count;
                 }
             }
-            SkillFx.Burst(transform, new Vector2(TargetX, groundY + 0.3f), row.damageMultiplier > 0 ? 3f : 1f, new Color(1f, 0.8f, 0.4f, 0.8f));
-            follow.Shake(0.3f, row.damageMultiplier > 0 ? 0.25f : 0.08f);
+            SkillFx.Burst(transform, db, art, FxIds.Landing, new Vector2(TargetX, groundY + 0.6f), multiplier > 0 ? 3f : 1.5f, new Color(1f, 0.8f, 0.4f, 0.8f));
+            follow.Shake(0.3f, multiplier > 0 ? 0.25f : 0.08f);
         }
 
         void Finish()

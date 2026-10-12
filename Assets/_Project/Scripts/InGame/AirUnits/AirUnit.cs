@@ -1,4 +1,5 @@
 using System;
+using DWH.Data;
 using DWH.InGame.Buildings;
 using DWH.InGame.Combat;
 using DWH.InGame.Dragon;
@@ -26,7 +27,10 @@ namespace DWH.InGame.AirUnits
         bool arrived;
         Vector2 size;
 
-        public int Slot { get; private set; }
+        /// <summary>unit 테이블 행 (체력, 공격, 공격 속도, 이동 속도, 드랍 그룹)</summary>
+        public UnitRow Row { get; private set; }
+        public int Slot => Row.slot;
+        /// <summary>현재 언어의 유닛 이름</summary>
         public string UnitName { get; private set; }
         public double MaxHp { get; private set; }
         public double Hp { get; private set; }
@@ -40,14 +44,17 @@ namespace DWH.InGame.AirUnits
 
         /// <param name="fraction">화면 왼쪽 끝 0 ~ 오른쪽 끝 1 중 머무를 가로 위치</param>
         /// <param name="flightAltitude">지면 위 비행 고도(unit)</param>
-        public void Init(int slot, string unitName, double hp, double damage, Sprite sprite, DragonController target, Camera camera,
-            float fraction, float flightAltitude, float ground, float speed, float attacksPerSecond, float projectileSpeed,
-            float projectileSize, Sprite projectile, int sortingOrder)
+        public void Init(UnitRow row, string unitName, Sprite sprite, DragonController target, Camera camera,
+            float fraction, float flightAltitude, float ground, Sprite projectile, int sortingOrder)
         {
-            Slot = slot;
+            Row = row;
             UnitName = unitName;
-            MaxHp = Hp = hp;
-            AttackDamage = damage;
+            MaxHp = Hp = row.hp;
+            AttackDamage = row.atk;
+            float speed = Tuning.Px(row.moveSpeed);
+            float attacksPerSecond = (float)row.atkSpeed;
+            float projectileSpeed = Tuning.AirUnitProjectileSpeed;
+            float projectileSize = Tuning.ProjectileSize;
             dragon = target;
             view = camera;
             screenFraction = fraction;

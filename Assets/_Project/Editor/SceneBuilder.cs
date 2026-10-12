@@ -25,6 +25,7 @@ namespace DWH.Editor
         [MenuItem("DWH/Build All (Data, Art, Scenes)")]
         public static void BuildAll()
         {
+            ArtScaleSettings.LoadOrCreate();
             ReimportChangedArt();
             CsvImporter.ImportAll();
             ArtCatalogBuilder.Build();
@@ -53,7 +54,7 @@ namespace DWH.Editor
         [MenuItem("DWH/Build Scenes")]
         public static void BuildGameScene()
         {
-            var database = AssetDatabase.LoadAssetAtPath<GameDatabase>($"{CsvImporter.AssetFolder}/GameDatabase.asset");
+            var database = AssetDatabase.LoadAssetAtPath<GameDatabase>(CsvImporter.DatabasePath);
             var art = AssetDatabase.LoadAssetAtPath<InGame.ArtCatalog>(ArtCatalogBuilder.CatalogPath);
             if (database == null || art == null)
             {
@@ -66,7 +67,7 @@ namespace DWH.Editor
             var cameraObject = new GameObject("Main Camera") { tag = "MainCamera" };
             var camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true;
-            camera.orthographicSize = (float)database.balance.cameraOrthoSize;
+            camera.orthographicSize = Tuning.CameraOrthoSize;
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = Color.black;
             cameraObject.transform.position = new Vector3(0, camera.orthographicSize, -10);

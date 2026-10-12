@@ -1,0 +1,333 @@
+res_id,type,res_name,res_path,loop,volume,frame_count,frame_rate,memo
+res1010001,10,bg_st1_1_03.png,Fix_Resource/배경/bg_st1_1_03.png,,,,,시대 공용 · 원경
+res1020001,10,bg_st2_1_03.png,Fix_Resource/배경/bg_st2_1_03.png,,,,,시대 공용 · 원경
+res1030001,10,bg_st3_1_03.png,Fix_Resource/배경/bg_st3_1_03.png,,,,,시대 공용 · 원경
+res1040001,10,bg_st4_1_03.png,Fix_Resource/배경/bg_st4_1_03.png,,,,,시대 공용 · 원경
+res1050001,10,bg_st5_1_03.png,Fix_Resource/배경/bg_st5_1_03.png,,,,,시대 공용 · 원경
+res1060001,10,bg_st6_1_03.png,Fix_Resource/배경/bg_st6_1_03.png,,,,,시대 공용 · 원경
+res1070001,10,bg_st7_1_03.png,Fix_Resource/배경/bg_st7_1_03.png,,,,,시대 공용 · 원경
+res1110001,11,bg_st1_1_02.png,Fix_Resource/배경/bg_st1_1_02.png,,,,,시대 공용 · 중경
+res1120001,11,bg_st2_1_02.png,Fix_Resource/배경/bg_st2_1_02.png,,,,,시대 공용 · 중경
+res1130001,11,bg_st3_1_02.png,Fix_Resource/배경/bg_st3_1_02.png,,,,,시대 공용 · 중경
+res1140001,11,bg_st4_1_02.png,Fix_Resource/배경/bg_st4_1_02.png,,,,,시대 공용 · 중경
+res1150001,11,bg_st5_1_02.png,Fix_Resource/배경/bg_st5_1_02.png,,,,,시대 공용 · 중경
+res1160001,11,bg_st6_1_02.png,Fix_Resource/배경/bg_st6_1_02.png,,,,,시대 공용 · 중경
+res1170001,11,bg_st7_1_02.png,Fix_Resource/배경/bg_st7_1_02.png,,,,,시대 공용 · 중경
+res1210001,12,bg_st1_1_01.png,Fix_Resource/배경/bg_st1_1_01.png,,,,,시대 공용 · 바닥(길)
+res1220001,12,bg_st2_1_01.png,Fix_Resource/배경/bg_st2_1_01.png,,,,,시대 공용 · 바닥(길)
+res1230001,12,bg_st3_1_01.png,Fix_Resource/배경/bg_st3_1_01.png,,,,,시대 공용 · 바닥(길)
+res1240001,12,bg_st4_1_01.png,Fix_Resource/배경/bg_st4_1_01.png,,,,,시대 공용 · 바닥(길)
+res1250001,12,bg_st5_1_01.png,Fix_Resource/배경/bg_st5_1_01.png,,,,,시대 공용 · 바닥(길)
+res1260001,12,bg_st6_1_01.png,Fix_Resource/배경/bg_st6_1_01.png,,,,,시대 공용 · 바닥(길)
+res1270001,12,bg_st7_1_01.png,Fix_Resource/배경/bg_st7_1_01.png,,,,,시대 공용 · 바닥(길)
+res2011001,20,building_nor_st1_1_01.png,Fix_Resource/건물/building_nor_st1_1_01.png,,,,,공룡 · 일반 건물 1
+res2011002,20,building_nor_st1_1_02.png,Fix_Resource/건물/building_nor_st1_1_02.png,,,,,공룡 · 일반 건물 2
+res2011003,20,building_nor_st1_1_03.png,Fix_Resource/건물/building_nor_st1_1_03.png,,,,,공룡 · 일반 건물 3
+res2012001,20,building_nor_st1_2_01.png,Fix_Resource/건물/building_nor_st1_2_01.png,,,,,원시인 · 일반 건물 1
+res2012002,20,building_nor_st1_2_02.png,Fix_Resource/건물/building_nor_st1_2_02.png,,,,,원시인 · 일반 건물 2
+res2012003,20,building_nor_st1_2_03.png,Fix_Resource/건물/building_nor_st1_2_03.png,,,,,원시인 · 일반 건물 3
+res2021001,20,building_nor_st2_1_01.png,Fix_Resource/건물/building_nor_st2_1_01.png,,,,,이집트 · 일반 건물 1
+res2021002,20,building_nor_st2_1_02.png,Fix_Resource/건물/building_nor_st2_1_02.png,,,,,이집트 · 일반 건물 2
+res2021003,20,building_nor_st2_1_03.png,Fix_Resource/건물/building_nor_st2_1_03.png,,,,,이집트 · 일반 건물 3
+res2022001,20,building_nor_st2_2_01.png,Fix_Resource/건물/building_nor_st2_2_01.png,,,,,그리스 · 일반 건물 1
+res2022002,20,building_nor_st2_2_02.png,Fix_Resource/건물/building_nor_st2_2_02.png,,,,,그리스 · 일반 건물 2
+res2022003,20,building_nor_st2_2_03.png,Fix_Resource/건물/building_nor_st2_2_03.png,,,,,그리스 · 일반 건물 3
+res2031001,20,building_nor_st3_1_01.png,Fix_Resource/건물/building_nor_st3_1_01.png,,,,,프랑스 · 일반 건물 1
+res2031002,20,building_nor_st3_1_02.png,Fix_Resource/건물/building_nor_st3_1_02.png,,,,,프랑스 · 일반 건물 2
+res2031003,20,building_nor_st3_1_03.png,Fix_Resource/건물/building_nor_st3_1_03.png,,,,,프랑스 · 일반 건물 3
+res2032001,20,building_nor_st3_2_01.png,Fix_Resource/건물/building_nor_st3_2_01.png,,,,,독일 · 일반 건물 1
+res2032002,20,building_nor_st3_2_02.png,Fix_Resource/건물/building_nor_st3_2_02.png,,,,,독일 · 일반 건물 2
+res2032003,20,building_nor_st3_2_03.png,Fix_Resource/건물/building_nor_st3_2_03.png,,,,,독일 · 일반 건물 3
+res2041001,20,building_nor_st4_1_01.png,Fix_Resource/건물/building_nor_st4_1_01.png,,,,,영국 · 일반 건물 1
+res2041002,20,building_nor_st4_1_02.png,Fix_Resource/건물/building_nor_st4_1_02.png,,,,,영국 · 일반 건물 2
+res2041003,20,building_nor_st4_1_03.png,Fix_Resource/건물/building_nor_st4_1_03.png,,,,,영국 · 일반 건물 3
+res2042001,20,building_nor_st4_2_01.png,Fix_Resource/건물/building_nor_st4_2_01.png,,,,,미국(산업) · 일반 건물 1
+res2042002,20,building_nor_st4_2_02.png,Fix_Resource/건물/building_nor_st4_2_02.png,,,,,미국(산업) · 일반 건물 2
+res2042003,20,building_nor_st4_2_03.png,Fix_Resource/건물/building_nor_st4_2_03.png,,,,,미국(산업) · 일반 건물 3
+res2051001,20,building_nor_st5_1_01.png,Fix_Resource/건물/building_nor_st5_1_01.png,,,,,미국(현대) · 일반 건물 1
+res2051002,20,building_nor_st5_1_02.png,Fix_Resource/건물/building_nor_st5_1_02.png,,,,,미국(현대) · 일반 건물 2
+res2051003,20,building_nor_st5_1_03.png,Fix_Resource/건물/building_nor_st5_1_03.png,,,,,미국(현대) · 일반 건물 3
+res2052001,20,building_nor_st5_2_01.png,Fix_Resource/건물/building_nor_st5_2_01.png,,,,,한국 · 일반 건물 1
+res2052002,20,building_nor_st5_2_02.png,Fix_Resource/건물/building_nor_st5_2_02.png,,,,,한국 · 일반 건물 2
+res2052003,20,building_nor_st5_2_03.png,Fix_Resource/건물/building_nor_st5_2_03.png,,,,,한국 · 일반 건물 3
+res2061001,20,building_nor_st6_1_01.png,Fix_Resource/건물/building_nor_st6_1_01.png,,,,,일본 · 일반 건물 1
+res2061002,20,building_nor_st6_1_02.png,Fix_Resource/건물/building_nor_st6_1_02.png,,,,,일본 · 일반 건물 2
+res2061003,20,building_nor_st6_1_03.png,Fix_Resource/건물/building_nor_st6_1_03.png,,,,,일본 · 일반 건물 3
+res2062001,20,building_nor_st6_2_01.png,Fix_Resource/건물/building_nor_st6_2_01.png,,,,,중국 · 일반 건물 1
+res2062002,20,building_nor_st6_2_02.png,Fix_Resource/건물/building_nor_st6_2_02.png,,,,,중국 · 일반 건물 2
+res2062003,20,building_nor_st6_2_03.png,Fix_Resource/건물/building_nor_st6_2_03.png,,,,,중국 · 일반 건물 3
+res2071001,20,building_nor_st7_1_01.png,Fix_Resource/건물/building_nor_st7_1_01.png,,,,,달 · 일반 건물 1
+res2071002,20,building_nor_st7_1_02.png,Fix_Resource/건물/building_nor_st7_1_02.png,,,,,달 · 일반 건물 2
+res2071003,20,building_nor_st7_1_03.png,Fix_Resource/건물/building_nor_st7_1_03.png,,,,,달 · 일반 건물 3
+res2072001,20,building_nor_st7_2_01.png,Fix_Resource/건물/building_nor_st7_2_01.png,,,,,화성 · 일반 건물 1
+res2072002,20,building_nor_st7_2_02.png,Fix_Resource/건물/building_nor_st7_2_02.png,,,,,화성 · 일반 건물 2
+res2072003,20,building_nor_st7_2_03.png,Fix_Resource/건물/building_nor_st7_2_03.png,,,,,화성 · 일반 건물 3
+res2111001,21,building_atk_st1_1_01.png,Fix_Resource/건물/building_atk_st1_1_01.png,,,,,공룡 · 공격 건물 1
+res2111002,21,building_atk_st1_1_02.png,Fix_Resource/건물/building_atk_st1_1_02.png,,,,,공룡 · 공격 건물 2
+res2112001,21,building_atk_st1_2_01.png,Fix_Resource/건물/building_atk_st1_2_01.png,,,,,원시인 · 공격 건물 1
+res2112002,21,building_atk_st1_2_02.png,Fix_Resource/건물/building_atk_st1_2_02.png,,,,,원시인 · 공격 건물 2
+res2121001,21,building_atk_st2_1_01.png,Fix_Resource/건물/building_atk_st2_1_01.png,,,,,이집트 · 공격 건물 1
+res2121002,21,building_atk_st2_1_02.png,Fix_Resource/건물/building_atk_st2_1_02.png,,,,,이집트 · 공격 건물 2
+res2122001,21,building_atk_st2_2_01.png,Fix_Resource/건물/building_atk_st2_2_01.png,,,,,그리스 · 공격 건물 1
+res2122002,21,building_atk_st2_2_02.png,Fix_Resource/건물/building_atk_st2_2_02.png,,,,,그리스 · 공격 건물 2
+res2131001,21,building_atk_st3_1_01.png,Fix_Resource/건물/building_atk_st3_1_01.png,,,,,프랑스 · 공격 건물 1
+res2131002,21,building_atk_st3_1_02.png,Fix_Resource/건물/building_atk_st3_1_02.png,,,,,프랑스 · 공격 건물 2
+res2132001,21,building_atk_st3_2_01.png,Fix_Resource/건물/building_atk_st3_2_01.png,,,,,독일 · 공격 건물 1
+res2132002,21,building_atk_st3_2_02.png,Fix_Resource/건물/building_atk_st3_2_02.png,,,,,독일 · 공격 건물 2
+res2141001,21,building_atk_st4_1_01.png,Fix_Resource/건물/building_atk_st4_1_01.png,,,,,영국 · 공격 건물 1
+res2141002,21,building_atk_st4_1_02.png,Fix_Resource/건물/building_atk_st4_1_02.png,,,,,영국 · 공격 건물 2
+res2142001,21,building_atk_st4_2_01.png,Fix_Resource/건물/building_atk_st4_2_01.png,,,,,미국(산업) · 공격 건물 1
+res2142002,21,building_atk_st4_2_02.png,Fix_Resource/건물/building_atk_st4_2_02.png,,,,,미국(산업) · 공격 건물 2
+res2151001,21,building_atk_st5_1_01.png,Fix_Resource/건물/building_atk_st5_1_01.png,,,,,미국(현대) · 공격 건물 1
+res2151002,21,building_atk_st5_1_02.png,Fix_Resource/건물/building_atk_st5_1_02.png,,,,,미국(현대) · 공격 건물 2
+res2152001,21,building_atk_st5_2_01.png,Fix_Resource/건물/building_atk_st5_2_01.png,,,,,한국 · 공격 건물 1
+res2152002,21,building_atk_st5_2_02.png,Fix_Resource/건물/building_atk_st5_2_02.png,,,,,한국 · 공격 건물 2
+res2161001,21,building_atk_st6_1_01.png,Fix_Resource/건물/building_atk_st6_1_01.png,,,,,일본 · 공격 건물 1
+res2161002,21,building_atk_st6_1_02.png,Fix_Resource/건물/building_atk_st6_1_02.png,,,,,일본 · 공격 건물 2
+res2162001,21,building_atk_st6_2_01.png,Fix_Resource/건물/building_atk_st6_2_01.png,,,,,중국 · 공격 건물 1
+res2162002,21,building_atk_st6_2_02.png,Fix_Resource/건물/building_atk_st6_2_02.png,,,,,중국 · 공격 건물 2
+res2171001,21,building_atk_st7_1_01.png,Fix_Resource/건물/building_atk_st7_1_01.png,,,,,달 · 공격 건물 1
+res2171002,21,building_atk_st7_1_02.png,Fix_Resource/건물/building_atk_st7_1_02.png,,,,,달 · 공격 건물 2
+res2172001,21,building_atk_st7_2_01.png,Fix_Resource/건물/building_atk_st7_2_01.png,,,,,화성 · 공격 건물 1
+res2172002,21,building_atk_st7_2_02.png,Fix_Resource/건물/building_atk_st7_2_02.png,,,,,화성 · 공격 건물 2
+res2211001,22,building_lm_st1_1_01.png,Fix_Resource/건물/building_lm_st1_1_01.png,,,,,공룡 · 랜드마크
+res2212001,22,building_lm_st1_2_01.png,Fix_Resource/건물/building_lm_st1_2_01.png,,,,,원시인 · 랜드마크
+res2221001,22,building_lm_st2_1_01.png,Fix_Resource/건물/building_lm_st2_1_01.png,,,,,이집트 · 랜드마크
+res2222001,22,building_lm_st2_2_01.png,Fix_Resource/건물/building_lm_st2_2_01.png,,,,,그리스 · 랜드마크
+res2231001,22,building_lm_st3_1_01.png,Fix_Resource/건물/building_lm_st3_1_01.png,,,,,프랑스 · 랜드마크
+res2232001,22,building_lm_st3_2_01.png,Fix_Resource/건물/building_lm_st3_2_01.png,,,,,독일 · 랜드마크
+res2241001,22,building_lm_st4_1_01.png,Fix_Resource/건물/building_lm_st4_1_01.png,,,,,영국 · 랜드마크
+res2242001,22,building_lm_st4_2_01.png,Fix_Resource/건물/building_lm_st4_2_01.png,,,,,미국(산업) · 랜드마크
+res2251001,22,building_lm_st5_1_01.png,Fix_Resource/건물/building_lm_st5_1_01.png,,,,,미국(현대) · 랜드마크
+res2252001,22,building_lm_st5_2_01.png,Fix_Resource/건물/building_lm_st5_2_01.png,,,,,한국 · 랜드마크
+res2261001,22,building_lm_st6_1_01.png,Fix_Resource/건물/building_lm_st6_1_01.png,,,,,일본 · 랜드마크
+res2262001,22,building_lm_st6_2_01.png,Fix_Resource/건물/building_lm_st6_2_01.png,,,,,중국 · 랜드마크
+res2271001,22,building_lm_st7_1_01.png,Fix_Resource/건물/building_lm_st7_1_01.png,,,,,달 · 랜드마크
+res2272001,22,building_lm_st7_2_01.png,Fix_Resource/건물/building_lm_st7_2_01.png,,,,,화성 · 랜드마크
+res3011001,30,unit_st1_1_01.png,Fix_Resource/적 유닛/unit_st1_1_01.png,,,,,공룡 · 공중 유닛 1
+res3011002,30,unit_st1_1_02.png,Fix_Resource/적 유닛/unit_st1_1_02.png,,,,,공룡 · 공중 유닛 2
+res3012001,30,unit_st1_2_01.png,Fix_Resource/적 유닛/unit_st1_2_01.png,,,,,원시인 · 공중 유닛 1
+res3012002,30,unit_st1_2_02.png,Fix_Resource/적 유닛/unit_st1_2_02.png,,,,,원시인 · 공중 유닛 2
+res3021001,30,unit_st2_1_01.png,Fix_Resource/적 유닛/unit_st2_1_01.png,,,,,이집트 · 공중 유닛 1
+res3021002,30,unit_st2_1_02.png,Fix_Resource/적 유닛/unit_st2_1_02.png,,,,,이집트 · 공중 유닛 2
+res3022001,30,unit_st2_2_01.png,Fix_Resource/적 유닛/unit_st2_2_01.png,,,,,그리스 · 공중 유닛 1
+res3022002,30,unit_st2_2_02.png,Fix_Resource/적 유닛/unit_st2_2_02.png,,,,,그리스 · 공중 유닛 2
+res3031001,30,unit_st3_1_01.png,Fix_Resource/적 유닛/unit_st3_1_01.png,,,,,프랑스 · 공중 유닛 1
+res3031002,30,unit_st3_1_02.png,Fix_Resource/적 유닛/unit_st3_1_02.png,,,,,프랑스 · 공중 유닛 2
+res3032001,30,unit_st3_2_01.png,Fix_Resource/적 유닛/unit_st3_2_01.png,,,,,독일 · 공중 유닛 1
+res3032002,30,unit_st3_2_02.png,Fix_Resource/적 유닛/unit_st3_2_02.png,,,,,독일 · 공중 유닛 2
+res3041001,30,unit_st4_1_01.png,Fix_Resource/적 유닛/unit_st4_1_01.png,,,,,영국 · 공중 유닛 1
+res3041002,30,unit_st4_1_02.png,Fix_Resource/적 유닛/unit_st4_1_02.png,,,,,영국 · 공중 유닛 2
+res3042001,30,unit_st4_2_01.png,Fix_Resource/적 유닛/unit_st4_2_01.png,,,,,미국(산업) · 공중 유닛 1
+res3042002,30,unit_st4_2_02.png,Fix_Resource/적 유닛/unit_st4_2_02.png,,,,,미국(산업) · 공중 유닛 2
+res3051001,30,unit_st5_1_01.png,Fix_Resource/적 유닛/unit_st5_1_01.png,,,,,미국(현대) · 공중 유닛 1
+res3051002,30,unit_st5_1_02.png,Fix_Resource/적 유닛/unit_st5_1_02.png,,,,,미국(현대) · 공중 유닛 2
+res3052001,30,unit_st5_2_01.png,Fix_Resource/적 유닛/unit_st5_2_01.png,,,,,한국 · 공중 유닛 1
+res3052002,30,unit_st5_2_02.png,Fix_Resource/적 유닛/unit_st5_2_02.png,,,,,한국 · 공중 유닛 2
+res3061001,30,unit_st6_1_01.png,Fix_Resource/적 유닛/unit_st6_1_01.png,,,,,일본 · 공중 유닛 1
+res3061002,30,unit_st6_1_02.png,Fix_Resource/적 유닛/unit_st6_1_02.png,,,,,일본 · 공중 유닛 2
+res3062001,30,unit_st6_2_01.png,Fix_Resource/적 유닛/unit_st6_2_01.png,,,,,중국 · 공중 유닛 1
+res3062002,30,unit_st6_2_02.png,Fix_Resource/적 유닛/unit_st6_2_02.png,,,,,중국 · 공중 유닛 2
+res3071001,30,unit_st7_1_01.png,Fix_Resource/적 유닛/unit_st7_1_01.png,,,,,달 · 공중 유닛 1
+res3071002,30,unit_st7_1_02.png,Fix_Resource/적 유닛/unit_st7_1_02.png,,,,,달 · 공중 유닛 2
+res3072001,30,unit_st7_2_01.png,Fix_Resource/적 유닛/unit_st7_2_01.png,,,,,화성 · 공중 유닛 1
+res3072002,30,unit_st7_2_02.png,Fix_Resource/적 유닛/unit_st7_2_02.png,,,,,화성 · 공중 유닛 2
+res4010001,40,drag1.png,Fix_Resource/드래곤/불 드래곤/1단계/drag1.png,,,,,성장 1단계 대표 이미지 (조립 완성본)
+res4020001,40,drag2.png,Fix_Resource/드래곤/불 드래곤/2단계/drag2.png,,,,,성장 2단계 대표 이미지 (조립 완성본)
+res4030001,40,drag3.png,Fix_Resource/드래곤/불 드래곤/3단계/drag3.png,,,,,성장 3단계 대표 이미지 (조립 완성본)
+res4040001,40,drag4.png,Fix_Resource/드래곤/불 드래곤/4단계/drag4.png,,,,,성장 4단계 대표 이미지 (조립 완성본)
+res4110001,41,body.png,Fix_Resource/드래곤/불 드래곤/1단계/body.png,,,,,성장 1단계 몸통
+res4110002,41,neck.png,Fix_Resource/드래곤/불 드래곤/1단계/neck.png,,,,,성장 1단계 목
+res4110003,41,up_head.png,Fix_Resource/드래곤/불 드래곤/1단계/up_head.png,,,,,성장 1단계 윗머리
+res4110004,41,down_head.png,Fix_Resource/드래곤/불 드래곤/1단계/down_head.png,,,,,성장 1단계 아랫머리
+res4110005,41,front_leg.png,Fix_Resource/드래곤/불 드래곤/1단계/front_leg.png,,,,,성장 1단계 앞다리
+res4110006,41,back_leg.png,Fix_Resource/드래곤/불 드래곤/1단계/back_leg.png,,,,,성장 1단계 뒷다리
+res4110007,41,wing.png,Fix_Resource/드래곤/불 드래곤/1단계/wing.png,,,,,성장 1단계 날개
+res4110008,41,tail.png,Fix_Resource/드래곤/불 드래곤/1단계/tail.png,,,,,성장 1단계 꼬리
+res4120001,41,body.png,Fix_Resource/드래곤/불 드래곤/2단계/body.png,,,,,성장 2단계 몸통
+res4120002,41,neck.png,Fix_Resource/드래곤/불 드래곤/2단계/neck.png,,,,,성장 2단계 목
+res4120003,41,up_head.png,Fix_Resource/드래곤/불 드래곤/2단계/up_head.png,,,,,성장 2단계 윗머리
+res4120004,41,down_head.png,Fix_Resource/드래곤/불 드래곤/2단계/down_head.png,,,,,성장 2단계 아랫머리
+res4120005,41,front_leg.png,Fix_Resource/드래곤/불 드래곤/2단계/front_leg.png,,,,,성장 2단계 앞다리
+res4120006,41,back_leg.png,Fix_Resource/드래곤/불 드래곤/2단계/back_leg.png,,,,,성장 2단계 뒷다리
+res4120007,41,wing.png,Fix_Resource/드래곤/불 드래곤/2단계/wing.png,,,,,성장 2단계 날개
+res4120008,41,tail.png,Fix_Resource/드래곤/불 드래곤/2단계/tail.png,,,,,성장 2단계 꼬리
+res4130001,41,body.png,Fix_Resource/드래곤/불 드래곤/3단계/body.png,,,,,성장 3단계 몸통
+res4130002,41,neck.png,Fix_Resource/드래곤/불 드래곤/3단계/neck.png,,,,,성장 3단계 목
+res4130003,41,up_head.png,Fix_Resource/드래곤/불 드래곤/3단계/up_head.png,,,,,성장 3단계 윗머리
+res4130004,41,down_head.png,Fix_Resource/드래곤/불 드래곤/3단계/down_head.png,,,,,성장 3단계 아랫머리
+res4130005,41,front_leg.png,Fix_Resource/드래곤/불 드래곤/3단계/front_leg.png,,,,,성장 3단계 앞다리
+res4130006,41,back_leg.png,Fix_Resource/드래곤/불 드래곤/3단계/back_leg.png,,,,,성장 3단계 뒷다리
+res4130007,41,wing.png,Fix_Resource/드래곤/불 드래곤/3단계/wing.png,,,,,성장 3단계 날개
+res4130008,41,tail.png,Fix_Resource/드래곤/불 드래곤/3단계/tail.png,,,,,성장 3단계 꼬리
+res4140001,41,body.png,Fix_Resource/드래곤/불 드래곤/4단계/body.png,,,,,성장 4단계 몸통
+res4140002,41,neck.png,Fix_Resource/드래곤/불 드래곤/4단계/neck.png,,,,,성장 4단계 목
+res4140003,41,up_head.png,Fix_Resource/드래곤/불 드래곤/4단계/up_head.png,,,,,성장 4단계 윗머리
+res4140004,41,down_head.png,Fix_Resource/드래곤/불 드래곤/4단계/down_head.png,,,,,성장 4단계 아랫머리
+res4140005,41,front_leg.png,Fix_Resource/드래곤/불 드래곤/4단계/front_leg.png,,,,,성장 4단계 앞다리
+res4140006,41,back_leg.png,Fix_Resource/드래곤/불 드래곤/4단계/back_leg.png,,,,,성장 4단계 뒷다리
+res4140007,41,wing.png,Fix_Resource/드래곤/불 드래곤/4단계/wing.png,,,,,성장 4단계 날개
+res4140008,41,tail.png,Fix_Resource/드래곤/불 드래곤/4단계/tail.png,,,,,성장 4단계 꼬리
+res5000001,50,01_gold.png,Fix_Resource/UI&폰트/03_자원/01_gold.png,,,,,금 코인
+res5000002,50,02_bar.png,Fix_Resource/UI&폰트/03_자원/02_bar.png,,,,,금괴
+res5000003,50,03_sapphire.png,Fix_Resource/UI&폰트/03_자원/03_sapphire.png,,,,,사파이어
+res5000004,50,04_ruby.png,Fix_Resource/UI&폰트/03_자원/04_ruby.png,,,,,루비
+res5000005,50,05_diamond.png,Fix_Resource/UI&폰트/03_자원/05_diamond.png,,,,,다이아몬드
+res5000006,50,06_crown.png,Fix_Resource/UI&폰트/03_자원/06_crown.png,,,,,왕관
+res6000001,60,button-gold-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/골드/button-gold-disabled.png,,,,,버튼(골드) · 비활성
+res6000002,60,button-gold-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/골드/button-gold-hover.png,,,,,버튼(골드) · 올림
+res6000003,60,button-gold-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/골드/button-gold-normal.png,,,,,버튼(골드) · 기본
+res6000004,60,button-gold-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/골드/button-gold-pressed.png,,,,,버튼(골드) · 누름
+res6000005,60,button-neutral-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/기본/button-neutral-disabled.png,,,,,버튼(기본) · 비활성
+res6000006,60,button-neutral-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/기본/button-neutral-hover.png,,,,,버튼(기본) · 올림
+res6000007,60,button-neutral-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/기본/button-neutral-normal.png,,,,,버튼(기본) · 기본
+res6000008,60,button-neutral-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/기본/button-neutral-pressed.png,,,,,버튼(기본) · 누름
+res6000009,60,icon-button-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/아이콘버튼/icon-button-disabled.png,,,,,버튼(아이콘버튼) · 비활성
+res6000010,60,icon-button-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/아이콘버튼/icon-button-hover.png,,,,,버튼(아이콘버튼) · 올림
+res6000011,60,icon-button-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/아이콘버튼/icon-button-normal.png,,,,,버튼(아이콘버튼) · 기본
+res6000012,60,icon-button-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/아이콘버튼/icon-button-pressed.png,,,,,버튼(아이콘버튼) · 누름
+res6000013,60,button-red-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/위험/button-red-disabled.png,,,,,버튼(위험) · 비활성
+res6000014,60,button-red-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/위험/button-red-hover.png,,,,,버튼(위험) · 올림
+res6000015,60,button-red-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/위험/button-red-normal.png,,,,,버튼(위험) · 기본
+res6000016,60,button-red-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/위험/button-red-pressed.png,,,,,버튼(위험) · 누름
+res6000017,60,button-green-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/진행/button-green-disabled.png,,,,,버튼(진행) · 비활성
+res6000018,60,button-green-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/진행/button-green-hover.png,,,,,버튼(진행) · 올림
+res6000019,60,button-green-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/진행/button-green-normal.png,,,,,버튼(진행) · 기본
+res6000020,60,button-green-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/진행/button-green-pressed.png,,,,,버튼(진행) · 누름
+res6000021,60,button-purple-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/환생/button-purple-disabled.png,,,,,버튼(환생) · 비활성
+res6000022,60,button-purple-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/환생/button-purple-hover.png,,,,,버튼(환생) · 올림
+res6000023,60,button-purple-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/환생/button-purple-normal.png,,,,,버튼(환생) · 기본
+res6000024,60,button-purple-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/01_버튼/환생/button-purple-pressed.png,,,,,버튼(환생) · 누름
+res6000025,60,hud-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/HUD/hud-disabled.png,,,,,HUD · 비활성
+res6000026,60,hud-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/HUD/hud-hover.png,,,,,HUD · 올림
+res6000027,60,hud-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/HUD/hud-normal.png,,,,,HUD · 기본
+res6000028,60,hud-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/HUD/hud-pressed.png,,,,,HUD · 누름
+res6000029,60,stage-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/스테이지/stage-disabled.png,,,,,스테이지 · 비활성
+res6000030,60,stage-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/스테이지/stage-hover.png,,,,,스테이지 · 올림
+res6000031,60,stage-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/스테이지/stage-normal.png,,,,,스테이지 · 기본
+res6000032,60,stage-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/스테이지/stage-pressed.png,,,,,스테이지 · 누름
+res6000033,60,card-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/카드/card-disabled.png,,,,,카드 · 비활성
+res6000034,60,card-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/카드/card-hover.png,,,,,카드 · 올림
+res6000035,60,card-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/카드/card-normal.png,,,,,카드 · 기본
+res6000036,60,card-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/카드/card-pressed.png,,,,,카드 · 누름
+res6000037,60,tooltip-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/툴팁/tooltip-disabled.png,,,,,툴팁 · 비활성
+res6000038,60,tooltip-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/툴팁/tooltip-hover.png,,,,,툴팁 · 올림
+res6000039,60,tooltip-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/툴팁/tooltip-normal.png,,,,,툴팁 · 기본
+res6000040,60,tooltip-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/툴팁/tooltip-pressed.png,,,,,툴팁 · 누름
+res6000041,60,popup-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/팝업/popup-disabled.png,,,,,팝업 · 비활성
+res6000042,60,popup-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/팝업/popup-hover.png,,,,,팝업 · 올림
+res6000043,60,popup-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/팝업/popup-normal.png,,,,,팝업 · 기본
+res6000044,60,popup-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/팝업/popup-pressed.png,,,,,팝업 · 누름
+res6000045,60,panel-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/패널/panel-disabled.png,,,,,패널 · 비활성
+res6000046,60,panel-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/패널/panel-hover.png,,,,,패널 · 올림
+res6000047,60,panel-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/패널/panel-normal.png,,,,,패널 · 기본
+res6000048,60,panel-outline-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/패널/panel-outline-normal.png,,,,,패널 외곽선 · 기본
+res6000049,60,panel-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/02_패널과팝업/패널/panel-pressed.png,,,,,패널 · 누름
+res6000050,60,node-core-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-core-disabled.png,,,,,트리 노드(코어) · 비활성
+res6000051,60,node-core-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-core-hover.png,,,,,트리 노드(코어) · 올림
+res6000052,60,node-core-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-core-normal.png,,,,,트리 노드(코어) · 기본
+res6000053,60,node-core-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-core-pressed.png,,,,,트리 노드(코어) · 누름
+res6000054,60,node-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-disabled.png,,,,,트리 노드 · 비활성
+res6000055,60,node-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-hover.png,,,,,트리 노드 · 올림
+res6000056,60,node-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-normal.png,,,,,트리 노드 · 기본
+res6000057,60,node-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-pressed.png,,,,,트리 노드 · 누름
+res6000058,60,node-selected-border.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-selected-border.png,,,,,트리 노드 선택 테두리
+res6000059,60,node-soul-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-soul-disabled.png,,,,,트리 노드(환생) · 비활성
+res6000060,60,node-soul-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-soul-hover.png,,,,,트리 노드(환생) · 올림
+res6000061,60,node-soul-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-soul-normal.png,,,,,트리 노드(환생) · 기본
+res6000062,60,node-soul-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/node-soul-pressed.png,,,,,트리 노드(환생) · 누름
+res6000063,60,tab-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/tab-disabled.png,,,,,탭 · 비활성
+res6000064,60,tab-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/tab-hover.png,,,,,탭 · 올림
+res6000065,60,tab-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/tab-normal.png,,,,,탭 · 기본
+res6000066,60,tab-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/03_트리노드와탭/tab-pressed.png,,,,,탭 · 누름
+res6000067,60,skill-active-border.png,Fix_Resource/UI&폰트/01_UI에셋/assets/04_스킬슬롯/skill-active-border.png,,,,,스킬 슬롯 발동 테두리
+res6000068,60,skill-slot-disabled.png,Fix_Resource/UI&폰트/01_UI에셋/assets/04_스킬슬롯/skill-slot-disabled.png,,,,,스킬 슬롯 · 비활성
+res6000069,60,skill-slot-hover.png,Fix_Resource/UI&폰트/01_UI에셋/assets/04_스킬슬롯/skill-slot-hover.png,,,,,스킬 슬롯 · 올림
+res6000070,60,skill-slot-normal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/04_스킬슬롯/skill-slot-normal.png,,,,,스킬 슬롯 · 기본
+res6000071,60,skill-slot-pressed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/04_스킬슬롯/skill-slot-pressed.png,,,,,스킬 슬롯 · 누름
+res6000072,60,gauge-fill-energy.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/gauge-fill-energy.png,,,,,게이지 채움 · 기력
+res6000073,60,gauge-fill-goal.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/gauge-fill-goal.png,,,,,게이지 채움 · 목표
+res6000074,60,gauge-fill-growth.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/gauge-fill-growth.png,,,,,게이지 채움 · 성장
+res6000075,60,gauge-fill-health.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/gauge-fill-health.png,,,,,게이지 채움 · 체력
+res6000076,60,gauge-track.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/gauge-track.png,,,,,게이지 바탕
+res6000077,60,slider-thumb.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/slider-thumb.png,,,,,슬라이더 손잡이
+res6000078,60,slider-track.png,Fix_Resource/UI&폰트/01_UI에셋/assets/05_게이지와슬라이더/slider-track.png,,,,,슬라이더 바탕
+res6000079,60,icon-back.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-back.png,,,,,공통 아이콘 · 뒤로
+res6000080,60,icon-check.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-check.png,,,,,공통 아이콘 · 확인
+res6000081,60,icon-close.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-close.png,,,,,공통 아이콘 · 닫기
+res6000082,60,icon-energy.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-energy.png,,,,,공통 아이콘 · 기력
+res6000083,60,icon-exit.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-exit.png,,,,,공통 아이콘 · 나가기
+res6000084,60,icon-gold.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-gold.png,,,,,공통 아이콘 · 골드
+res6000085,60,icon-heart.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-heart.png,,,,,공통 아이콘 · 체력
+res6000086,60,icon-info.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-info.png,,,,,공통 아이콘 · 정보
+res6000087,60,icon-lock.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-lock.png,,,,,공통 아이콘 · 잠김
+res6000088,60,icon-rebirth.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-rebirth.png,,,,,공통 아이콘 · 환생
+res6000089,60,icon-resume.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-resume.png,,,,,공통 아이콘 · 재개
+res6000090,60,icon-settings.png,Fix_Resource/UI&폰트/01_UI에셋/assets/06_공통아이콘/icon-settings.png,,,,,공통 아이콘 · 설정
+res6000091,60,skill-body-slam.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-body-slam.png,,,,,스킬 아이콘 · 몸통 박치기
+res6000092,60,skill-earthquake.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-earthquake.png,,,,,스킬 아이콘 · 지진
+res6000093,60,skill-fire-breath.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-fire-breath.png,,,,,스킬 아이콘 · 파이어 브레스
+res6000094,60,skill-fireball.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-fireball.png,,,,,스킬 아이콘 · 파이어 볼
+res6000095,60,skill-hurricane.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-hurricane.png,,,,,스킬 아이콘 · 허리케인
+res6000096,60,skill-lightning.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-lightning.png,,,,,스킬 아이콘 · 낙뢰
+res6000097,60,skill-meteor.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-meteor.png,,,,,스킬 아이콘 · 메테오
+res6000098,60,skill-shockwave.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-shockwave.png,,,,,스킬 아이콘 · 충격파
+res6000099,60,skill-tail-spin.png,Fix_Resource/UI&폰트/01_UI에셋/assets/07_스킬아이콘/skill-tail-spin.png,,,,,스킬 아이콘 · 회전 회오리
+res6000100,60,upgrade-agility.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-agility.png,,,,,강화 아이콘 · 날개 힘
+res6000101,60,upgrade-apocalypse.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-apocalypse.png,,,,,강화 아이콘 · 종말의 용
+res6000102,60,upgrade-burn.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-burn.png,,,,,강화 아이콘 · 지옥불
+res6000103,60,upgrade-charge.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-charge.png,,,,,강화 아이콘 · 돌진
+res6000104,60,upgrade-clearTime.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-clearTime.png,,,,,강화 아이콘 · 승전의 포효
+res6000105,60,upgrade-combo.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-combo.png,,,,,강화 아이콘 · 연쇄 파괴
+res6000106,60,upgrade-core.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-core.png,,,,,강화 아이콘 · 용의 각성
+res6000107,60,upgrade-crit.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-crit.png,,,,,강화 아이콘 · 역린
+res6000108,60,upgrade-critDmg.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-critDmg.png,,,,,강화 아이콘 · 용의 분노
+res6000109,60,upgrade-feast.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-feast.png,,,,,강화 아이콘 · 포식
+res6000110,60,upgrade-fireballCount.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-fireballCount.png,,,,,강화 아이콘 · 연속 파이어 볼
+res6000111,60,upgrade-greed.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-greed.png,,,,,강화 아이콘 · 탐욕
+res6000112,60,upgrade-hoard.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-hoard.png,,,,,강화 아이콘 · 보물 산더미
+res6000113,60,upgrade-lavaCount.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-lavaCount.png,,,,,강화 아이콘 · 충격 범위
+res6000114,60,upgrade-loot.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-loot.png,,,,,강화 아이콘 · 황금 감별안
+res6000115,60,upgrade-rage.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-rage.png,,,,,강화 아이콘 · 광란
+res6000116,60,upgrade-regen.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-regen.png,,,,,강화 아이콘 · 용의 심장
+res6000117,60,upgrade-scales.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-scales.png,,,,,강화 아이콘 · 강철 비늘
+res6000118,60,upgrade-stamina.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-stamina.png,,,,,강화 아이콘 · 지구력
+res6000119,60,upgrade-tailspinSize.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-tailspinSize.png,,,,,강화 아이콘 · 거대 회오리
+res6000120,60,upgrade-thunderChain.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-thunderChain.png,,,,,강화 아이콘 · 연쇄 번개 (현재 미사용)
+res6000121,60,upgrade-thunderCount.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-thunderCount.png,,,,,강화 아이콘 · 천둥 폭풍
+res6000122,60,upgrade-wings.png,Fix_Resource/UI&폰트/01_UI에셋/assets/08_강화아이콘/upgrade-wings.png,,,,,강화 아이콘 · 맹렬한 질주
+res6000123,60,perk-p_auto.png,Fix_Resource/UI&폰트/01_UI에셋/assets/09_환생아이콘/perk-p_auto.png,,,,,환생 특성 아이콘 · 자동 각성
+res6000124,60,perk-p_cost.png,Fix_Resource/UI&폰트/01_UI에셋/assets/09_환생아이콘/perk-p_cost.png,,,,,환생 특성 아이콘 · 용의 지혜
+res6000125,60,perk-p_dmg.png,Fix_Resource/UI&폰트/01_UI에셋/assets/09_환생아이콘/perk-p_dmg.png,,,,,환생 특성 아이콘 · 태고의 분노
+res6000126,60,perk-p_gold.png,Fix_Resource/UI&폰트/01_UI에셋/assets/09_환생아이콘/perk-p_gold.png,,,,,환생 특성 아이콘 · 황금 혈통
+res6000127,60,perk-p_start.png,Fix_Resource/UI&폰트/01_UI에셋/assets/09_환생아이콘/perk-p_start.png,,,,,환생 특성 아이콘 · 고룡의 유산
+res6000128,60,perk-p_time.png,Fix_Resource/UI&폰트/01_UI에셋/assets/09_환생아이콘/perk-p_time.png,,,,,환생 특성 아이콘 · 영원의 심장
+res6000129,60,logo-en.png,Fix_Resource/UI&폰트/01_UI에셋/assets/10_타이틀/logo-en.png,,,,,로고 (영문)
+res6000130,60,logo-ko.png,Fix_Resource/UI&폰트/01_UI에셋/assets/10_타이틀/logo-ko.png,,,,,로고 (한글)
+res6000131,60,judgement-fail.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스테이지연출/judgement-fail.png,,,,,스타터 판정 표시 · Fail
+res6000132,60,judgement-good.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스테이지연출/judgement-good.png,,,,,스타터 판정 표시 · Good
+res6000133,60,judgement-great.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스테이지연출/judgement-great.png,,,,,스타터 판정 표시 · Great
+res6000134,60,timing-pointer.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스테이지연출/timing-pointer.png,,,,,스타터 타이밍 포인터
+res6000135,60,timing-track.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스테이지연출/timing-track.png,,,,,스타터 타이밍 바
+res6000136,60,warning-drop.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스테이지연출/warning-drop.png,,,,,낙하 경고
+res6000137,60,title_en.png,Fix_Resource/UI&폰트/01_UI에셋/assets/12_타이틀/title_en.png,,,,,타이틀 (영문)
+res6000138,60,title_kr.png,Fix_Resource/UI&폰트/01_UI에셋/assets/12_타이틀/title_kr.png,,,,,타이틀 (한글)
+res8000001,80,sheet.png,Fix_Resource/스킬 이펙트/A1. 메테오/sheet.png,0,,12,12,"스킬 이펙트 · 메테오 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000002,80,sheet.png,Fix_Resource/스킬 이펙트/A2. 허리케인/sheet.png,0,,12,12,"스킬 이펙트 · 허리케인 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000003,80,sheet.png,Fix_Resource/스킬 이펙트/A3. 지진/sheet.png,0,,12,12,"스킬 이펙트 · 지진 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000004,80,sheet.png,Fix_Resource/스킬 이펙트/P1. 파이어볼/sheet.png,0,,12,12,"스킬 이펙트 · 파이어볼 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000005,80,sheet.png,Fix_Resource/스킬 이펙트/P2. 파이어브레스/sheet.png,0,,12,12,"스킬 이펙트 · 파이어브레스 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000006,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(낙뢰)_골드/sheet.png,0,,12,12,"스킬 이펙트 · 번개(낙뢰)_골드 (시트 4×3, 프레임 256×512px. 낱장은 frames 폴더)"
+res8000007,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(낙뢰)_블루/sheet.png,0,,12,12,"스킬 이펙트 · 번개(낙뢰)_블루 (시트 4×3, 프레임 256×512px. 낱장은 frames 폴더)"
+res8000008,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(연쇄)_골드/sheet.png,0,,6,12,"스킬 이펙트 · 번개(연쇄)_골드 (시트 3×2, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000009,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(연쇄)_블루/sheet.png,0,,6,12,"스킬 이펙트 · 번개(연쇄)_블루 (시트 3×2, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000010,80,frame_00.png,Fix_Resource/피격 이펙트/강한 타격/frame_00.png,0,,11,24,피격 이펙트 · 강한 타격 (연속 이미지 frame_00~frame_10)
+res8000011,80,frame_00.png,Fix_Resource/피격 이펙트/건물화재/frame_00.png,1,,45,24,피격 이펙트 · 건물화재 (연속 이미지 frame_00~frame_44)
+res8000012,80,frame_00.png,Fix_Resource/피격 이펙트/땅먼지/frame_00.png,0,,27,24,피격 이펙트 · 땅먼지 (연속 이미지 frame_00~frame_26)
+res8000013,80,frame_00.png,Fix_Resource/피격 이펙트/메테오 폭발/frame_00.png,0,,39,24,피격 이펙트 · 메테오 폭발 (연속 이미지 frame_00~frame_38)
+res8000014,80,frame_00.png,Fix_Resource/피격 이펙트/일반타격/frame_00.png,0,,11,24,피격 이펙트 · 일반타격 (연속 이미지 frame_00~frame_10)
+res8000015,80,frame_00.png,Fix_Resource/피격 이펙트/잔연기/frame_00.png,1,,45,24,피격 이펙트 · 잔연기 (연속 이미지 frame_00~frame_44)
+res8000016,80,frame_00.png,Fix_Resource/피격 이펙트/착지/frame_00.png,0,,27,24,피격 이펙트 · 착지 (연속 이미지 frame_00~frame_26)
+res8000017,80,frame_00.png,Fix_Resource/피격 이펙트/파이어볼 폭발/frame_00.png,0,,39,24,피격 이펙트 · 파이어볼 폭발 (연속 이미지 frame_00~frame_38)
+res9000001,90,title-background.webm,Fix_Resource/UI&폰트/01_UI에셋/assets/10_타이틀/title-background.webm,1,,,,타이틀 배경 영상
+res9100001,91,NotoSansKR-VariableFont_wght.ttf,Fix_Resource/UI&폰트/02_폰트/원본/NotoSansKR-VariableFont_wght.ttf,,,,,"본문 폰트 (가변). 굵기별 정적 폰트는 원본/static, Unity용은 NotoSansKR-TMP-20261012.unitypackage"

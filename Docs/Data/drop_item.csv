@@ -1,0 +1,7 @@
+item_id,tier,name_str,desc_str,gold_value,res_id
+itm101,1,item_name_101,item_desc_101,1,res5000001
+itm102,2,item_name_102,item_desc_102,5,res5000002
+itm103,3,item_name_103,item_desc_103,25,res5000003
+itm104,4,item_name_104,item_desc_104,100,res5000004
+itm105,5,item_name_105,item_desc_105,500,res5000005
+itm106,6,item_name_106,item_desc_106,1000,res5000006

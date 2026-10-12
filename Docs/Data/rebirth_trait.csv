@@ -1,0 +1,7 @@
+trait_id,name_str,desc_str,max_level,base_cost,add_cost,effect_type,base_value,add_value,value_op,res_id
+rbt1,rebirth_trait_name_1,rebirth_trait_desc_1,50,1,1,1,0.2,0.2,2,res6000125
+rbt2,rebirth_trait_name_2,rebirth_trait_desc_2,50,1,1,8,0.2,0.2,2,res6000126
+rbt3,rebirth_trait_name_3,rebirth_trait_desc_3,20,2,2,2,10,10,1,res6000128
+rbt4,rebirth_trait_name_4,rebirth_trait_desc_4,10,3,5,33,1000,1000,1,res6000127
+rbt5,rebirth_trait_name_5,rebirth_trait_desc_5,10,3,5,34,0.06,0.06,2,res6000124
+rbt6,rebirth_trait_name_6,rebirth_trait_desc_6,2,5,10,35,1,1,1,res6000123

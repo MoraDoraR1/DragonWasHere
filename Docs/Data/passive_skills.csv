@@ -1,7 +1,0 @@
-skill,name_ko,motion_slot,unlocked_by_default,cooldown,damage_multiplier,hit_count,max_hit_count,hit_interval,duration,range,per_level_damage_bonus,per_level_extra,sub_upgrade,sub_upgrade_name_ko,sub_upgrade_values,sub_upgrade_param,notes,icon
-BodySlam,몸통 박치기,Body,true,0,1,1,1,0,0,0,0.5,0.05,Dash,돌진,1;2;3,5,충돌 중 공격 속도마다 1회. 레벨당 점프 확률 +5%(최대 30%). 돌진: 쿨타임 5초 앞쪽 건물 N개 관통 100%,slam
-FireBall,파이어 볼,Head,false,3,0.6,3,8,0.15,0,0,0.5,0,MoreFireBalls,개수 증가,4;5;6;7;8,0,정면에서 가까운 대상 순. 사거리는 화면 오른쪽 끝. 불덩이는 대상을 따라 휜다(유도),fireball
-FireBreath,파이어 브레스,Head,false,7,0.4,6,6,0.5,3,0.75,1,0,Burn,화상,0.1;0.2;0.3,0.1,부채꼴 커서 방향. 화상: 확률. 브레스 공격력의 10%를 1초마다 3초간. 갱신,breath
-Lightning,낙뢰,Head,false,9,1.5,3,8,0.1,0,0,0.5,1,ChainLightning,연쇄 번개,0.1;0.2;0.3,0.2,"화면 안 무작위 대상. 포효 0.5초 후 발사. 레벨당 번개 +1(최대 8), 그 뒤로는 레벨당 공격력 +50%. 연쇄: 확률. 양옆에 20%",thunder
-Shockwave,충격파,Body,false,10,1.5,1,1,0,0,1,0.5,0,ShockRange,충격 범위,1.5;2;2.5;3,0,드래곤 앞뒤 range unit 안의 모든 대상. 충격 범위: 범위(unit). 공격 건물 1초 기절. 화면 0.3초 흔들림,volcano
-Whirlwind,회전 회오리,Body,false,8,1.5,2,7,0.3,0,0.5,0.5,0,MoreSpins,회전 횟수 증가,3;4;5;6;7,0,앞뒤 range unit 안의 대상 각 1개. 이동 유지. 회전하는 동안 탄 패링,tailspin

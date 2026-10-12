@@ -1,0 +1,98 @@
+enum_type,value,name,desc
+growth_stage,1,해츨링,Hatchling
+growth_stage,2,청소년,Juvenile
+growth_stage,3,성체,Adult
+growth_stage,4,고룡,Ancient
+dragon_part_type,1,몸통,리소스 파일 body.png
+dragon_part_type,2,목,리소스 파일 neck.png
+dragon_part_type,3,윗머리,리소스 파일 up_head.png
+dragon_part_type,4,아랫머리,리소스 파일 down_head.png
+dragon_part_type,5,앞다리,리소스 파일 front_leg.png
+dragon_part_type,6,뒷다리,리소스 파일 back_leg.png
+dragon_part_type,7,날개,리소스 파일 wing.png
+dragon_part_type,8,꼬리,리소스 파일 tail.png
+side,0,공용,리소스 ID에서만 사용 (시대 공용 등)
+side,1,앞 테마,"x-1, x-2"
+side,2,뒤 테마,"x-3, x-4"
+stage_type,1,일반,
+stage_type,2,보스,x-4. 클리어 시 다음 시대
+building_type,1,일반 건물,공격 안 함
+building_type,2,공격 건물,
+building_type,3,랜드마크,짝수 스테이지에 1개
+building_type,4,황금 건물,"보너스 스테이지 전용, 공격 안 함. 그림은 같은 테마 일반 건물을 Unity에서 황금색으로 바꿔 표시"
+drop_source,1,일반 건물,
+drop_source,2,공격 건물,
+drop_source,3,랜드마크,
+drop_source,4,황금 건물,
+drop_source,5,공중 1번 유닛,
+drop_source,6,공중 2번 유닛,
+starter_grade,1,Great,
+starter_grade,2,Good,
+starter_grade,3,Fail,
+res_type,10,배경 원경,
+res_type,11,배경 중경,
+res_type,12,바닥(길),근경. 길과 바닥은 같은 리소스
+res_type,20,일반 건물,
+res_type,21,공격 건물,
+res_type,22,랜드마크,
+res_type,30,공중 유닛,
+res_type,40,드래곤 대표 이미지,시대 자리 = 성장 단계
+res_type,41,드래곤 파츠,시대 자리 = 성장 단계
+res_type,50,드랍 자원,
+res_type,60,UI,아이콘·버튼·게이지·판정 표시 등
+res_type,61,연출,"콤보 연출, 효과음 텍스트(BOOM 등)"
+res_type,70,BGM,배경 음악
+res_type,71,효과음,SFX
+res_type,80,VFX,스킬·피격·파괴 이펙트
+res_type,90,동영상,타이틀 배경 영상 등
+res_type,91,폰트,
+upgrade_category,1,공통,
+upgrade_category,2,체력·기력,
+upgrade_category,3,골드 수급,
+upgrade_category,4,캐릭터 스탯,
+upgrade_category,5,패시브 스킬,
+effect_type,1,모든 공격력 증가,배수 · 단위 증가율
+effect_type,2,최대 기력 증가,합산 · 단위 기력
+effect_type,3,파괴 시 기력 회복,합산 · 단위 기력
+effect_type,4,최대 체력 증가,배수 · 단위 증가율
+effect_type,5,초당 체력 회복,배수 · 단위 최대 체력 회복률/초
+effect_type,6,클리어 시 기력 회복,합산 · 단위 기력
+effect_type,7,낮은 기력 공격력 증가,배수 · 단위 증가율
+effect_type,8,골드 획득량 증가,배수 · 단위 증가율
+effect_type,9,황금 건물 등장 확률,합산 · 단위 확률
+effect_type,10,콤보 골드 보너스,배수 · 단위 보너스율
+effect_type,11,최대 콤보,합산 · 단위 회
+effect_type,12,클리어 골드 보너스,배수 · 단위 보너스율
+effect_type,13,이동 속도 증가,배수 · 단위 증가율
+effect_type,14,점프 성능 증가,배수 · 단위 증가율
+effect_type,15,비행 시간 증가,배수 · 단위 증가율
+effect_type,16,치명타 확률,합산 · 단위 확률
+effect_type,17,치명타 피해 배율,배수 · 단위 배율
+effect_type,18,브레스 피해 증가,배수 · 단위 증가율
+effect_type,19,화상 피해,배수 · 단위 공격력 대비 피해율/초
+effect_type,20,사거리 증가,배수 · 단위 증가율
+effect_type,21,파이어 볼 피해 배율,배수 · 단위 배율
+effect_type,22,동시 발사 수,합산 · 단위 발
+effect_type,23,충격파 피해 배율,배수 · 단위 배율
+effect_type,24,충격 범위,합산 · 단위 양옆 건물 수
+effect_type,25,몸통 박치기 피해 증가,배수 · 단위 증가율
+effect_type,26,돌진 주기,합산 · 단위 초
+effect_type,27,회전 회오리 피해 배율,배수 · 단위 배율
+effect_type,28,범위 증가,배수 · 단위 증가율
+effect_type,29,지속 시간 증가,합산 · 단위 초
+effect_type,30,낙뢰 피해 배율,배수 · 단위 배율
+effect_type,31,낙뢰 수,합산 · 단위 줄기
+effect_type,32,모든 공격 쿨다운 감소,배수 · 단위 감소율
+effect_type,33,환생 시작 골드,합산 · 단위 골드
+effect_type,34,업그레이드 비용 감소,배수 · 단위 감소율
+effect_type,35,공격 스킬 자동 해금,합산 · 단위 개 [임시]
+effect_type,36,피해 배율,배수 · 단위 배율
+effect_type,37,메테오 수,합산 · 단위 개
+effect_type,38,지속 시간,합산 · 단위 초
+value_op,1,합산,기본값에 수치를 더함
+value_op,2,배수,"곱연산. 단위가 증가율·감소율·보너스율이면 ×(1 ± 수치), 배율이면 ×수치"
+skill_target,1,대상별,메테오 1개당 건물 1개
+skill_target,2,충돌 범위,충돌 범위 건물 1~2개
+skill_target,3,화면 전체,화면 내 모든 건물
+activation_type,1,즉발,
+activation_type,2,지속,
