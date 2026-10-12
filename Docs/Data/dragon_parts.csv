@@ -1,0 +1,12 @@
+part,name_ko,layer_order,sprite,parent,pivot_x,pivot_y,attach_x,attach_y,mirror
+BackLeg,뒷다리,1,back_leg,Body,135,100,584,387,false
+Wing,날개,2,wing,Body,70,650,378,215,false
+Tail,꼬리,3,tail,Body,80,420,605,215,false
+FrontLeg,앞다리,4,front_leg,Body,170,100,250,357,false
+UpHead,윗머리,5,up_head,Neck,330,290,203,110,false
+DownHead,아랫머리,6,down_head,UpHead,285,35,290,357,false
+Neck,목,7,neck,Body,190,510,148,282,false
+Body,몸통,8,body,,0,0,0,0,false
+FrontLeg_B,앞다리_반대편,9,front_leg,Body,170,100,92,341,true
+BackLeg_B,뒷다리_반대편,10,back_leg,Body,135,100,422,375,true
+Wing_B,날개_반대편,11,wing,Body,70,650,217,225,true

@@ -1,0 +1,7 @@
+resource,name_ko,gold_value,debut_stage
+GoldCoin,금 코인,1,1-1
+GoldBar,금괴,5,1-1
+Sapphire,사파이어,25,1-4
+Ruby,루비,100,3-4
+Diamond,다이아몬드,500,5-4
+Crown,왕관,1000,7-4

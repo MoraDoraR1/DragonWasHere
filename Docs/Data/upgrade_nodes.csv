@@ -1,0 +1,27 @@
+node,name_ko,effect,target,effect_value,effect_mode,initial_level,initial_cost,cost_multiplier,max_level,prerequisites,available,tree_x,tree_y,description,icon
+DragonAwakening,용의 각성,AttackPower,,1.09,Multiply,0,10,1.15,0,,true,0,0,잠든 용의 힘을 깨워요. 공격력이 곱연산으로 강해져요.,upgrade-core
+StaminaBoost,기력 강화,MaxStamina,,10,Add,0,15,1.15,25,DragonAwakening,true,0,-1.3,기력 통이 커져서 더 오래 날뛸 수 있어요.,upgrade-stamina
+Devour,포식,StaminaOnDestroy,,1,Add,0,30,1.25,10,StaminaBoost,true,0,-2.6,건물을 부술 때마다 기력을 되찾아요.,upgrade-feast
+HpBoost,체력 강화,MaxHp,,1.1,Multiply,0,15,1.15,0,StaminaBoost,true,-1.15,-2.2,화살과 포탄을 버텨 내는 단단한 비늘이에요. 체력이 곱연산으로 늘어요.,upgrade-scales
+HpRegen,체력 회복,HpRegenPercent,,0.01,Add,0,40,1.25,10,HpBoost,true,-1.15,-3.5,날뛰는 동안 체력이 조금씩 차올라요.,upgrade-regen
+VictoryCry,승전보,StaminaOnClear,,5,Add,0,50,1.3,10,StaminaBoost,true,1.15,-2.2,스테이지를 통째로 부수면 기력을 되찾아요. 보너스 스테이지 진입에 유리해요.,upgrade-clearTime
+FierceDash,맹렬한 질주,MoveSpeed,,0.05,AddPercent,0,20,1.2,10,DragonAwakening,true,1.6,0,네 발로 더 빠르게 달려요.,upgrade-wings
+Weight,중량 강화,LandingDamage,,0.2,Add,0,40,1.3,10,FierceDash,true,2.75,-0.7,몸이 무거워져 점프 후 착지할 때 더 세게 내리찍어요.,upgrade-rage
+CritChance,치명타 확률,CritChance,,0.01,Add,0,30,1.2,20,FierceDash,true,2.75,0.7,가끔 엄청나게 아픈 한 방이 터져요.,upgrade-crit
+CritDamage,치명타 피해,CritMultiplier,,0.1,Add,0,50,1.2,0,CritChance,true,3.9,0.7,치명타가 더 세져요.,upgrade-critDmg
+Greed,탐욕,GoldBonus,,0.1,Add,0,20,1.18,0,DragonAwakening,true,-1.6,0,반짝이는 건 전부 내 거야! 얻는 골드가 늘어요.,upgrade-greed
+Appraisal,감별안,GoldenChance,,0.01,Add,0,60,1.25,10,Greed,true,-2.75,-0.7,건물이 황금으로 바뀌어 나타날 확률이 올라요. 황금 건물은 골드 3배!,upgrade-loot
+ChainDestruction,연쇄 파괴,ChainGoldBonus,,0.02,Add,0,60,1.25,10,Greed,true,-2.75,0.7,3초 안에 연달아 부수면 콤보가 쌓여 골드가 늘어요.,upgrade-combo
+TreasurePile,보물 더미,ClearGoldBonus,,0.05,Add,0,100,1.3,10,Appraisal;ChainDestruction,true,-3.9,0,스테이지를 통째로 부수면 번 골드에 보너스가 붙어요.,upgrade-hoard
+Skill_BodySlam,몸통 박치기,SkillLevel,BodySlam,1,Add,1,50,1.2,0,DragonAwakening,true,1.15,1.45,"들이받아 부숴요. 레벨마다 공격력 +50%, 점프 확률 +5%.",upgrade-slamPow
+Skill_Whirlwind,회전 회오리,SkillLevel,Whirlwind,1,Add,0,200,1.2,0,Skill_BodySlam,true,1.15,2.75,"꼬리를 휘둘러 앞뒤를 쓸고, 도는 동안 날아오는 탄을 튕겨 내요.",upgrade-tailspin
+Skill_Shockwave,충격파,SkillLevel,Shockwave,1,Add,0,800,1.2,0,Skill_Whirlwind,true,1.15,4.05,꼬리로 땅을 내리쳐 주변을 한꺼번에 부수고 공격 건물을 기절시켜요.,upgrade-apocalypse
+Skill_FireBreath,파이어 브레스,SkillLevel,FireBreath,1,Add,0,50,1.2,0,DragonAwakening,true,-1.15,1.45,부채꼴로 불을 뿜어 앞을 불바다로 만들어요.,upgrade-breathPow
+Skill_FireBall,파이어 볼,SkillLevel,FireBall,1,Add,0,200,1.2,0,Skill_FireBreath,true,-1.15,2.75,불덩이를 연달아 날려요. 불덩이는 목표를 따라 휘어 날아가요.,upgrade-fireball
+Skill_Lightning,낙뢰,SkillLevel,Lightning,1,Add,0,800,1.2,0,Skill_FireBall,true,-1.15,4.05,포효와 함께 화면 곳곳에 번개를 떨어뜨려요.,upgrade-thunder
+Sub_Dash,돌진,SubUpgradeLevel,BodySlam,1,Add,0,100,1.5,3,Skill_BodySlam,true,2.4,2.1,앞쪽 건물 여러 채를 관통해 돌진해요.,upgrade-charge
+Sub_MoreSpins,회전 횟수 증가,SubUpgradeLevel,Whirlwind,1,Add,0,400,1.5,5,Skill_Whirlwind,true,2.4,3.4,회전 횟수가 늘어나요. 탄을 튕겨 내는 시간도 길어져요.,upgrade-tailspinSize
+Sub_ShockRange,충격 범위,SubUpgradeLevel,Shockwave,1,Add,0,1600,1.5,4,Skill_Shockwave,true,2.4,4.7,충격파가 양옆으로 더 멀리 퍼져요.,upgrade-apocalypse
+Sub_Burn,화상,SubUpgradeLevel,FireBreath,1,Add,0,100,1.5,3,Skill_FireBreath,true,-2.4,2.1,브레스에 닿은 대상이 불타며 피해를 입어요.,upgrade-burn
+Sub_MoreFireBalls,개수 증가,SubUpgradeLevel,FireBall,1,Add,0,400,1.5,5,Skill_FireBall,true,-2.4,3.4,불덩이를 한 번에 더 많이 날려요.,upgrade-fireballCount
+Sub_ChainLightning,연쇄 번개,SubUpgradeLevel,Lightning,1,Add,0,1600,1.5,3,Skill_Lightning,true,-2.4,4.7,번개가 양옆 대상으로 번져요.,upgrade-thunderCount

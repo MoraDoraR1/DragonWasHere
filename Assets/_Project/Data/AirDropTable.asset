@@ -1,0 +1,631 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ec3187c8398b354baa181adcb37115e, type: 3}
+  m_Name: AirDropTable
+  m_EditorClassIdentifier: DWH.Runtime::DWH.Data.AirDropTable
+  rows:
+  - stageId: 1-1
+    targetGold: 12
+    targetCount: 8
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 1
+    goldCoin: 7
+    totalGold: 12
+    slot: 1
+  - stageId: 1-2
+    targetGold: 15
+    targetCount: 8
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 2
+    goldCoin: 6
+    totalGold: 16
+    slot: 1
+  - stageId: 1-3
+    targetGold: 18
+    targetCount: 8
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 3
+    goldCoin: 5
+    totalGold: 20
+    slot: 1
+  - stageId: 1-4
+    targetGold: 23
+    targetCount: 8
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 4
+    goldCoin: 4
+    totalGold: 24
+    slot: 1
+  - stageId: 2-1
+    targetGold: 27
+    targetCount: 9
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 5
+    goldCoin: 4
+    totalGold: 29
+    slot: 1
+  - stageId: 2-2
+    targetGold: 35
+    targetCount: 9
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 7
+    goldCoin: 2
+    totalGold: 37
+    slot: 1
+  - stageId: 2-3
+    targetGold: 42
+    targetCount: 10
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 8
+    goldCoin: 2
+    totalGold: 42
+    slot: 1
+  - stageId: 2-4
+    targetGold: 52
+    targetCount: 10
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 10
+    goldCoin: 0
+    totalGold: 50
+    slot: 1
+  - stageId: 3-1
+    targetGold: 63
+    targetCount: 11
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 11
+    goldCoin: 0
+    totalGold: 55
+    slot: 1
+  - stageId: 3-2
+    targetGold: 78
+    targetCount: 11
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 1
+    goldBar: 10
+    goldCoin: 0
+    totalGold: 75
+    slot: 1
+  - stageId: 3-3
+    targetGold: 95
+    targetCount: 11
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 2
+    goldBar: 9
+    goldCoin: 0
+    totalGold: 95
+    slot: 1
+  - stageId: 3-4
+    targetGold: 118
+    targetCount: 11
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 3
+    goldBar: 8
+    goldCoin: 0
+    totalGold: 115
+    slot: 1
+  - stageId: 4-1
+    targetGold: 142
+    targetCount: 12
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 4
+    goldBar: 8
+    goldCoin: 0
+    totalGold: 140
+    slot: 1
+  - stageId: 4-2
+    targetGold: 178
+    targetCount: 13
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 6
+    goldBar: 7
+    goldCoin: 0
+    totalGold: 185
+    slot: 1
+  - stageId: 4-3
+    targetGold: 213
+    targetCount: 13
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 7
+    goldBar: 6
+    goldCoin: 0
+    totalGold: 205
+    slot: 1
+  - stageId: 4-4
+    targetGold: 267
+    targetCount: 13
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 10
+    goldBar: 3
+    goldCoin: 0
+    totalGold: 265
+    slot: 1
+  - stageId: 5-1
+    targetGold: 320
+    targetCount: 14
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 13
+    goldBar: 1
+    goldCoin: 0
+    totalGold: 330
+    slot: 1
+  - stageId: 5-2
+    targetGold: 403
+    targetCount: 15
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 15
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 375
+    slot: 1
+  - stageId: 5-3
+    targetGold: 486
+    targetCount: 15
+    crown: 0
+    diamond: 0
+    ruby: 1
+    sapphire: 14
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 450
+    slot: 1
+  - stageId: 5-4
+    targetGold: 604
+    targetCount: 15
+    crown: 0
+    diamond: 0
+    ruby: 3
+    sapphire: 12
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 600
+    slot: 1
+  - stageId: 6-1
+    targetGold: 735
+    targetCount: 17
+    crown: 0
+    diamond: 0
+    ruby: 4
+    sapphire: 13
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 725
+    slot: 1
+  - stageId: 6-2
+    targetGold: 912
+    targetCount: 17
+    crown: 0
+    diamond: 0
+    ruby: 6
+    sapphire: 11
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 875
+    slot: 1
+  - stageId: 6-3
+    targetGold: 1102
+    targetCount: 17
+    crown: 0
+    diamond: 0
+    ruby: 9
+    sapphire: 8
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1100
+    slot: 1
+  - stageId: 6-4
+    targetGold: 1375
+    targetCount: 18
+    crown: 0
+    diamond: 0
+    ruby: 12
+    sapphire: 6
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1350
+    slot: 1
+  - stageId: 7-1
+    targetGold: 1659
+    targetCount: 19
+    crown: 0
+    diamond: 0
+    ruby: 16
+    sapphire: 3
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1675
+    slot: 1
+  - stageId: 7-2
+    targetGold: 2073
+    targetCount: 20
+    crown: 0
+    diamond: 0
+    ruby: 20
+    sapphire: 0
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 2000
+    slot: 1
+  - stageId: 7-3
+    targetGold: 2488
+    targetCount: 20
+    crown: 0
+    diamond: 1
+    ruby: 19
+    sapphire: 0
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 2400
+    slot: 1
+  - stageId: 7-4
+    targetGold: 3080
+    targetCount: 20
+    crown: 0
+    diamond: 3
+    ruby: 17
+    sapphire: 0
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 3200
+    slot: 1
+  - stageId: 1-1
+    targetGold: 14
+    targetCount: 10
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 1
+    goldCoin: 9
+    totalGold: 14
+    slot: 2
+  - stageId: 1-2
+    targetGold: 18
+    targetCount: 10
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 2
+    goldCoin: 8
+    totalGold: 18
+    slot: 2
+  - stageId: 1-3
+    targetGold: 21
+    targetCount: 10
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 3
+    goldCoin: 7
+    totalGold: 22
+    slot: 2
+  - stageId: 1-4
+    targetGold: 26
+    targetCount: 11
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 4
+    goldCoin: 7
+    totalGold: 27
+    slot: 2
+  - stageId: 2-1
+    targetGold: 32
+    targetCount: 12
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 5
+    goldCoin: 7
+    totalGold: 32
+    slot: 2
+  - stageId: 2-2
+    targetGold: 40
+    targetCount: 12
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 7
+    goldCoin: 5
+    totalGold: 40
+    slot: 2
+  - stageId: 2-3
+    targetGold: 48
+    targetCount: 12
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 9
+    goldCoin: 3
+    totalGold: 48
+    slot: 2
+  - stageId: 2-4
+    targetGold: 61
+    targetCount: 12
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 12
+    goldCoin: 0
+    totalGold: 60
+    slot: 2
+  - stageId: 3-1
+    targetGold: 74
+    targetCount: 13
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 0
+    goldBar: 13
+    goldCoin: 0
+    totalGold: 65
+    slot: 2
+  - stageId: 3-2
+    targetGold: 91
+    targetCount: 14
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 1
+    goldBar: 13
+    goldCoin: 0
+    totalGold: 90
+    slot: 2
+  - stageId: 3-3
+    targetGold: 111
+    targetCount: 14
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 2
+    goldBar: 12
+    goldCoin: 0
+    totalGold: 110
+    slot: 2
+  - stageId: 3-4
+    targetGold: 138
+    targetCount: 14
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 3
+    goldBar: 11
+    goldCoin: 0
+    totalGold: 130
+    slot: 2
+  - stageId: 4-1
+    targetGold: 165
+    targetCount: 16
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 4
+    goldBar: 12
+    goldCoin: 0
+    totalGold: 160
+    slot: 2
+  - stageId: 4-2
+    targetGold: 206
+    targetCount: 16
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 6
+    goldBar: 10
+    goldCoin: 0
+    totalGold: 200
+    slot: 2
+  - stageId: 4-3
+    targetGold: 248
+    targetCount: 16
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 8
+    goldBar: 8
+    goldCoin: 0
+    totalGold: 240
+    slot: 2
+  - stageId: 4-4
+    targetGold: 309
+    targetCount: 16
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 11
+    goldBar: 5
+    goldCoin: 0
+    totalGold: 300
+    slot: 2
+  - stageId: 5-1
+    targetGold: 371
+    targetCount: 18
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 14
+    goldBar: 4
+    goldCoin: 0
+    totalGold: 370
+    slot: 2
+  - stageId: 5-2
+    targetGold: 467
+    targetCount: 18
+    crown: 0
+    diamond: 0
+    ruby: 0
+    sapphire: 18
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 450
+    slot: 2
+  - stageId: 5-3
+    targetGold: 564
+    targetCount: 19
+    crown: 0
+    diamond: 0
+    ruby: 1
+    sapphire: 18
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 550
+    slot: 2
+  - stageId: 5-4
+    targetGold: 702
+    targetCount: 19
+    crown: 0
+    diamond: 0
+    ruby: 3
+    sapphire: 16
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 700
+    slot: 2
+  - stageId: 6-1
+    targetGold: 852
+    targetCount: 21
+    crown: 0
+    diamond: 0
+    ruby: 4
+    sapphire: 17
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 825
+    slot: 2
+  - stageId: 6-2
+    targetGold: 1059
+    targetCount: 21
+    crown: 0
+    diamond: 0
+    ruby: 7
+    sapphire: 14
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1050
+    slot: 2
+  - stageId: 6-3
+    targetGold: 1279
+    targetCount: 22
+    crown: 0
+    diamond: 0
+    ruby: 10
+    sapphire: 12
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1300
+    slot: 2
+  - stageId: 6-4
+    targetGold: 1596
+    targetCount: 22
+    crown: 0
+    diamond: 0
+    ruby: 14
+    sapphire: 8
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1600
+    slot: 2
+  - stageId: 7-1
+    targetGold: 1925
+    targetCount: 24
+    crown: 0
+    diamond: 0
+    ruby: 18
+    sapphire: 6
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 1950
+    slot: 2
+  - stageId: 7-2
+    targetGold: 2407
+    targetCount: 25
+    crown: 0
+    diamond: 0
+    ruby: 24
+    sapphire: 1
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 2425
+    slot: 2
+  - stageId: 7-3
+    targetGold: 2888
+    targetCount: 25
+    crown: 0
+    diamond: 1
+    ruby: 24
+    sapphire: 0
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 2900
+    slot: 2
+  - stageId: 7-4
+    targetGold: 3576
+    targetCount: 26
+    crown: 0
+    diamond: 2
+    ruby: 24
+    sapphire: 0
+    goldBar: 0
+    goldCoin: 0
+    totalGold: 3400
+    slot: 2

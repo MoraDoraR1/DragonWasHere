@@ -1,0 +1,7 @@
+trait,name_ko,effect,effect_value,effect_growth,first_cost,cost_step,max_level,description,icon
+PrimalFury,태고의 분노,AttackPercent,0.05,0,1,1,50,모든 공격력이 영구히 레벨당 5% 오른다,upgrade-p_dmg
+GoldenBlood,황금 혈통,GoldPercent,0.1,0,1,1,50,골드 획득량이 영구히 레벨당 10% 오른다,upgrade-p_gold
+EternalHeart,영원의 심장,MaxStamina,5,0,2,2,20,최대 기력이 영구히 레벨당 5 오른다,upgrade-p_time
+ElderLegacy,고룡의 유산,StartGold,50,3,3,5,10,환생 직후 골드를 받고 시작한다 (50 × 3^(레벨-1)),upgrade-p_start
+DragonWisdom,용의 지혜,UpgradeDiscount,0.03,0,3,5,10,업그레이드 트리 비용이 레벨당 3% 싸진다,upgrade-p_cost
+AutoAwakening,자동 각성,AutoUnlockSkills,1,0,5,10,2,환생 직후 패시브 스킬이 해금된 채 시작한다,upgrade-p_auto

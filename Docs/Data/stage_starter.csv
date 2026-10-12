@@ -1,0 +1,4 @@
+grade,name_ko,damage_multiplier,side_count
+Great,Great,2,5
+Good,Good,1.3,2
+Fail,Fail,0,0

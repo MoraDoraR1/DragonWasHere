@@ -1,0 +1,313 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172ffa67d4a50af48b300e2d55525b95, type: 3}
+  m_Name: ArtCatalog
+  m_EditorClassIdentifier: DWH.Runtime::DWH.InGame.ArtCatalog
+  themes:
+  - normal:
+    - {fileID: 21300000, guid: 80f92fe2cae6e2a4f860094528ee8eb1, type: 3}
+    - {fileID: 21300000, guid: 884d2bf6ba928b94caa73ba8c5768e58, type: 3}
+    - {fileID: 21300000, guid: 886815c8c4a322b43a2dcce167109f03, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 033ca2cea65551e479048844c4354e1c, type: 3}
+    - {fileID: 21300000, guid: b3bd3c81252a7404d890dcdede295134, type: 3}
+    golden:
+    - {fileID: 21300000, guid: dd4b3a61f6dfbe14ab1bb5930d425c34, type: 3}
+    - {fileID: 21300000, guid: 8edc5085750c3cc45b85720733ce87bf, type: 3}
+    - {fileID: 21300000, guid: 6f3957c292de0b44f83e1616e1596730, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: e6c961945d56e6b4eb63effe43338205, type: 3}
+    - {fileID: 21300000, guid: 1c2de92571c2df64cb056fc53b8f9bae, type: 3}
+    landmark: {fileID: 21300000, guid: abb808edac709344480072e0ef4f8fa0, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 984063e25fa73c24b9c5dc0247169596, type: 3}
+    - {fileID: 21300000, guid: c6d303a501697234db1a5c3655d81c24, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: b39326e27f92ad642866362d258f9d46, type: 3}
+    - {fileID: 21300000, guid: 6f414022273403049a18dc38e2ec912f, type: 3}
+    - {fileID: 21300000, guid: 77451e9cb828db5468cd7a666bd43d7b, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 3c1969557f611e342a85ca091fea097f, type: 3}
+    - {fileID: 21300000, guid: 7109a3bbd76d15b4bbc9332b4020d560, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 0fd2a70f0d080544fb9c647e30de60b5, type: 3}
+    - {fileID: 21300000, guid: 461f9c6ecef0bea449131bc112304981, type: 3}
+    - {fileID: 21300000, guid: 4ce3201d65eb92a40ae1fd2084d86a5d, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: a5a491a80486a774d8923d246810cb78, type: 3}
+    - {fileID: 21300000, guid: a97d37efd7dd12246b1e719a6dfea3b7, type: 3}
+    landmark: {fileID: 21300000, guid: 863bc128b3525b44f8ca6ffba0300c84, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 8bd24cd8ed5fe884099363318249545e, type: 3}
+    - {fileID: 21300000, guid: c63023c43fee32f4794be0c960691cd6, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: db5f245401b7f0040a15f0b5b6240e3d, type: 3}
+    - {fileID: 21300000, guid: 47edac6a09d864f4cae7ad5dc64a9919, type: 3}
+    - {fileID: 21300000, guid: 79d71e69489f520479d4ba341492de74, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 754766ce62f9df747a46d13be0b12ace, type: 3}
+    - {fileID: 21300000, guid: 4f0166702b842564d84890117c283c6a, type: 3}
+    golden:
+    - {fileID: 21300000, guid: fca231704351a9c409d7511f59063acd, type: 3}
+    - {fileID: 21300000, guid: 98e903c18b7e5d44486f220e8bad1ee5, type: 3}
+    - {fileID: 21300000, guid: 121ef85a2789b64428ea05e737df69a0, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: b366358b125ef604ca82491cf2040380, type: 3}
+    - {fileID: 21300000, guid: 107d2acda2d264542804c166deed7255, type: 3}
+    landmark: {fileID: 21300000, guid: ab7d3c1c7d712b046a705f8e6ada4b41, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: effaf5bc5e3e41c4789b222ec14d927f, type: 3}
+    - {fileID: 21300000, guid: 4452a4df8ec75814492e00b8d1ef6dcc, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 87057e6c861d58c47984a26cf4ee5c76, type: 3}
+    - {fileID: 21300000, guid: c1452f2f3bf11ea4aa667bb4134dcb67, type: 3}
+    - {fileID: 21300000, guid: c2fbfdf334f5e9c45a8d17f09f43b64f, type: 3}
+    attack:
+    - {fileID: 21300000, guid: f537256da7f0d6347afcc640b94b22de, type: 3}
+    - {fileID: 21300000, guid: 600c1c8698e5f404484f144b1444c681, type: 3}
+    golden:
+    - {fileID: 21300000, guid: edc67b1c96e4c7e46a456553303c81c3, type: 3}
+    - {fileID: 21300000, guid: 8f51c63f9c7099342b991ec0081c3c1d, type: 3}
+    - {fileID: 21300000, guid: 2063a32a3b58f7142be722c5664817fc, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: 8a846681c1878ac46842bb674205e112, type: 3}
+    - {fileID: 21300000, guid: 42cb522e888513a49a7c7231c7ff2067, type: 3}
+    landmark: {fileID: 21300000, guid: 0f73226c7a01f6942ba639134ae25c36, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 3a3f0b339b3cbb34898ddd6b2fdd626d, type: 3}
+    - {fileID: 21300000, guid: 27e3636fa518f5d4896192755f8b99a4, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 89d4d52d3f924ea4f8c99871b55ea351, type: 3}
+    - {fileID: 21300000, guid: 11c80355a5375e548b123ea6a9a1d2f2, type: 3}
+    - {fileID: 21300000, guid: e337ca6f172c62d499cea85cfca130c2, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 67133d0678c5bff47a58f3f49a850613, type: 3}
+    - {fileID: 21300000, guid: 7ef452815ae90b54eb1c25afc5709926, type: 3}
+    golden:
+    - {fileID: 21300000, guid: a09812cb36a464542b21b01033ff8af3, type: 3}
+    - {fileID: 21300000, guid: 372a1a91138773841904e463b09d4764, type: 3}
+    - {fileID: 21300000, guid: dbeeec2555fff734fa4a0fbae664d815, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: 34ba912e76973484c926c81add94108e, type: 3}
+    - {fileID: 21300000, guid: 6b81dbf6978b04b4498142b660a8271c, type: 3}
+    landmark: {fileID: 21300000, guid: 84be1894af8e836469bac2fe1f40d4ba, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: bea8b1f69108827408ac996dada4417b, type: 3}
+    - {fileID: 21300000, guid: 95a77c55b1aa21c4bb1cfb7d6411e100, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 142edf72ba63c7f4bb11de3263935c5e, type: 3}
+    - {fileID: 21300000, guid: dddb615f74b20494b9acc68243fcf645, type: 3}
+    - {fileID: 21300000, guid: 42cc2f7cf0ed54a45938650aa785c21d, type: 3}
+    attack:
+    - {fileID: 21300000, guid: f307416f8ec02464b9106c690143e9e5, type: 3}
+    - {fileID: 21300000, guid: 272ffa455ab07be45b441f7e42b204fe, type: 3}
+    golden:
+    - {fileID: 21300000, guid: c7ddcc34d0b6a264eae327202ddb2790, type: 3}
+    - {fileID: 21300000, guid: ae2c0be2e3c543d4e9759114339a5a67, type: 3}
+    - {fileID: 21300000, guid: 3ea65ba4538abda47b240f015d1cfd03, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: 73aa5149e8966fe44b2c05f2e5fc3d8a, type: 3}
+    - {fileID: 21300000, guid: 5d41b40443b22924a9384c173ced71ac, type: 3}
+    landmark: {fileID: 21300000, guid: d2a6db0fba79f60458f89c4fbe2e1975, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: d070573e45f0e6f4ab333a322e5ff3ce, type: 3}
+    - {fileID: 21300000, guid: 7df6bfb2bf002254c8915f7f178e60fe, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 2f306aca8d6c39548a37c9daff3a0bb2, type: 3}
+    - {fileID: 21300000, guid: 400fb1c19f666c44f9ed418967a81a19, type: 3}
+    - {fileID: 21300000, guid: 251da053fd8e0184ab0f7331cc931c28, type: 3}
+    attack:
+    - {fileID: 21300000, guid: e5448bc0de5da664eba1b756349ab108, type: 3}
+    - {fileID: 21300000, guid: ccaa1a146e9a5be42bde5f14f278ff88, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 343b916122cf02f4aa00f6daa6471401, type: 3}
+    - {fileID: 21300000, guid: 78e2ad08e12b3ca4899f27024c214958, type: 3}
+    - {fileID: 21300000, guid: 0a32c9a5761f82f4b9fdae5fceced3f2, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: 7421874e3bbcbd84fa79df4d63058107, type: 3}
+    - {fileID: 21300000, guid: 80ba7c3ad6caf9f42bde7e0f775584c0, type: 3}
+    landmark: {fileID: 21300000, guid: 2b40f1eec462f4644a765772350ff8c1, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 19f9153d1c0281440a426507f5d90b2d, type: 3}
+    - {fileID: 21300000, guid: 85ad99c0094d3d545a676ee6840fcd98, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 9ff91ace1b1168544b969a269a2427cc, type: 3}
+    - {fileID: 21300000, guid: 2019b3ff3cdf0154fb9bd7bd0260329f, type: 3}
+    - {fileID: 21300000, guid: 0a41ef1a645316249b23f68199e76196, type: 3}
+    attack:
+    - {fileID: 21300000, guid: c6243fbf096f8504e9969d7f8bf9404f, type: 3}
+    - {fileID: 21300000, guid: fef4dd11cd5218d44bcf8596cd6f4113, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 916982d408e10324eb7eb62b42af11ea, type: 3}
+    - {fileID: 21300000, guid: 1d09b36cd6d5d69418d77d020bcb1fad, type: 3}
+    - {fileID: 21300000, guid: 9ce763806aa7ab646b51353e9cc52729, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: d5790baa0dcc1cd4bafd9dad2f499416, type: 3}
+    - {fileID: 21300000, guid: e8bebe86849ffa545a32b71052ffd91f, type: 3}
+    landmark: {fileID: 21300000, guid: 3b9e5b68e00b37c43a4e5172b3f3f021, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 8e3bb69a9c646724eb6c1e7b53cb325d, type: 3}
+    - {fileID: 21300000, guid: 07ca402ed4504fd4ca97036ad0ece866, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: aa5cd59aea6625f4e9b7328f0eda2401, type: 3}
+    - {fileID: 21300000, guid: 066535851bc3f1a4e8a1040124e3daad, type: 3}
+    - {fileID: 21300000, guid: 0fd2708d80e947140a1fe9f067f52d2b, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 29f588c08d8295f4f92319bf559a83d1, type: 3}
+    - {fileID: 21300000, guid: eef861a53b8ab09428ff7c898765845b, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 92a6ee06b56d51546a008bdab5ff83bd, type: 3}
+    - {fileID: 21300000, guid: fd6f43e3097b76646b432ce137f5ad56, type: 3}
+    - {fileID: 21300000, guid: 4744eb4247723cb4eb3c843af5aa8585, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: af34158ed505f4c43a4fe2d53ffb3729, type: 3}
+    - {fileID: 21300000, guid: c786a4385ba39f04486cffc4953c9fba, type: 3}
+    landmark: {fileID: 21300000, guid: 1b0c0dea7b8d4ec4199194b6d06c3457, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 629581f81eb5a2f4a81fa6f97741d951, type: 3}
+    - {fileID: 21300000, guid: 83deb14ca4e6a834e9ac16a026da1900, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 60d27c9857dce184a9fe27ef88f92055, type: 3}
+    - {fileID: 21300000, guid: 0a46fe06bf69d3b409e3616d279baef6, type: 3}
+    - {fileID: 21300000, guid: 3435eb8dc086cac4ca2ab69ad874c4d2, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 7103edbe590789644b0c3f4f2d8cdf75, type: 3}
+    - {fileID: 21300000, guid: 6d256c375e0b6a94eb4825312a09d6d8, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 1169c67d7b13fa54c8ded886e116d3f7, type: 3}
+    - {fileID: 21300000, guid: 62df80a76a49cef4a83a904507cf30b2, type: 3}
+    - {fileID: 21300000, guid: d57032620303aa74ca8a0b2c020d4d17, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: f1eb610a871d06b4199650c1602ab869, type: 3}
+    - {fileID: 21300000, guid: 701350a6e2114a5488dbc140732469ed, type: 3}
+    landmark: {fileID: 21300000, guid: 2aa089c9ccfcdb14dacf3d2884c4e81f, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 4371eebd2ce6cd94f9533a9e2927c521, type: 3}
+    - {fileID: 21300000, guid: 117db6784fb112c49b7f00972070b1d0, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 523ed5117a03a6e4ebbb06b2215c3e93, type: 3}
+    - {fileID: 21300000, guid: c612f47c4fc20414c8b641dfb4c88c79, type: 3}
+    - {fileID: 21300000, guid: d7d9f7599fb62544aaf1b9a00d07474a, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 490d562cbdfb9f84bb662e8bda782bea, type: 3}
+    - {fileID: 21300000, guid: 0603b3f18b3842b43b46e748d611395d, type: 3}
+    golden:
+    - {fileID: 21300000, guid: cdea9fe522820c34d857eac6d4b010c7, type: 3}
+    - {fileID: 21300000, guid: 90eeb59e32c30d8478b6452944447cbd, type: 3}
+    - {fileID: 21300000, guid: 9ec7693ed395d7f45a1aa31cbca232d3, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: d96c2fe1247956440884fb915f588c40, type: 3}
+    - {fileID: 21300000, guid: ebe8e2d88f687e34f850a52056092e0c, type: 3}
+    landmark: {fileID: 21300000, guid: 7e1c39b8ec9887f42adf60c8610770d2, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: e5292779adf130e46b3f3343ebf86b38, type: 3}
+    - {fileID: 21300000, guid: 88a20e67facc6864781c8733d2857343, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 8234bb0bc47a12f47baffea247d5be15, type: 3}
+    - {fileID: 21300000, guid: 86cc8d260fddcb444a5c9451f5b4ccca, type: 3}
+    - {fileID: 21300000, guid: eca80915b80079e43a0ebec78d14e4b4, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 310b65b92487e78488cb0dd3aa81db76, type: 3}
+    - {fileID: 21300000, guid: 112d9aae32838bd40ae6770c8ce3ed1e, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 3efce94a2a6c3b046adc2e898a04e9be, type: 3}
+    - {fileID: 21300000, guid: e75a6b363a1f7b341a75e0c7fc1f57e0, type: 3}
+    - {fileID: 21300000, guid: 1d7df205093889e4ebf034e61badadac, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: 9cb5e4424b1b50c4ca1c9b8f34fa6dd6, type: 3}
+    - {fileID: 21300000, guid: 6e4aab84eff658c48a21456b14bac772, type: 3}
+    landmark: {fileID: 21300000, guid: 4a699abe8df708740b0139deda71d516, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: fd7d7eacc72980647ad50e726eaa91b1, type: 3}
+    - {fileID: 21300000, guid: 289276dd0e3852f40911301eb4becd19, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: bf517a341b3f4b6409388e8b90f12b74, type: 3}
+    - {fileID: 21300000, guid: af8ce88737c9aee4f9aeee484382329c, type: 3}
+    - {fileID: 21300000, guid: 1234ef665f2ccff45aee5e67f46c4f9a, type: 3}
+    attack:
+    - {fileID: 21300000, guid: 5230718cc3324594a879965fcf9b552e, type: 3}
+    - {fileID: 21300000, guid: 5fb64faaa9caaa047910ea31f4e382a1, type: 3}
+    golden:
+    - {fileID: 21300000, guid: d9f255b1e4b95b8489fb6f2fa64578f2, type: 3}
+    - {fileID: 21300000, guid: 248200cb29dbe184bb2ce22473f7cb7f, type: 3}
+    - {fileID: 21300000, guid: 2043aeab61073f04eab75a3d7d075ac8, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: 74ba55600f6c6b349a3717202515b30c, type: 3}
+    - {fileID: 21300000, guid: 9243fbbbd5e521240b001a3d0768d640, type: 3}
+    landmark: {fileID: 21300000, guid: ee7a7175b64c4854cae7cd56803cf9b1, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: 6d9533798406c604684b56cc68096ecb, type: 3}
+    - {fileID: 21300000, guid: 5069ece0fa977c742bf64ae1135b9d64, type: 3}
+  - normal:
+    - {fileID: 21300000, guid: 5e6fc3244568ad443a6c29c13360572f, type: 3}
+    - {fileID: 21300000, guid: 1ee22160f8d8791459e0df59ba73533d, type: 3}
+    - {fileID: 21300000, guid: 8640c4f8d8799b447b3784433aee501a, type: 3}
+    attack:
+    - {fileID: 21300000, guid: a5b8a6ffc39f304449df5ff5fbf29447, type: 3}
+    - {fileID: 21300000, guid: fd0a8bd3a1cd58b47a445720a5f79603, type: 3}
+    golden:
+    - {fileID: 21300000, guid: 831ba0e0302bb654c872f26f0ea612b2, type: 3}
+    - {fileID: 21300000, guid: b99a6c83d07eb744a97651acbb7fff49, type: 3}
+    - {fileID: 21300000, guid: e201539fbe6278949bb22677fb9bb78f, type: 3}
+    goldenAttack:
+    - {fileID: 21300000, guid: e4a60aedd8412f24db3af9351c314764, type: 3}
+    - {fileID: 21300000, guid: 8038f3d5b57430a4da66783b23d1dc20, type: 3}
+    landmark: {fileID: 21300000, guid: 0d502fa6388840f4ab213c2914fe1275, type: 3}
+    airUnits:
+    - {fileID: 21300000, guid: a6f9d5f061cd1dd4aafbb8c38870cc72, type: 3}
+    - {fileID: 21300000, guid: a46ef591052441c4fabec955b8a034d1, type: 3}
+  eras:
+  - far: {fileID: 21300000, guid: ce42850512fea08499f2c7a0c528bd96, type: 3}
+    mid: {fileID: 21300000, guid: 7a10c1cf338b59048808e85bb0087a71, type: 3}
+    ground: {fileID: 21300000, guid: e196f76057746b241a350549494f17e0, type: 3}
+  - far: {fileID: 21300000, guid: 015b4b8f0049b9f48ab9ff27d9b481b5, type: 3}
+    mid: {fileID: 21300000, guid: b3ea024573da3de49bb193b9fffa2322, type: 3}
+    ground: {fileID: 21300000, guid: 3e8c557af36cd694eba43e460268ee9e, type: 3}
+  - far: {fileID: 21300000, guid: 305a4a01de9ce764692516201676f82f, type: 3}
+    mid: {fileID: 21300000, guid: 9ffc26616244f2e459f2bb5499ad960c, type: 3}
+    ground: {fileID: 21300000, guid: c6da0b87e37cebc4dacf96959e97fccc, type: 3}
+  - far: {fileID: 21300000, guid: c47e64f8ef6461f4a836cbe9c6a011f8, type: 3}
+    mid: {fileID: 21300000, guid: 993bfbd44077b1c4889dda6f269f545f, type: 3}
+    ground: {fileID: 21300000, guid: 60391d37f8f7bf24aa4caf35ddc23732, type: 3}
+  - far: {fileID: 21300000, guid: 478c007d32eb7bd44b6f9ebe34d5491d, type: 3}
+    mid: {fileID: 21300000, guid: 513ee4edc3314db40b7c712315c471c0, type: 3}
+    ground: {fileID: 21300000, guid: 4f7b6933f936ba146b370b03c0a06b17, type: 3}
+  - far: {fileID: 21300000, guid: 074c8816e724d5546ab8731939923e49, type: 3}
+    mid: {fileID: 21300000, guid: 8bc92e0a891405e4da4d7402e3b7fbf6, type: 3}
+    ground: {fileID: 21300000, guid: 73bafecf30c0e564ea784ac792f5f300, type: 3}
+  - far: {fileID: 21300000, guid: 680ffe0e976a7974981759c0cb6bdd9c, type: 3}
+    mid: {fileID: 21300000, guid: b398d308c6cd1a14584244e023918bb8, type: 3}
+    ground: {fileID: 21300000, guid: 65c2855aa7f24f044909752a2dd04f45, type: 3}
+  dragonParts:
+  - name: back_leg
+    sprite: {fileID: 21300000, guid: 22e2b860160d4d94ba9a344734977fc2, type: 3}
+  - name: body
+    sprite: {fileID: 21300000, guid: 0aa979d26e0fcbd4bad2b59954bab64c, type: 3}
+  - name: down_head
+    sprite: {fileID: 21300000, guid: beef8e02021df1e4a985588f6bf2a116, type: 3}
+  - name: front_leg
+    sprite: {fileID: 21300000, guid: aa127101b57e60f4299a10a2b4b0c100, type: 3}
+  - name: neck
+    sprite: {fileID: 21300000, guid: df16c566bc4030242a35eb6b5b53b639, type: 3}
+  - name: tail
+    sprite: {fileID: 21300000, guid: ee4a716f1d899e0448fb87397e45e18b, type: 3}
+  - name: up_head
+    sprite: {fileID: 21300000, guid: f388966d55169734fbdff5d409314e80, type: 3}
+  - name: wing
+    sprite: {fileID: 21300000, guid: baa996254288711499606f9c5d895800, type: 3}
+  drops:
+  - {fileID: 21300000, guid: 60dd02c23cd3ded4c9245b65f18a424a, type: 3}
+  - {fileID: 21300000, guid: 3504365885c9c6f4f833075e899a3e68, type: 3}
+  - {fileID: 21300000, guid: f10723b323a915646ba08adef350002d, type: 3}
+  - {fileID: 21300000, guid: c785fc6e5c3f4874b8dd743a7603e0f2, type: 3}
+  - {fileID: 21300000, guid: 219aaea0459f2684f9b88d53e15188df, type: 3}
+  - {fileID: 21300000, guid: b170ba02e9dfb6b4cb5d8a9767642564, type: 3}

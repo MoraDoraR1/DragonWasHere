@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081000d0c461c3e4a987255416983f62, type: 3}
+  m_Name: BalanceSettings
+  m_EditorClassIdentifier: DWH.Runtime::DWH.Data.BalanceSettings
+  goldPerHp: 0.1
+  buildingSpacing: 1.5
+  buildingAps: 1
+  bonusStaminaThreshold: 10
+  bonusStaminaDrainMultiplier: 2
+  dropAbsorbDelay: 0.5
+  airUnitSpawnTimes:
+  - 3
+  - 10
+  - 25
+  airUnitAps: 0.5
+  airUnitAltitudeMin: 3
+  airUnitAltitudeMax: 4.5
+  airUnitProjectileSpeed: 4
+  airUnitFlySpeed: 3
+  airUnit1HpMultiplier: 0.6
+  airUnit2HpMultiplier: 0.8
+  airUnit1DamageMultiplier: 0.5
+  airUnit2DamageMultiplier: 0.8
+  airUnit1GoldRatio: 0.33
+  airUnit2GoldRatio: 0.67
+  rebirthUnlockStage: 1-4
+  rebirthPointDivisor: 10
+  starterZoneSpeedBase: 0.8
+  starterZoneSpeedPerStage: 0.05
+  starterBarSpeedBase: 1.2
+  starterBarSpeedPerStage: 0.05
+  starterGreatWidthBase: 0.15
+  starterGreatWidthPerStage: 0.003
+  starterGreatWidthMin: 0.06
+  starterGoodWidthRatio: 2.5
+  cameraOrthoSize: 5.4
+  cameraDragonOffsetX: -5
+  groundHeight: 2.44
+  parallaxMidFactor: 0.333
+  stageStartMargin: 3
+  colliderScaleX: 0.85
+  colliderScaleY: 0.9
+  dragonSortingBase: 20
+  mirrorPartTint: 0.6
+  artMarginPx: 12
+  attackBuildingRange: 4
+  landmarkRange: 6
+  projectileSpeed: 5
+  attackShotHeight: 0.6
+  landmarkShotHeights:
+  - 0.25
+  - 0.6
+  - 1.3
+  projectileSize: 0.2
+  hitFlashDuration: 0.05
+  endSlowmoDuration: 0.5
+  endSlowmoScale: 0.2
+  dropBurstSpeedMin: 2.5
+  dropBurstSpeedMax: 5.5
+  dropBurstAngle: 50
+  dropGravity: 14
+  dropAbsorbSpeed: 14
+  dropCollectDistance: 0.3
+  chainDestroyWindow: 3
+  chainDestroyMaxStacks: 10

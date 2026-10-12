@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d36a8c9557beb14ba0f3c4668fd263e, type: 3}
+  m_Name: GameDatabase
+  m_EditorClassIdentifier: DWH.Runtime::DWH.Data.GameDatabase
+  stages: {fileID: 11400000, guid: 535afa4998f230c409758347ccfba37d, type: 2}
+  hurdles: {fileID: 11400000, guid: 4f72c19adf1831d45bdde9c69ce9eb37, type: 2}
+  buildingTypes: {fileID: 11400000, guid: 6d736e206354bb14f890af43a479a541, type: 2}
+  dropCurves: {fileID: 11400000, guid: 31cf66f77584ed647b86b49ab7884362, type: 2}
+  dropResources: {fileID: 11400000, guid: c2e601b277dfb9d479f40b1110146c9b, type: 2}
+  dropComposition: {fileID: 11400000, guid: 10329b609eec6504fbbd204e5748342e, type: 2}
+  airUnits: {fileID: 11400000, guid: aff2efed8b5c8ca4c86e483a18b8ed1d, type: 2}
+  airDrop: {fileID: 11400000, guid: 019aa592f394b034894ed9359c20679b, type: 2}
+  passiveSkills: {fileID: 11400000, guid: c5fe81dfa10ba714bb9c9e75b68a4240, type: 2}
+  activeSkills: {fileID: 11400000, guid: 36da923184734244cb12407fd9fc0177, type: 2}
+  rebirthTraits: {fileID: 11400000, guid: 056e0c159c4da424fb1f1bb1f7dc9c5e, type: 2}
+  upgradeNodes: {fileID: 11400000, guid: 8b7fd15393583794383f9c6e5e1ee336, type: 2}
+  growth: {fileID: 11400000, guid: 32675ae92bdec2247a1b67c7c927bd2b, type: 2}
+  stageStarter: {fileID: 11400000, guid: f5d8fb0a99f32fd4fb4fed076965b13c, type: 2}
+  dragonParts: {fileID: 11400000, guid: 315a4949a257ca6469ab6f3ef0bcaa5a, type: 2}
+  dragon: {fileID: 11400000, guid: 8f3240753ad51fe4cb426dd390d40b98, type: 2}
+  balance: {fileID: 11400000, guid: 120f14300de44ae47aa0b2746a18c797, type: 2}

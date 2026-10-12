@@ -1,0 +1,16 @@
+skill,level,name_ko,hit_count,damage_multiplier,duration,tick_interval,uses_per_session,cost_rp,icon
+Meteor,1,메테오,3,2.5,0,0,1,5,meteor
+Meteor,2,메테오,4,2.6,0,0,1,10,meteor
+Meteor,3,메테오,4,2.75,0,0,2,20,meteor
+Meteor,4,메테오,5,3,0,0,2,40,meteor
+Meteor,5,메테오,5,3.2,0,0,3,80,meteor
+Hurricane,1,허리케인,0,1.4,3,0.375,1,5,upgrade-tailspinSize
+Hurricane,2,허리케인,0,1.55,4,0.375,1,10,upgrade-tailspinSize
+Hurricane,3,허리케인,0,1.75,4,0.375,2,20,upgrade-tailspinSize
+Hurricane,4,허리케인,0,1.95,5,0.375,2,40,upgrade-tailspinSize
+Hurricane,5,허리케인,0,2.1,5,0.375,3,80,upgrade-tailspinSize
+Earthquake,1,지진,0,1.4,2,0.5,1,5,upgrade-apocalypse
+Earthquake,2,지진,0,1.55,3,0.5,1,10,upgrade-apocalypse
+Earthquake,3,지진,0,1.75,3.5,0.5,2,20,upgrade-apocalypse
+Earthquake,4,지진,0,1.95,4,0.5,2,40,upgrade-apocalypse
+Earthquake,5,지진,0,2.1,4.5,0.5,3,80,upgrade-apocalypse

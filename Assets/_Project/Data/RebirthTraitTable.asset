@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01ca82dd9cff4694a8e9ce3f3b88bebc, type: 3}
+  m_Name: RebirthTraitTable
+  m_EditorClassIdentifier: DWH.Runtime::DWH.Data.RebirthTraitTable
+  rows:
+  - trait: 0
+    nameKo: "\uD0DC\uACE0\uC758 \uBD84\uB178"
+    effect: 0
+    effectValue: 0.05
+    effectGrowth: 0
+    firstCost: 1
+    costStep: 1
+    maxLevel: 50
+    description: "\uBAA8\uB4E0 \uACF5\uACA9\uB825\uC774 \uC601\uAD6C\uD788 \uB808\uBCA8\uB2F9
+      5% \uC624\uB978\uB2E4"
+    icon: upgrade-p_dmg
+  - trait: 1
+    nameKo: "\uD669\uAE08 \uD608\uD1B5"
+    effect: 1
+    effectValue: 0.1
+    effectGrowth: 0
+    firstCost: 1
+    costStep: 1
+    maxLevel: 50
+    description: "\uACE8\uB4DC \uD68D\uB4DD\uB7C9\uC774 \uC601\uAD6C\uD788 \uB808\uBCA8\uB2F9
+      10% \uC624\uB978\uB2E4"
+    icon: upgrade-p_gold
+  - trait: 2
+    nameKo: "\uC601\uC6D0\uC758 \uC2EC\uC7A5"
+    effect: 2
+    effectValue: 5
+    effectGrowth: 0
+    firstCost: 2
+    costStep: 2
+    maxLevel: 20
+    description: "\uCD5C\uB300 \uAE30\uB825\uC774 \uC601\uAD6C\uD788 \uB808\uBCA8\uB2F9
+      5 \uC624\uB978\uB2E4"
+    icon: upgrade-p_time
+  - trait: 3
+    nameKo: "\uACE0\uB8E1\uC758 \uC720\uC0B0"
+    effect: 3
+    effectValue: 50
+    effectGrowth: 3
+    firstCost: 3
+    costStep: 5
+    maxLevel: 10
+    description: "\uD658\uC0DD \uC9C1\uD6C4 \uACE8\uB4DC\uB97C \uBC1B\uACE0 \uC2DC\uC791\uD55C\uB2E4
+      (50 \xD7 3^(\uB808\uBCA8-1))"
+    icon: upgrade-p_start
+  - trait: 4
+    nameKo: "\uC6A9\uC758 \uC9C0\uD61C"
+    effect: 4
+    effectValue: 0.03
+    effectGrowth: 0
+    firstCost: 3
+    costStep: 5
+    maxLevel: 10
+    description: "\uC5C5\uADF8\uB808\uC774\uB4DC \uD2B8\uB9AC \uBE44\uC6A9\uC774
+      \uB808\uBCA8\uB2F9 3% \uC2F8\uC9C4\uB2E4"
+    icon: upgrade-p_cost
+  - trait: 5
+    nameKo: "\uC790\uB3D9 \uAC01\uC131"
+    effect: 5
+    effectValue: 1
+    effectGrowth: 0
+    firstCost: 5
+    costStep: 10
+    maxLevel: 2
+    description: "\uD658\uC0DD \uC9C1\uD6C4 \uD328\uC2DC\uBE0C \uC2A4\uD0AC\uC774
+      \uD574\uAE08\uB41C \uCC44 \uC2DC\uC791\uD55C\uB2E4"
+    icon: upgrade-p_auto

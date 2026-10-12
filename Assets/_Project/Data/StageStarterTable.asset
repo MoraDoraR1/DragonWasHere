@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7bca0dba68cd214f817c1255000d6f8, type: 3}
+  m_Name: StageStarterTable
+  m_EditorClassIdentifier: DWH.Runtime::DWH.Data.StageStarterTable
+  rows:
+  - grade: 0
+    nameKo: Great
+    damageMultiplier: 2
+    sideCount: 5
+  - grade: 1
+    nameKo: Good
+    damageMultiplier: 1.3
+    sideCount: 2
+  - grade: 2
+    nameKo: Fail
+    damageMultiplier: 0
+    sideCount: 0

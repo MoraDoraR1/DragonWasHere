@@ -19,27 +19,55 @@ MonoBehaviour:
   - pathPrefix: Backgrounds/
     pixelsPerUnit: 100
     pivot: 7
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Buildings/Normal/
-    pixelsPerUnit: 600
+    pixelsPerUnit: 240
     pivot: 7
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Buildings/Golden/
-    pixelsPerUnit: 600
+    pixelsPerUnit: 240
     pivot: 7
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Buildings/Attack/
-    pixelsPerUnit: 600
+    pixelsPerUnit: 240
     pivot: 7
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Buildings/GoldenAttack/
-    pixelsPerUnit: 600
+    pixelsPerUnit: 240
     pivot: 7
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Buildings/Landmark/
-    pixelsPerUnit: 350
+    pixelsPerUnit: 140
     pivot: 7
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Dragon/
     pixelsPerUnit: 700
     pivot: 0
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: AirUnits/
     pixelsPerUnit: 200
     pivot: 0
+    sliceBorder: 0
+    uncompressed: 0
   - pathPrefix: Drops/
     pixelsPerUnit: 500
     pivot: 0
+    sliceBorder: 0
+    uncompressed: 0
+  - pathPrefix: UI/
+    pixelsPerUnit: 100
+    pivot: 0
+    sliceBorder: 12
+    uncompressed: 1
+  - pathPrefix: UIKit/
+    pixelsPerUnit: 100
+    pivot: 0
+    sliceBorder: 0
+    uncompressed: 1

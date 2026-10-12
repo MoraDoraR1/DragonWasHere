@@ -1,0 +1,23 @@
+key,value,description
+species_id,Default,드래곤 종류 (보류. 1종만 구현)
+attack_power,20,기본 공격력 (4.1.1)
+attacks_per_second,2,몸통 박치기 공격 속도
+max_hp,100,최대 체력
+hp_regen_per_second,0,초당 체력 회복
+max_stamina,100,최대 기력
+fatigue_start,1,피로 시작값
+fatigue_interval,10,피로가 오르는 간격(초)
+fatigue_step,1,간격마다 오르는 피로
+stamina_on_destroy,0,건물 파괴 시 기력 회복
+stamina_on_clear,0,스테이지 클리어 시 기력 회복
+move_speed,3,이동 속도(unit/s)
+jump_height,2,점프 높이(unit)
+jump_chance,0,몸통 박치기 타격 시 점프 확률
+jump_chance_max,0.3,점프 확률 상한
+jump_cooldown,0.5,점프 후 재점프 대기(초)
+crit_chance,0,치명타 확률
+crit_multiplier,1.5,치명타 배율
+knockback_duration,0.2,건물 충돌 넉백(초)
+auto_move_idle_seconds,3,커서가 멈춘 뒤 자동 이동으로 바뀌는 시간(초)
+knockback_distance,0.15,몸통 박치기 후 뒤로 밀리는 거리(unit)
+contact_tolerance,0.05,이 거리 안이면 건물과 닿은 것으로 본다(unit)

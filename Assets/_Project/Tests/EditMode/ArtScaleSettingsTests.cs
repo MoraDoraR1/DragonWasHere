@@ -14,9 +14,9 @@ namespace DWH.Tests
         [TearDown]
         public void TearDown() => Object.DestroyImmediate(settings);
 
-        [TestCase("Buildings/Normal/theme01/basalt-cave.png", 600f, SpriteAlignment.BottomCenter)]
-        [TestCase("Buildings/GoldenAttack/theme14/thermal-turret.png", 600f, SpriteAlignment.BottomCenter)]
-        [TestCase("Buildings/Landmark/theme10.png", 350f, SpriteAlignment.BottomCenter)]
+        [TestCase("Buildings/Normal/theme01/basalt-cave.png", 240f, SpriteAlignment.BottomCenter)]
+        [TestCase("Buildings/GoldenAttack/theme14/thermal-turret.png", 240f, SpriteAlignment.BottomCenter)]
+        [TestCase("Buildings/Landmark/theme10.png", 140f, SpriteAlignment.BottomCenter)]
         [TestCase("Backgrounds/era7/ground.png", 100f, SpriteAlignment.BottomCenter)]
         [TestCase("Dragon/Parts/body.png", 700f, SpriteAlignment.Center)]
         [TestCase("AirUnits/theme01_unit1.png", 200f, SpriteAlignment.Center)]
