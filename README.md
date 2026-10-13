@@ -33,6 +33,11 @@ Unity 6 (6000.3.19f1) · URP · Input System 기반 프로젝트.
 ### 5. 커밋
 - 사용자가 요청할 때만 커밋한다. 작업이 끝나도 자동으로 커밋하지 않는다.
 
+### 6. itch.io 업로드
+- 업로드는 **이 PC에서 butler로만** 한다. itch 웹 화면에서 파일을 직접 올리거나 바꾸지 않는다.
+- 테스트 빌드: `bash Tools/itch_deploy.sh test` (채널 `html5-test`), 출시 빌드: `bash Tools/itch_deploy.sh release` (채널 `html5`). 이미 만든 빌드만 올릴 때는 뒤에 `--skip-build`.
+- 올린 뒤 itch 편집 페이지에서 butler 업로드에 "This file will be played in the browser"가 켜져 있는지 확인한다.
+
 ## 컨벤션
 
 ### 파일명

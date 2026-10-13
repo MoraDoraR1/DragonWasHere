@@ -170,7 +170,7 @@ namespace DWH.Tests
         // ───── 환생 ─────
 
         [Test]
-        public void Rebirth_UnlocksAtWallsMaxTwice()
+        public void Rebirth_FirstAtWallThenFree()
         {
             var save = NewSave();
             save.currentStage = "stg301";
@@ -182,13 +182,16 @@ namespace DWH.Tests
             Assert.AreEqual(24, Rebirth.Perform(db, save));
             Assert.AreEqual("stg101", save.currentStage);
             Assert.AreEqual(1, save.rebirthCount);
-            save.currentStage = "stg402";
-            Assert.IsFalse(Rebirth.IsUnlocked(db, save), "2번째는 5-2 도달");
-            save.currentStage = "stg502";
+            // 첫 환생 뒤에는 벽이 없다: 1-1에서도, 횟수 제한 없이 (10-13)
+            Assert.IsTrue(Rebirth.IsUnlocked(db, save), "첫 환생 뒤 1-1에서도 환생 가능");
+            for (int i = 0; i < 3; i++)
+            {
+                save.currentStage = i == 0 ? "stg102" : "stg702";
+                Assert.IsTrue(Rebirth.IsUnlocked(db, save));
+                Rebirth.Perform(db, save);
+            }
+            Assert.AreEqual(4, save.rebirthCount, "횟수 제한 없음");
             Assert.IsTrue(Rebirth.IsUnlocked(db, save));
-            Rebirth.Perform(db, save);
-            save.currentStage = "stg702";
-            Assert.IsFalse(Rebirth.IsUnlocked(db, save), "최대 2회");
         }
 
         [Test]

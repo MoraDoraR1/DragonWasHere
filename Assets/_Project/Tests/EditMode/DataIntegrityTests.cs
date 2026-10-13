@@ -181,10 +181,9 @@ namespace DWH.Tests
         }
 
         [Test]
-        public void RebirthWalls_AreMvpStages()
+        public void RebirthWall_IsMvpStage()
         {
-            foreach (var wall in Tuning.RebirthWalls)
-                Assert.GreaterOrEqual(db.OrderIndex(wall), 0, $"{wall}가 진행 순서에 없다");
+            Assert.GreaterOrEqual(db.OrderIndex(Tuning.FirstRebirthWall), 0, $"{Tuning.FirstRebirthWall}가 진행 순서에 없다");
         }
 
         [Test]

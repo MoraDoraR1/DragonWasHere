@@ -135,7 +135,7 @@ namespace DWH.Analytics
         /// <summary>화면이 바뀔 때 호출. 브라우저가 이탈 순간에 이 화면과 공통 파라미터를 page_exit로 보낸다.</summary>
         public static void SetScene(string scene)
         {
-            if (!_initialized) Init();
+            // Init은 하지 않는다(실행 시 BeforeSceneLoad에서 이미 한다). 에디트모드 테스트에서 DontDestroyOnLoad를 부르지 않게.
             Scene = string.IsNullOrEmpty(scene) ? AnalyticsValues.SceneTitle : scene;
             PushContext();
         }

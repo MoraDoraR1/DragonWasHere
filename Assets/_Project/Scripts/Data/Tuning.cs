@@ -91,10 +91,10 @@ namespace DWH.Data
 
         // ───── 진행 (가이드 1장) ─────
         /// <summary>
-        /// 환생 벽. n번째 환생은 n번째 벽 스테이지에 도달하면 해금된다. 최대 횟수 = 벽 수.
-        /// 테이블에 표시가 없어 가이드 1장 값을 쓴다 [임시] (const 추가 요청 대상)
+        /// 첫 환생 벽. 첫 환생은 이 스테이지에 도달하면 해금되고, 그 뒤 환생은 횟수·스테이지 제한 없이 언제든 할 수 있다
+        /// (10-13 사용자 결정: 3-2·5-2 두 벽 → 첫 벽만). 테이블에 표시가 없어 코드 값 [임시] (const 추가 요청 대상)
         /// </summary>
-        public static readonly string[] RebirthWalls = { "stg302", "stg502" };
+        public const string FirstRebirthWall = "stg302";
 
         /// <summary>건물 파괴 시 기력 회복(효과 3)에서 랜드마크 배수 (upgrade_desc_202)</summary>
         public const double LandmarkStaminaMultiplier = 5;

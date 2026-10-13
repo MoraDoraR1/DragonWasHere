@@ -120,7 +120,7 @@ namespace DWH.Core
                 .Add(AnalyticsParams.GoldAfter, save.goldCoin));
         }
 
-        /// <summary>rebirth_unlocked: 3-2, 5-2 도달</summary>
+        /// <summary>rebirth_unlocked: 첫 환생 벽(3-2) 도달. 첫 환생 뒤에는 늘 열려 있어 다시 보내지 않는다</summary>
         public static void RebirthUnlocked(GameDatabase db, SaveData save)
         {
             Context(db, save);

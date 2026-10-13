@@ -139,10 +139,9 @@ namespace DWH.UI
             string wall = Rebirth.NextWall(save);
             summary.text =
                 $"{UiText.Get("ui_rebirth_point")}  <b><color=#{soul}>{save.rebirthPoint:0} P</color></b>\n" +
-                $"{UiText.Format("ui_rebirth_count", save.rebirthCount, Rebirth.MaxRebirths)}\n" +
+                $"{UiText.Format("ui_rebirth_count", save.rebirthCount)}\n" +
                 $"<b>{UiText.Format("ui_rebirth_gain", points.ToString("0"))}</b>\n" +
-                (unlocked ? "" : wall == null
-                    ? $"\n{UiText.Get("ui_rebirth_done")}"
+                (unlocked || wall == null ? ""
                     : $"\n<color=#{UiTheme.HexString(UiTheme.Hp)}>{UiText.Format("ui_rebirth_locked", db.StageLabel(wall))}</color>");
 
             bool confirming = confirmUntil > 0;

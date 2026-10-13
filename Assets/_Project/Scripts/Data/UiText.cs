@@ -100,7 +100,6 @@ namespace DWH.Data
             ["ui_rebirth_title"] = ("환생", "Rebirth"),
             ["ui_rebirth_gain"] = ("지금 환생하면 +{0} P", "Rebirth now: +{0} P"),
             ["ui_rebirth_locked"] = ("{0}에 도달하면 환생할 수 있어요", "Reach {0} to unlock rebirth"),
-            ["ui_rebirth_done"] = ("더 이상 환생할 수 없어요", "No more rebirths"),
             ["ui_rebirth_desc"] = ("진행을 처음(1-1)부터 다시 시작하고 환생 포인트를 받아요.\n<b>초기화</b>: 업그레이드, 골드, 진행, 성장 단계\n<b>유지</b>: 환생 포인트, 환생 특성, 액티브 스킬",
                 "Restart from 1-1 and earn Rebirth Points.\n<b>Reset</b>: upgrades, gold, progress, growth\n<b>Kept</b>: points, traits, active skills"),
             ["ui_rebirth_button"] = ("환생하기", "Rebirth"),
@@ -112,7 +111,7 @@ namespace DWH.Data
             ["ui_active_need"] = ("필요: {0}", "Requires: {0}"),
             ["ui_active_learn"] = ("습득", "Learn"),
             ["ui_active_uses"] = ("출격당 {0}회", "{0} per run"),
-            ["ui_rebirth_count"] = ("환생 {0}/{1}", "Rebirth {0}/{1}"),
+            ["ui_rebirth_count"] = ("환생 {0}회", "Rebirths: {0}"),
             // 일시정지·설정
             ["ui_pause"] = ("일시정지", "Paused"),
             ["ui_resume"] = ("계속하기", "Resume"),

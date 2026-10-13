@@ -7,22 +7,20 @@ namespace DWH.OutGame
 {
     /// <summary>
     /// 환생 (가이드 1장 환생 벽, 6.10).
-    /// - 해금: n번째 환생은 n번째 벽(3-2, 5-2)에 도달하면 열린다. 최대 = 벽 수(2회).
+    /// - 해금: 첫 환생은 첫 벽(3-2)에 도달하면 열린다. 한 번 환생한 뒤에는 어느 스테이지에서든 횟수 제한 없이 할 수 있다 (10-13).
     /// - 포인트 = floor(√(이번 회차 누적 획득 골드) ÷ const.rebirth_rp_divisor).
     /// - 초기화: 업그레이드 레벨, 골드, 진행(1-1부터), 성장 단계(이번 회차 누적 사용 골드).
     /// - 유지: 환생 포인트, 환생 특성, 액티브 습득 단계, 환생 횟수, 최고 스테이지.
     /// </summary>
     public static class Rebirth
     {
-        public static int MaxRebirths => Tuning.RebirthWalls.Length;
-
-        /// <summary>다음 환생을 여는 벽 스테이지. 더 환생할 수 없으면 null</summary>
-        public static string NextWall(SaveData save) => save.rebirthCount < MaxRebirths ? Tuning.RebirthWalls[save.rebirthCount] : null;
+        /// <summary>환생을 여는 벽 스테이지. 첫 환생 전에만 있고, 한 번 환생한 뒤에는 벽이 없어 null</summary>
+        public static string NextWall(SaveData save) => save.rebirthCount == 0 ? Tuning.FirstRebirthWall : null;
 
         public static bool IsUnlocked(GameDatabase db, SaveData save)
         {
             string wall = NextWall(save);
-            return wall != null && db.OrderIndex(save.currentStage) >= db.OrderIndex(wall);
+            return wall == null || db.OrderIndex(save.currentStage) >= db.OrderIndex(wall);
         }
 
         public static double PointsIfRebirthNow(GameDatabase db, SaveData save) =>
