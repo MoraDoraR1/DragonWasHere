@@ -449,7 +449,7 @@ namespace DWH.UI
 
             int destroyed = battle.DestroyedCount, total = battle.Buildings.Count;
             UiFactory.SetFill(progressFill, total > 0 ? (double)destroyed / total : 0);
-            progressText.text = UiText.Format("ui_hud_remaining", total - destroyed);
+            progressText.text = battle.Mode == BattleMode.Bonus ? UiText.Get("ui_hud_bonus_goal") : UiText.Format("ui_hud_remaining", total - destroyed);
             if (battle.Mode == BattleMode.Bonus)
                 progressFillImage.color = Color.Lerp(UiTheme.Gold, UiTheme.Cream, Mathf.PingPong(Time.unscaledTime * 1.5f, 1f) * 0.6f);
 

@@ -31,6 +31,8 @@ namespace DWH.Data
                 "Click to stop the bar!   <color=#9fd4ac>Green center: Great</color>  ·  <color=#efc15a>Gold sides: Good</color>"),
             // HUD
             ["ui_hud_remaining"] = ("남은 건물 {0}", "Buildings left {0}"),
+            // UI 기획서 10쪽: 보너스 스테이지에서는 클리어 목표 자리에 남은 수 대신 이 문구
+            ["ui_hud_bonus_goal"] = ("최대한 많이!!", "As many as you can!!"),
             ["ui_hud_fatigue"] = ("피로 ×{0} · 초당 기력 -{1}", "Fatigue ×{0} · Stamina -{1}/s"),
             ["ui_hud_bonus"] = ("보너스 스테이지!", "Bonus Stage!"),
             ["ui_hud_bonus_hint"] = ("황금 건물을 모두 부수세요! 기력이 2배로 줄어요", "Smash every golden building! Stamina drains twice as fast"),

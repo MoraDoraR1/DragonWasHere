@@ -7,7 +7,7 @@ namespace DWH.InGame.Stage
     /// <summary>
     /// 드래곤을 따라 가로로만 스크롤한다 (4.1.2). 스테이지 양 끝 밖은 보여 주지 않는다.
     /// 진행 방향 앞보기: 드래곤이 바라보는 쪽을 넓게 보여 준다. 오른쪽을 보면 드래곤이 화면 왼쪽 1/3, 왼쪽을 보면 오른쪽 1/3.
-    /// 방향이 0.3초 이상 유지돼야 바꾸고(넉백·짧은 방향 전환 무시), Tuning.CameraTurnSeconds(1.5초) 동안 부드럽게(SmoothStep) 옮겨 간다.
+    /// 방향이 Tuning.CameraTurnDelay(0.15초) 이상 유지돼야 바꾸고(넉백·짧은 방향 전환 무시), Tuning.CameraTurnSeconds(0.6초) 동안 부드럽게(SmoothStep) 옮겨 간다.
     /// </summary>
     public class BattleCamera : MonoBehaviour
     {

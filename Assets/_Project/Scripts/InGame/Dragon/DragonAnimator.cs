@@ -98,7 +98,10 @@ namespace DWH.InGame.Dragon
             roar = 0;
         }
 
-        /// <summary>불이 나오는 입 위치 (월드). 윗머리 그림의 앞쪽 아래</summary>
+        /// <summary>
+        /// 불이 나오는 입 위치 (월드). 윗머리 아래 변(아래턱이 붙는 선)의 주둥이 쪽.
+        /// 10-13 피드백: 예전 값(아래에서 32%, 끝에서 6%)은 콧구멍 높이라 코에서 불이 나왔다
+        /// </summary>
         public Vector2 Mouth
         {
             get
@@ -106,8 +109,8 @@ namespace DWH.InGame.Dragon
                 var r = rig.PartRenderer("UpHead");
                 if (r == null) return transform.position;
                 var bb = r.bounds;
-                float x = Facing > 0 ? bb.max.x - bb.size.x * 0.06f : bb.min.x + bb.size.x * 0.06f;
-                return new Vector2(x, bb.min.y + bb.size.y * 0.32f);
+                float x = Facing > 0 ? bb.max.x - bb.size.x * 0.12f : bb.min.x + bb.size.x * 0.12f;
+                return new Vector2(x, bb.min.y + bb.size.y * 0.08f);
             }
         }
 

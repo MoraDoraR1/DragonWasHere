@@ -316,11 +316,11 @@ res8000001,80,sheet.png,Fix_Resource/스킬 이펙트/A1. 메테오/sheet.png,0,
 res8000002,80,sheet.png,Fix_Resource/스킬 이펙트/A2. 허리케인/sheet.png,0,,18,12,"스킬 이펙트 · 허리케인 (시트 3×6, 프레임 400×340px. 낱장은 frames 폴더)"
 res8000003,80,sheet.png,Fix_Resource/스킬 이펙트/A3. 지진/sheet.png,0,,12,12,"스킬 이펙트 · 지진 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
 res8000004,80,sheet.png,Fix_Resource/스킬 이펙트/P1. 파이어볼/sheet.png,0,,12,12,"스킬 이펙트 · 파이어볼 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
-res8000005,80,sheet.png,Fix_Resource/스킬 이펙트/P2. 파이어브레스/sheet.png,0,,12,12,"스킬 이펙트 · 파이어브레스 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
-res8000006,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(낙뢰)_골드/sheet.png,0,,12,12,"스킬 이펙트 · 번개(낙뢰)_골드 (시트 4×3, 프레임 256×512px. 낱장은 frames 폴더)"
-res8000007,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(낙뢰)_블루/sheet.png,0,,12,12,"스킬 이펙트 · 번개(낙뢰)_블루 (시트 4×3, 프레임 256×512px. 낱장은 frames 폴더)"
-res8000008,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(연쇄)_골드/sheet.png,0,,6,12,"스킬 이펙트 · 번개(연쇄)_골드 (시트 3×2, 프레임 540×540px. 낱장은 frames 폴더)"
-res8000009,80,sheet.png,Fix_Resource/스킬 이펙트/P3. 번개(연쇄)_블루/sheet.png,0,,6,12,"스킬 이펙트 · 번개(연쇄)_블루 (시트 3×2, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000005,80,frame_00.png,Fix_Resource/스킬 이펙트/P2. 파이어브레스/frame_00.png,0,,11,12,"스킬 이펙트 · 파이어브레스 Ver02 (낱장 11장, 프레임 540×540px, 왼쪽 끝이 입. 0~2 커짐, 3~6 유지, 7~10 사그라듦)"
+res8000006,80,frame_00.png,Fix_Resource/스킬 이펙트/P3. 번개(낙뢰)_골드/frame_00.png,0,,12,12,"스킬 이펙트 · 번개(낙뢰)_골드 Ver02 (낱장, 프레임 256×512px, 12장)"
+res8000007,80,frame_00.png,Fix_Resource/스킬 이펙트/P3. 번개(낙뢰)_블루/frame_00.png,0,,12,12,"스킬 이펙트 · 번개(낙뢰)_블루 Ver02 (낱장, 프레임 256×512px, 12장)"
+res8000008,80,frame_00.png,Fix_Resource/스킬 이펙트/P3. 번개(연쇄)_골드/frame_00.png,0,,6,12,"스킬 이펙트 · 번개(연쇄)_골드 Ver02 (낱장, 프레임 540×540px, 6장)"
+res8000009,80,frame_00.png,Fix_Resource/스킬 이펙트/P3. 번개(연쇄)_블루/frame_00.png,0,,6,12,"스킬 이펙트 · 번개(연쇄)_블루 Ver02 (낱장, 프레임 540×540px, 6장)"
 res8000010,80,frame_00.png,Fix_Resource/피격 이펙트/강한 타격/frame_00.png,0,,11,24,피격 이펙트 · 강한 타격 (연속 이미지 frame_00~frame_10)
 res8000011,80,frame_00.png,Fix_Resource/피격 이펙트/건물화재/frame_00.png,1,,45,24,피격 이펙트 · 건물화재 (연속 이미지 frame_00~frame_44)
 res8000012,80,frame_00.png,Fix_Resource/피격 이펙트/땅먼지/frame_00.png,0,,27,24,피격 이펙트 · 땅먼지 (연속 이미지 frame_00~frame_26)

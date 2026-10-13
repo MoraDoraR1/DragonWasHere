@@ -36,7 +36,8 @@ namespace DWH.InGame
             return resId != null && index.TryGetValue(resId, out var entry) ? entry : null;
         }
 
-        public bool Has(string resId) => Find(resId) is { frames: { Length: > 0 } };
+        /// <summary>그림이 있는지. 카탈로그를 다시 만들기 전에 파일이 지워져 첫 프레임이 비어 있으면 없는 것으로 본다</summary>
+        public bool Has(string resId) => Find(resId) is { frames: { Length: > 0 } f } && f[0] != null;
 
         /// <summary>res_id의 스프라이트(이펙트는 첫 프레임). 없으면 예외</summary>
         public Sprite Sprite(string resId) =>

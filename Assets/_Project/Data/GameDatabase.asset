@@ -9035,59 +9035,55 @@ MonoBehaviour:
       4\xD73, \uD504\uB808\uC784 540\xD7540px. \uB0B1\uC7A5\uC740 frames \uD3F4\uB354)"
   - resId: res8000005
     type: 80
-    resName: sheet.png
-    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P2. \uD30C\uC774\uC5B4\uBE0C\uB808\uC2A4/sheet.png"
+    resName: frame_00.png
+    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P2. \uD30C\uC774\uC5B4\uBE0C\uB808\uC2A4/frame_00.png"
     loop: 0
     volume: NaN
-    frameCount: 12
+    frameCount: 11
     frameRate: 12
     memo: "\uC2A4\uD0AC \uC774\uD399\uD2B8 \xB7 \uD30C\uC774\uC5B4\uBE0C\uB808\uC2A4
-      (\uC2DC\uD2B8 4\xD73, \uD504\uB808\uC784 540\xD7540px. \uB0B1\uC7A5\uC740 frames
-      \uD3F4\uB354)"
+      Ver02 (\uB0B1\uC7A5 11\uC7A5, \uD504\uB808\uC784 540\xD7540px, \uC67C\uCABD
+      \uB05D\uC774 \uC785. 0~2 \uCEE4\uC9D0, 3~6 \uC720\uC9C0, 7~10 \uC0AC\uADF8\uB77C\uB4E6)"
   - resId: res8000006
     type: 80
-    resName: sheet.png
-    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uB099\uB8B0)_\uACE8\uB4DC/sheet.png"
+    resName: frame_00.png
+    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uB099\uB8B0)_\uACE8\uB4DC/frame_00.png"
     loop: 0
     volume: NaN
     frameCount: 12
     frameRate: 12
     memo: "\uC2A4\uD0AC \uC774\uD399\uD2B8 \xB7 \uBC88\uAC1C(\uB099\uB8B0)_\uACE8\uB4DC
-      (\uC2DC\uD2B8 4\xD73, \uD504\uB808\uC784 256\xD7512px. \uB0B1\uC7A5\uC740 frames
-      \uD3F4\uB354)"
+      Ver02 (\uB0B1\uC7A5, \uD504\uB808\uC784 256\xD7512px, 12\uC7A5)"
   - resId: res8000007
     type: 80
-    resName: sheet.png
-    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uB099\uB8B0)_\uBE14\uB8E8/sheet.png"
+    resName: frame_00.png
+    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uB099\uB8B0)_\uBE14\uB8E8/frame_00.png"
     loop: 0
     volume: NaN
     frameCount: 12
     frameRate: 12
     memo: "\uC2A4\uD0AC \uC774\uD399\uD2B8 \xB7 \uBC88\uAC1C(\uB099\uB8B0)_\uBE14\uB8E8
-      (\uC2DC\uD2B8 4\xD73, \uD504\uB808\uC784 256\xD7512px. \uB0B1\uC7A5\uC740 frames
-      \uD3F4\uB354)"
+      Ver02 (\uB0B1\uC7A5, \uD504\uB808\uC784 256\xD7512px, 12\uC7A5)"
   - resId: res8000008
     type: 80
-    resName: sheet.png
-    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uC5F0\uC1C4)_\uACE8\uB4DC/sheet.png"
+    resName: frame_00.png
+    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uC5F0\uC1C4)_\uACE8\uB4DC/frame_00.png"
     loop: 0
     volume: NaN
     frameCount: 6
     frameRate: 12
     memo: "\uC2A4\uD0AC \uC774\uD399\uD2B8 \xB7 \uBC88\uAC1C(\uC5F0\uC1C4)_\uACE8\uB4DC
-      (\uC2DC\uD2B8 3\xD72, \uD504\uB808\uC784 540\xD7540px. \uB0B1\uC7A5\uC740 frames
-      \uD3F4\uB354)"
+      Ver02 (\uB0B1\uC7A5, \uD504\uB808\uC784 540\xD7540px, 6\uC7A5)"
   - resId: res8000009
     type: 80
-    resName: sheet.png
-    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uC5F0\uC1C4)_\uBE14\uB8E8/sheet.png"
+    resName: frame_00.png
+    resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/P3. \uBC88\uAC1C(\uC5F0\uC1C4)_\uBE14\uB8E8/frame_00.png"
     loop: 0
     volume: NaN
     frameCount: 6
     frameRate: 12
     memo: "\uC2A4\uD0AC \uC774\uD399\uD2B8 \xB7 \uBC88\uAC1C(\uC5F0\uC1C4)_\uBE14\uB8E8
-      (\uC2DC\uD2B8 3\xD72, \uD504\uB808\uC784 540\xD7540px. \uB0B1\uC7A5\uC740 frames
-      \uD3F4\uB354)"
+      Ver02 (\uB0B1\uC7A5, \uD504\uB808\uC784 540\xD7540px, 6\uC7A5)"
   - resId: res8000010
     type: 80
     resName: frame_00.png

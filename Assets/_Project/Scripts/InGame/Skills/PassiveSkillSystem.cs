@@ -91,8 +91,9 @@ namespace DWH.InGame.Skills
                 float cooldown;
                 if (spec.id == PassiveSkillId.Dash)
                 {
-                    if (stats.DashCooldown <= 0) continue;
-                    cooldown = (float)stats.DashCooldown;
+                    // 0 = 돌진 노드 미보유. 레벨이 올라 쿨타임이 하한 밑으로 내려가도 돌진이 꺼지지 않게 막는다 (10-13: 예전 데이터는 13레벨부터 음수)
+                    if (stats.DashCooldown == 0) continue;
+                    cooldown = Mathf.Max(DashMinCooldown, (float)stats.DashCooldown);
                 }
                 else
                 {
@@ -353,6 +354,9 @@ namespace DWH.InGame.Skills
             if (breathFlame != null) Destroy(breathFlame.gameObject);
             breathFlame = null;
         }
+
+        /// <summary>돌진 쿨타임 하한(초)</summary>
+        const float DashMinCooldown = 1f;
 
         SpriteAnim breathFlame;
         /// <summary>브레스 그림에서 불길이 차지하는 비율(프레임 폭 기준)과 뿜는 쪽 끝 위치(가운데 기준)</summary>

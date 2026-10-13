@@ -111,8 +111,8 @@ namespace DWH.InGame.Skills
             var fx = SpriteAnim.Play(parent, db, art, FxIds.FireBreath, Vector2.zero, 1f, Order, lifetime);
             if (fx == null) return null;
             fx.LoopFor(lifetime);
-            // 0~3 커지고, 4~8 유지, 9~11 줄어든다 → 커진 뒤에는 4~8만 반복
-            fx.LoopRange(4, 8);
+            // Ver02 낱장 11장: 0~2 커지고, 3~6 유지, 7~10 사그라든다 → 커진 뒤에는 3~6만 반복
+            fx.LoopRange(3, 6);
             return fx;
         }
 

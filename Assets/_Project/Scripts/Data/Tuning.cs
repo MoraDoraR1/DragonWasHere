@@ -25,9 +25,9 @@ namespace DWH.Data
         /// <summary>진행 방향 앞보기: 드래곤은 뒤쪽 가장자리에서 화면 폭의 이 비율 지점에 선다 (1/3)</summary>
         public const float CameraLeadScreenFraction = 1f / 3f;
         /// <summary>바라보는 방향이 이 시간 이상 유지돼야 카메라가 돌아선다(넉백·짧은 방향 전환 무시)</summary>
-        public const float CameraTurnDelay = 0.3f;
-        /// <summary>카메라가 반대쪽으로 넘어가는 시간(초). 10-12 피드백</summary>
-        public const float CameraTurnSeconds = 1.5f;
+        public const float CameraTurnDelay = 0.15f;
+        /// <summary>카메라가 반대쪽으로 넘어가는 시간(초). 10-12 피드백 1.5 → 10-13 피드백(드래곤 방향 전환보다 너무 느림) 0.6</summary>
+        public const float CameraTurnSeconds = 0.6f;
         /// <summary>지면 높이 = 바닥 배경 이미지 높이(244 px)</summary>
         public const float GroundHeight = 2.44f;
         /// <summary>중경 스크롤 = 바닥의 1/3 (가이드 6.5)</summary>
