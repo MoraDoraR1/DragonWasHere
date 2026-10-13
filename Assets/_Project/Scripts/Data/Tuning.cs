@@ -12,10 +12,22 @@ namespace DWH.Data
 
         public static float Px(double px) => (float)(px / PixelsPerUnit);
 
+        // ───── 타이틀 (UI 기획서 2장). resource 테이블 res_id ─────
+        public const string TitleLogoKoRes = "res6000138";
+        public const string TitleLogoEnRes = "res6000137";
+        /// <summary>타이틀 배경 영상. 빌드 때 StreamingAssets/{res_name}으로 복사해 URL로 재생한다</summary>
+        public const string TitleVideoRes = "res9000001";
+
         // ───── 화면 (가이드 2장, 임시unity제작.md 9.3) ─────
         public const float CameraOrthoSize = 5.4f;
-        /// <summary>카메라 중심 기준 드래곤 위치. 음수면 화면 왼쪽</summary>
-        public const float CameraDragonOffsetX = -5f;
+        /// <summary>전투 화면에서 늘 보장하는 가로:세로 비율. 이보다 좁은 화면은 카메라를 키워 가로 폭을 지킨다</summary>
+        public const float CameraMinAspect = 16f / 9f;
+        /// <summary>진행 방향 앞보기: 드래곤은 뒤쪽 가장자리에서 화면 폭의 이 비율 지점에 선다 (1/3)</summary>
+        public const float CameraLeadScreenFraction = 1f / 3f;
+        /// <summary>바라보는 방향이 이 시간 이상 유지돼야 카메라가 돌아선다(넉백·짧은 방향 전환 무시)</summary>
+        public const float CameraTurnDelay = 0.3f;
+        /// <summary>카메라가 반대쪽으로 넘어가는 시간(초). 10-12 피드백</summary>
+        public const float CameraTurnSeconds = 1.5f;
         /// <summary>지면 높이 = 바닥 배경 이미지 높이(244 px)</summary>
         public const float GroundHeight = 2.44f;
         /// <summary>중경 스크롤 = 바닥의 1/3 (가이드 6.5)</summary>
@@ -52,7 +64,15 @@ namespace DWH.Data
 
         // ───── 공중 유닛 (4.5) ─────
         public const float AirUnitAltitudeMin = 3f, AirUnitAltitudeMax = 4.5f;
+        /// <summary>공중 유닛 그림 배율 (QA DWH-60: ×1.5~2.0 제안 → 1.75)</summary>
+        public const float AirUnitScale = 1.75f;
         public const float AirUnitProjectileSpeed = 4f;
+        /// <summary>[임시] 공중 유닛 공격 범위: 드래곤과의 가로 거리(unit). unit 테이블에 컬럼이 없다</summary>
+        public const float AirUnitAttackRange = 6f;
+        /// <summary>[임시] 공중 유닛이 드래곤 머리 위를 배회하는 가로 폭(드래곤 기준 ±, unit). 공격 범위 안쪽</summary>
+        public const float AirUnitHoverRange = 3.5f;
+        /// <summary>공중 유닛은 드래곤(서 있을 때) 머리보다 이만큼 + 자기 몸 절반 이상 높이에서만 난다. 몸통 충돌을 피한다</summary>
+        public const float AirUnitHeadClearance = 0.8f;
 
         // ───── 드랍 연출 (4.6) ─────
         public const float DropBurstSpeedMin = 2.5f, DropBurstSpeedMax = 5.5f;

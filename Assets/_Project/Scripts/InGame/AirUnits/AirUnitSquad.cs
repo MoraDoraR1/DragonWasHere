@@ -13,13 +13,14 @@ namespace DWH.InGame.AirUnits
     /// </summary>
     public class AirUnitSquad : MonoBehaviour
     {
-        /// <summary>등장 순서별 화면 가로 위치와 고도 비율(0 = 고도 하한, 1 = 상한) [임시]</summary>
-        static readonly (float fraction, float altitude)[] Formation = { (0.62f, 0.4f), (0.8f, 0.9f), (0.9f, 0f) };
+        /// <summary>등장 순서별 일렁임 위상과 고도 비율(0 = 고도 하한, 1 = 상한) [임시]</summary>
+        static readonly (float phase, float altitude)[] Formation = { (0.62f, 0.4f), (0.8f, 0.9f), (0.9f, 0f) };
 
         GameDatabase db;
         ArtCatalog art;
         DragonController dragon;
         Camera view;
+        float stageLeft, stageRight;
         List<UnitRow> schedule;
         int next;
         bool enabledFlag = true;
@@ -28,8 +29,12 @@ namespace DWH.InGame.AirUnits
         public IReadOnlyList<AirUnit> Units => units;
         public event Action<AirUnit> Spawned;
 
-        public void Init(GameDatabase database, ArtCatalog catalog, StageRow stage, DragonController target, Camera camera)
+        /// <param name="left">맵 왼쪽 끝(월드 x). 공중 유닛이 이 사이를 왕복한다</param>
+        /// <param name="right">맵 오른쪽 끝(월드 x)</param>
+        public void Init(GameDatabase database, ArtCatalog catalog, StageRow stage, DragonController target, Camera camera, float left, float right)
         {
+            stageLeft = left;
+            stageRight = right;
             db = database;
             art = catalog;
             dragon = target;
@@ -59,13 +64,13 @@ namespace DWH.InGame.AirUnits
         void Spawn(int index)
         {
             var row = schedule[index];
-            var (fraction, altitudeRatio) = Formation[index % Formation.Length];
+            var (phase, altitudeRatio) = Formation[index % Formation.Length];
             var go = new GameObject($"Air{index}_{row.unitId}");
             go.transform.SetParent(transform, false);
             var unit = go.AddComponent<AirUnit>();
             unit.Init(row, db.Text(row.nameStr), art.Sprite(row.resId), dragon, view,
-                fraction, Mathf.Lerp(Tuning.AirUnitAltitudeMin, Tuning.AirUnitAltitudeMax, altitudeRatio), Tuning.GroundHeight,
-                GrayboxSprites.Square, SortingOrders.AirUnit);
+                phase, Mathf.Lerp(Tuning.AirUnitAltitudeMin, Tuning.AirUnitAltitudeMax, altitudeRatio), Tuning.GroundHeight,
+                stageLeft, stageRight, GrayboxSprites.Square, SortingOrders.AirUnit);
             units.Add(unit);
             Spawned?.Invoke(unit);
         }

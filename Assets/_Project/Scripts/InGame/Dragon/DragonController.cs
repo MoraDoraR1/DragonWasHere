@@ -133,6 +133,8 @@ namespace DWH.InGame.Dragon
 
         void Update()
         {
+            // 일시정지(timeScale 0) 중에는 인게임을 모두 멈춘다. 커서를 움직여도 방향·시선이 바뀌지 않는다
+            if (Time.timeScale <= 0) return;
             if (Vitals == null || !IsAlive || !Controllable)
             {
                 IsAttacking = false;

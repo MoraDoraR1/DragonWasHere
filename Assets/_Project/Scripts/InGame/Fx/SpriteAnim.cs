@@ -47,6 +47,26 @@ namespace DWH.InGame.Fx
             lifetime = seconds;
         }
 
+        int loopStart, loopEnd = -1;
+
+        /// <summary>처음 한 번은 끝까지가 아니라 end까지 재생하고, 그 뒤로는 start~end 프레임만 반복한다 (커졌다가 유지되는 불길)</summary>
+        public void LoopRange(int start, int end)
+        {
+            loopStart = Mathf.Clamp(start, 0, frames.Length - 1);
+            loopEnd = Mathf.Clamp(end, loopStart, frames.Length - 1);
+        }
+
+        /// <summary>
+        /// 그림이 원래 향한 방향(intrinsic)을 실제 진행 방향(direction)에 맞춘다. 왼쪽으로 가면 좌우를 뒤집은 뒤 돌린다
+        /// </summary>
+        public void Orient(Vector2 intrinsic, Vector2 direction)
+        {
+            bool flip = direction.x < 0;
+            sr.flipX = flip;
+            var drawn = flip ? new Vector2(-intrinsic.x, intrinsic.y) : intrinsic;
+            transform.rotation = Quaternion.Euler(0, 0, Vector2.SignedAngle(drawn, direction));
+        }
+
         /// <summary>한 번 재생하는 데 걸리는 시간</summary>
         public float Duration => frames.Length / fps;
 
@@ -59,6 +79,8 @@ namespace DWH.InGame.Fx
                 Destroy(gameObject);
                 return;
             }
+            if (loopEnd >= 0 && frame > loopEnd)
+                frame = loopStart + (frame - loopEnd - 1) % (loopEnd - loopStart + 1);
             sr.sprite = frames[frame % frames.Length];
             if (loop)
             {

@@ -224,10 +224,23 @@ namespace DWH.UI
             return text;
         }
 
-        /// <summary>프레임 위 글자색: 영혼색·초록·빨강 버튼과 어두운 바탕은 밝은 색, 나머지(밝은 패널·금색)는 먹색</summary>
+        /// <summary>
+        /// 영역을 넘는 글자(특히 영어)를 줄여서 맞춘다. 한 줄이면 줄바꿈 없이, 아니면 줄바꿈 후 줄인다. 최소 크기에서도 넘치면 말줄임표.
+        /// </summary>
+        public static TMP_Text Fit(TMP_Text text, float minSize, bool singleLine)
+        {
+            text.enableAutoSizing = true;
+            text.fontSizeMax = text.fontSize;
+            text.fontSizeMin = minSize;
+            text.textWrappingMode = singleLine ? TextWrappingModes.NoWrap : TextWrappingModes.Normal;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            return text;
+        }
+
+        /// <summary>프레임 위 글자색: 영혼색 버튼과 어두운 바탕은 밝은 색, 나머지(밝은 패널·금색·초록·연한 빨강)는 먹색</summary>
         public static Color LabelColorFor(FrameStyle style) => style switch
         {
-            FrameStyle.ButtonSoul or FrameStyle.ButtonRed or FrameStyle.Ink or FrameStyle.BarBack => UiTheme.TextLight,
+            FrameStyle.ButtonSoul or FrameStyle.Ink or FrameStyle.BarBack => UiTheme.TextLight,
             _ => UiTheme.Ink,
         };
 

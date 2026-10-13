@@ -196,14 +196,14 @@ namespace DWH.InGame.Stage
 
             if (!camera.TryGetComponent(out BattleCamera follow))
                 follow = camera.gameObject.AddComponent<BattleCamera>();
-            follow.Init(camera, Dragon.transform, Tuning.CameraDragonOffsetX, StageLeft, StageRight);
+            follow.Init(camera, Dragon.transform, () => Dragon.Facing, StageLeft, StageRight);
 
             // 공중 유닛: 일반 스테이지에만 나온다. 클리어 조건에는 들어가지 않는다
             if (!bonus)
             {
                 AirUnits = new GameObject("AirUnits").AddComponent<AirUnitSquad>();
                 AirUnits.transform.SetParent(transform, false);
-                AirUnits.Init(db, art, stage, Dragon, camera);
+                AirUnits.Init(db, art, stage, Dragon, camera, StageLeft, StageRight);
                 AirUnits.Spawned += unit => unit.Destroyed += Drops.OnAirUnitDowned;
                 Dragon.SetAirTargets(AirUnits.Units);
             }

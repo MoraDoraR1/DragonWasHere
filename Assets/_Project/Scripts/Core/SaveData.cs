@@ -77,5 +77,7 @@ namespace DWH.Core
     public class SaveSettings
     {
         public float masterVolume = 1f;
+        /// <summary>화면 흔들림 켜기/끄기 (환경설정)</summary>
+        public bool screenShake = true;
     }
 }

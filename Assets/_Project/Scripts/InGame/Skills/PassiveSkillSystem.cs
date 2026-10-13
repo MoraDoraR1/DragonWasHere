@@ -323,6 +323,8 @@ namespace DWH.InGame.Skills
             double multiplier = stats.BreathMultiplier;
             dragon.Animator.SetBreathing(true);
             float range = BreathRange;
+            // 불길 그림 (DWH-54). 리소스가 없으면(테스트 등) 예전 파티클로 뿜는다
+            breathFlame = SkillFx.Breath(transform.parent, db, art, (spec.hits + 1) * spec.interval + 1f);
             float tickTimer = 0;
             int ticks = 0;
             while (ticks < spec.hits)
@@ -348,12 +350,18 @@ namespace DWH.InGame.Skills
                 yield return null;
             }
             dragon.Animator.SetBreathing(false);
+            if (breathFlame != null) Destroy(breathFlame.gameObject);
+            breathFlame = null;
         }
+
+        SpriteAnim breathFlame;
+        /// <summary>브레스 그림에서 불길이 차지하는 비율(프레임 폭 기준)과 뿜는 쪽 끝 위치(가운데 기준)</summary>
+        const float BreathFlameLength = 0.85f, BreathFlameTip = 0.44f;
 
         void EmitBreath(float range)
         {
             var fx = dragon.Animator.Fx;
-            if (fx == null) return;
+            if (fx == null && breathFlame == null) return;
             float scale = dragon.SizeScale;
             var dir = new Vector2(dragon.Facing, -0.18f).normalized;
             // 마우스로 조준 중이고 조준 지점이 앞쪽이면 그쪽으로 뿜는다 (수평에서 ±35도 안)
@@ -363,8 +371,18 @@ namespace DWH.InGame.Skills
                 float ang = Mathf.Clamp(Mathf.Atan2(aim.y - mouth.y, Mathf.Abs(aim.x - mouth.x)) * Mathf.Rad2Deg, -35f, 35f) * Mathf.Deg2Rad;
                 dir = new Vector2(dragon.Facing * Mathf.Cos(ang), Mathf.Sin(ang));
             }
-            int count = Mathf.Max(2, Mathf.RoundToInt(Time.deltaTime * 170f));
             float reach = Mathf.Abs((dragon.Facing > 0 ? dragon.Hitbox.xMax + range : dragon.Hitbox.xMin - range) - mouth.x);
+            if (breathFlame != null)
+            {
+                // 불길 끝이 입에 오고, 길이가 사거리에 닿게 키운다. 왼쪽을 보면 뒤집는다
+                float frameWidth = breathFlame.Renderer.sprite != null ? breathFlame.Renderer.sprite.bounds.size.x : 2.7f;
+                float size = Mathf.Max(0.7f * scale, reach / (BreathFlameLength * frameWidth));
+                breathFlame.transform.localScale = Vector3.one * size;
+                breathFlame.transform.position = mouth + dir * (BreathFlameTip * frameWidth * size);
+                breathFlame.Orient(Vector2.right, dir);
+                return;
+            }
+            int count = Mathf.Max(2, Mathf.RoundToInt(Time.deltaTime * 170f));
             fx.Fire(mouth, dir, Mathf.Max(1.6f * scale, reach * 1.3f), scale, count);
         }
 

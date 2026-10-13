@@ -157,11 +157,18 @@ namespace DWH.Tests
             Create("stg202", stats: stats);
             var hit = new HashSet<PassiveSkillId>();
             battle.Skills.SkillHit += (id, _, _, _) => hit.Add(id);
-            bool shot = false;
+            bool shot = false, breathShot = false;
             for (int i = 0; i < FrameRate * 30 && !battle.IsFinished; i++)
             {
                 yield return null;
                 if (!shot && hit.Count >= 3) { shot = true; yield return TestScreens.Capture(camera, "passives_2-2"); }
+                // 파이어 브레스 불길 그림 확인용 (DWH-54)
+                if (!breathShot && hit.Contains(PassiveSkillId.FireBreath))
+                {
+                    breathShot = true;
+                    for (int k = 0; k < 20; k++) yield return null;   // 불길이 다 커진 뒤
+                    yield return TestScreens.Capture(camera, "skill_breath");
+                }
             }
             var expected = new[] { PassiveSkillId.Dash, PassiveSkillId.FireBall, PassiveSkillId.FireBreath, PassiveSkillId.Shockwave, PassiveSkillId.Whirlwind, PassiveSkillId.Lightning };
             CollectionAssert.IsSubsetOf(expected, hit, $"발동해서 때린 스킬: {string.Join(", ", hit)}");
@@ -181,7 +188,12 @@ namespace DWH.Tests
             foreach (var id in levels.Keys) Assert.IsTrue(battle.Actives.Use(id));
             Assert.IsFalse(battle.Actives.Use(ActiveSkillId.Meteor), "0회면 쓸 수 없다");
             yield return TestScreens.Capture(camera, "actives_1-2");
-            for (int i = 0; i < FrameRate * 4; i++) yield return null;
+            // 메테오 낙하 방향·지진 균열·허리케인 확인용 (DWH-57~59)
+            for (int i = 0; i < 14; i++) yield return null;
+            yield return TestScreens.Capture(camera, "skill_meteor");
+            for (int i = 0; i < FrameRate; i++) yield return null;
+            yield return TestScreens.Capture(camera, "skill_quake");
+            for (int i = 0; i < FrameRate * 3; i++) yield return null;
             CollectionAssert.AreEquivalent(levels.Keys, hit);
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DWH.Data;
 using DWH.InGame.Combat;
 using DWH.InGame.Fx;
@@ -60,34 +61,68 @@ namespace DWH.InGame.Skills
         /// <summary>허리케인 기둥 (액티브). 호출하는 쪽이 위치를 옮긴다</summary>
         public static GameObject Column(Transform parent, GameDatabase db, ArtCatalog art, Vector2 center, Vector2 size, float lifetime)
         {
-            var fx = SpriteAnim.Play(parent, db, art, FxIds.Hurricane, center, size.y / 2.7f, Order, lifetime);
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.Hurricane, center, 1f, Order, lifetime);
             if (fx != null)
             {
+                // 그림 높이가 기둥 높이에 맞게 키운다 (10-12 리소스 교체로 프레임이 540×540 → 400×340이 되어 실제 크기로 계산)
+                float drawn = fx.Renderer.sprite != null ? fx.Renderer.sprite.bounds.size.y : 2.7f;
+                fx.transform.localScale = Vector3.one * (size.y / Mathf.Max(0.01f, drawn));
                 fx.LoopFor(lifetime);
                 return fx.gameObject;
             }
             return Quad(parent, "FxHurricane", center, size, new Color(0.7f, 0.9f, 1f, 0.35f), lifetime);
         }
 
-        /// <summary>지진: 화면 폭의 지면 진동</summary>
-        public static void Ground(Transform parent, GameDatabase db, ArtCatalog art, float centerX, float width, float groundY)
+        /// <summary>파이어볼 크기 (QA: 0.35 → 0.6 → 10-12 사용자 요청 ×1.5 = 0.9)</summary>
+        public const float FireBallScale = 0.9f;
+        /// <summary>지진 균열 한 장 크기와 간격. 그림의 균열은 프레임 폭의 약 2/3이라 간격을 그보다 좁혀 끊김 없이 잇는다</summary>
+        const float QuakeScale = 1.6f, QuakeSpacing = 2.3f;
+
+        /// <summary>
+        /// 지진: 지면 위에 균열을 끊김 없이 한 줄로 깔고 지속 시간 동안 반복 재생한다 (DWH-57).
+        /// 돌려받은 조각들을 호출하는 쪽이 카메라를 따라 옮긴다. 균열 그림은 프레임 세로 가운데에 있어 지면 높이에 맞춘다
+        /// </summary>
+        public static List<SpriteAnim> QuakeStrip(Transform parent, GameDatabase db, ArtCatalog art, float left, float right, float groundY, float duration)
         {
-            int pieces = Mathf.Max(1, Mathf.CeilToInt(width / 4f));
-            bool any = false;
-            for (int i = 0; i < pieces; i++)
+            var pieces = new List<SpriteAnim>();
+            int count = Mathf.CeilToInt((right - left) / QuakeSpacing) + 2;
+            for (int i = 0; i < count; i++)
             {
-                float x = centerX - width / 2 + (i + 0.5f) * width / pieces;
-                any |= SpriteAnim.Play(parent, db, art, FxIds.Earthquake, new Vector2(x, groundY + 0.8f), 1.2f, Order) != null;
+                var fx = SpriteAnim.Play(parent, db, art, FxIds.Earthquake, new Vector2(left + i * QuakeSpacing, groundY), QuakeScale, Order, duration);
+                if (fx == null) break;
+                fx.LoopFor(duration);
+                pieces.Add(fx);
             }
-            if (!any) Quad(parent, "FxQuake", new Vector2(centerX, groundY), new Vector2(width, 0.5f), new Color(0.6f, 0.45f, 0.3f, 0.5f), 0.35f);
+            if (pieces.Count == 0)
+                Quad(parent, "FxQuake", new Vector2((left + right) / 2, groundY), new Vector2(right - left, 0.5f), new Color(0.6f, 0.45f, 0.3f, 0.5f), duration);
+            return pieces;
+        }
+
+        /// <summary>지진 균열 조각을 화면 왼쪽부터 다시 깐다 (카메라가 움직여도 화면 전체를 덮는다)</summary>
+        public static void LayQuakeStrip(List<SpriteAnim> pieces, float left, float groundY)
+        {
+            for (int i = 0; i < pieces.Count; i++)
+                if (pieces[i] != null) pieces[i].transform.position = new Vector3(left + i * QuakeSpacing, groundY, 0);
+        }
+
+        /// <summary>파이어 브레스 불길 그림 (res8000005). 앞쪽 끝이 입에 오게 호출하는 쪽이 매 프레임 놓는다</summary>
+        public static SpriteAnim Breath(Transform parent, GameDatabase db, ArtCatalog art, float lifetime)
+        {
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.FireBreath, Vector2.zero, 1f, Order, lifetime);
+            if (fx == null) return null;
+            fx.LoopFor(lifetime);
+            // 0~3 커지고, 4~8 유지, 9~11 줄어든다 → 커진 뒤에는 4~8만 반복
+            fx.LoopRange(4, 8);
+            return fx;
         }
 
         /// <summary>파이어 볼: 대상을 따라 휘어 날아가는 불덩이</summary>
         public static void Homing(Transform parent, GameDatabase db, ArtCatalog art, Vector2 origin, ICombatTarget target, float speed,
             Action<ICombatTarget> onHit, Func<ICombatTarget> retarget)
         {
-            var fx = SpriteAnim.Play(parent, db, art, FxIds.FireBall, origin, 0.35f, Order, 4f);
-            var go = fx != null ? fx.gameObject : Quad(parent, "FxFireBall", origin, new Vector2(0.35f, 0.35f), new Color(1f, 0.5f, 0.15f), 4f);
+            // 불덩이 크기 (DWH-55: 잘 안 보인다 → 0.6, 이후 ×1.5)
+            var fx = SpriteAnim.Play(parent, db, art, FxIds.FireBall, origin, FireBallScale, Order, 4f);
+            var go = fx != null ? fx.gameObject : Quad(parent, "FxFireBall", origin, new Vector2(FireBallScale, FireBallScale), new Color(1f, 0.5f, 0.15f), 4f);
             if (fx != null) fx.LoopFor(4f);
             go.AddComponent<HomingShot>().Launch(target, speed, onHit, retarget);
         }

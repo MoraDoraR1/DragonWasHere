@@ -31,7 +31,32 @@ namespace DWH.Editor
             ArtCatalogBuilder.Build();
             EnsureTmpEssentials();
             UiThemeBuilder.Build();
+            CopyStreamingVideos();
             BuildGameScene();
+        }
+
+        /// <summary>
+        /// 타이틀 배경 영상을 StreamingAssets로 복사한다. WebGL은 VideoClip을 재생하지 못해 URL로 연다.
+        /// 원본 경로는 resource 테이블(Tuning.TitleVideoRes)을 따른다.
+        /// </summary>
+        [MenuItem("DWH/Copy Streaming Videos")]
+        public static void CopyStreamingVideos()
+        {
+            var database = AssetDatabase.LoadAssetAtPath<GameDatabase>(CsvImporter.DatabasePath);
+            if (database == null || !database.HasResource(Tuning.TitleVideoRes)) return;
+            var row = database.Resource(Tuning.TitleVideoRes);
+            string source = ArtScaleSettings.ArtRoot + row.resPath;
+            string target = Path.Combine(Application.streamingAssetsPath, row.resName);
+            if (!File.Exists(source))
+            {
+                Debug.LogError($"[DWH] 타이틀 영상이 없습니다: {source}");
+                return;
+            }
+            if (File.Exists(target) && new FileInfo(target).Length == new FileInfo(source).Length) return;
+            Directory.CreateDirectory(Application.streamingAssetsPath);
+            File.Copy(source, target, true);
+            AssetDatabase.Refresh();
+            Debug.Log($"[DWH] 타이틀 영상 복사: {target}");
         }
 
         /// <summary>ArtScaleSettings의 PPU가 바뀐 이미지(예: 건물 크기 조정)를 다시 임포트한다</summary>

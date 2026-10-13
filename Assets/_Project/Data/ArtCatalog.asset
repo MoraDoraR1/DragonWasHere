@@ -980,6 +980,12 @@ MonoBehaviour:
     - {fileID: 21300000, guid: ab5fb09260eee8a49a0d46318a22d081, type: 3}
     - {fileID: 21300000, guid: 000c053c4f22bf14e81d1656e09c724a, type: 3}
     - {fileID: 21300000, guid: 3e94eb404f46d7848aff70a886279691, type: 3}
+    - {fileID: 21300000, guid: b3e84d3f9f5202345bb5ba6426e76006, type: 3}
+    - {fileID: 21300000, guid: c780a259de6ee554ebd2a773eb596766, type: 3}
+    - {fileID: 21300000, guid: 75165537467661e4aaeb4412722fe767, type: 3}
+    - {fileID: 21300000, guid: adfe322637573d740832e16077c648ed, type: 3}
+    - {fileID: 21300000, guid: 7dcc3ec3afde5fe469b0e34c04569b7b, type: 3}
+    - {fileID: 21300000, guid: 32fa2f69c0347e344be79c587076f875, type: 3}
   - resId: res8000003
     frames:
     - {fileID: 21300000, guid: 343ce62aa481d7d409a6d3b02cfeeb01, type: 3}

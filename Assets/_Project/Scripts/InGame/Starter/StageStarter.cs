@@ -121,15 +121,15 @@ namespace DWH.InGame.Starter
             canvas = UiFactory.Canvas("Starter", 3);
             // 안내 문구와 게이지는 클릭을 가로채지 않는다
             Destroy(canvas.GetComponent<GraphicRaycaster>());
-            // 드래곤이 화면 위쪽 정중앙에 있으므로 글자는 화면 가운데에 둔다
-            title = UiFactory.Text(canvas, "Title", UiFactory.Center, new Vector2(0, -20), new Vector2(1400, 180), 120, TextAlignmentOptions.Center,
+            // 드래곤은 화면 가운데보다 조금 위를 난다. 글자·안내·게이지는 그 아래 빈 하늘에 둬서 드래곤과 지면의 건물을 가리지 않는다 (DWH-56)
+            title = UiFactory.Text(canvas, "Title", UiFactory.Center, new Vector2(0, -150), new Vector2(1400, 180), 120, TextAlignmentOptions.Center,
                 UiTheme.Gold, bold: true, outline: true);
             // 밝은 하늘 위에서도 읽히게 안내 문구 뒤에 어두운 띠를 깐다. 문구가 없으면 띠도 숨긴다 (Update)
-            hintBack = UiFactory.Panel(canvas, "HintBack", UiFactory.BottomCenter, new Vector2(0, 222), new Vector2(1240, 76), FrameStyle.Ink);
-            hint = UiFactory.Text(canvas, "Hint", UiFactory.BottomCenter, new Vector2(0, 230), new Vector2(1200, 60), 34, TextAlignmentOptions.Center,
+            hintBack = UiFactory.Panel(canvas, "HintBack", UiFactory.BottomCenter, new Vector2(0, 412), new Vector2(1240, 76), FrameStyle.Ink);
+            hint = UiFactory.Text(canvas, "Hint", UiFactory.BottomCenter, new Vector2(0, 420), new Vector2(1200, 60), 34, TextAlignmentOptions.Center,
                 bold: true, outline: true);
 
-            gaugeRoot = UiFactory.Panel(canvas, "Gauge", UiFactory.BottomCenter, new Vector2(0, 120), new Vector2(900, 80), FrameStyle.Ink);
+            gaugeRoot = UiFactory.Panel(canvas, "Gauge", UiFactory.BottomCenter, new Vector2(0, 310), new Vector2(900, 80), FrameStyle.Ink);
             var track = UiFactory.Stretch(gaugeRoot, "Track", 12);
             zoneRect = UiFactory.Rect(track, "Good", new Vector2(0, 0.5f), Vector2.zero, new Vector2(0, 56));
             zoneRect.gameObject.AddComponent<Image>().color = new Color(UiTheme.Gold.r, UiTheme.Gold.g, UiTheme.Gold.b, 0.8f);
@@ -141,7 +141,7 @@ namespace DWH.InGame.Starter
             gaugeRoot.gameObject.SetActive(false);
 
             // 판정 표시 이미지 (starter_grade.res_id)
-            judgement = UiFactory.Rect(canvas, "Judgement", UiFactory.Center, new Vector2(0, 40), new Vector2(576, 216)).gameObject.AddComponent<Image>();
+            judgement = UiFactory.Rect(canvas, "Judgement", UiFactory.Center, new Vector2(0, -60), new Vector2(576, 216)).gameObject.AddComponent<Image>();
             judgement.preserveAspect = true;
             judgement.raycastTarget = false;
             judgement.gameObject.SetActive(false);
@@ -151,15 +151,23 @@ namespace DWH.InGame.Starter
         {
             var dragon = battle.Dragon;
             float left = battle.StageLeft, right = battle.StageRight;
-            float zoomSize = Mathf.Max(normalSize, (right - left) / (2f * view.aspect));
             float centerX = (left + right) / 2f;
             float startX = view.transform.position.x;
+            var normalScale = dragon.transform.localScale;
+            // 줌아웃: 건물 배치 전체 + 양옆 여백(상공을 나는 드래곤 몸 절반)이 화면 폭에 들어오게 한다.
+            // 여백이 없으면 맵 끝을 날 때 드래곤이 화면 밖으로 잘린다 (DWH-56). 드래곤 크기가 줌에 따라 바뀌어 두 번 맞춘다
+            float zoomSize = Mathf.Max(normalSize, (right - left) / (2f * view.aspect));
+            float sidePad = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                sidePad = SkyHalfWidth(dragon, normalScale, zoomSize) + 0.4f;
+                zoomSize = Mathf.Max(normalSize, (right - left + 2f * sidePad) / (2f * view.aspect));
+            }
 
             // 1) Game Start! + 줌아웃. 드래곤은 처음부터 땅이 아닌 화면 상공 정중앙에 있다
             Phase = StarterPhase.Intro;
             title.text = UiText.Get("ui_starter_start");
             float scale = zoomSize / normalSize;
-            var normalScale = dragon.transform.localScale;
             dragon.Rig.SetFacing(1);
             for (float t = 0; t < IntroSeconds; t += Time.deltaTime)
             {
@@ -182,7 +190,9 @@ namespace DWH.InGame.Starter
             // 표적은 건물을 가리지 않게 지면 아래 흙 띠에 둔다
             marker = Quad("StarterTarget", new Vector2(0.9f * scale, Mathf.Min(0.35f * scale, groundY * 0.8f)), new Color(0.95f, 0.15f, 0.15f, 0.9f));
             line = Quad("StarterLine", new Vector2(0.06f * scale, 1), new Color(0.95f, 0.15f, 0.15f, 0.5f));
-            float minX = left + 1f, maxX = right - 1f, travel = 0;
+            // 상공 왕복 범위: 화면 양 끝에서 드래곤 몸 절반 안쪽 (맵 끝 건물 위까지는 간다)
+            float viewHalf = zoomSize * view.aspect;
+            float minX = centerX - viewHalf + sidePad, maxX = centerX + viewHalf - sidePad, travel = 0;
             float speed = (maxX - minX) * 2f / FlyLapSeconds;
             float x = centerX;
             travel = Mathf.Clamp(centerX - minX, 0, maxX - minX);
@@ -269,8 +279,16 @@ namespace DWH.InGame.Starter
             Finish();
         }
 
-        /// <summary>상공 높이: 화면 높이의 약 2/3 (카메라 아래 끝이 지면 바닥 0)</summary>
-        static float SkyY(float cameraSize) => cameraSize * 1.35f;
+        /// <summary>상공 높이: 화면 높이의 약 57% (카메라 아래 끝이 지면 바닥 0). 왼쪽 위 HUD에 가리지 않게 2/3에서 내렸다 (DWH-56)</summary>
+        static float SkyY(float cameraSize) => cameraSize * 1.15f;
+
+        /// <summary>상공을 나는 드래곤 그림의 가로 절반 (날개·꼬리 포함 근사: 몸 판정 폭의 0.8배)</summary>
+        float SkyHalfWidth(DragonController dragon, Vector3 normalScale, float cameraSize)
+        {
+            float grow = Mathf.Max(1f, cameraSize / normalSize * 0.7f);
+            float baseWidth = dragon.Hitbox.width / Mathf.Max(0.01f, dragon.transform.localScale.x / Mathf.Max(0.01f, normalScale.x));
+            return baseWidth * grow * 0.8f;
+        }
 
         /// <summary>현재 카메라 화면의 가로 정중앙 상공에 드래곤을 둔다. 줌아웃할수록 작아 보이므로 함께 키운다</summary>
         void PlaceInSky(DragonController dragon, Vector3 normalScale, float cameraSize)

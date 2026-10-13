@@ -5,6 +5,7 @@ using DWH.Editor.Data;
 using DWH.InGame.Drops;
 using DWH.OutGame;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace DWH.Tests
 {
@@ -144,7 +145,12 @@ namespace DWH.Tests
             var points = pos.Values.ToList();
             for (int i = 0; i < points.Count; i++)
                 for (int j = i + 1; j < points.Count; j++)
-                    Assert.Greater((points[i] - points[j]).magnitude, 0.7f, "노드가 겹친다");
+                {
+                    var d = points[i] - points[j];
+                    Assert.Greater(d.magnitude, 0.7f, "노드가 겹친다");
+                    // 같은 열에서 위아래로 붙으면 위 노드 이름(배지 아래)이 아래 노드를 가린다 (DWH-51)
+                    if (Mathf.Abs(d.x) < 1f) Assert.GreaterOrEqual(Mathf.Abs(d.y), 1.15f, "위아래 노드 사이에 이름 자리가 없다");
+                }
         }
 
         // ───── 환생 ─────

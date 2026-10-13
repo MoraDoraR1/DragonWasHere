@@ -14,10 +14,11 @@ using UnityEngine.InputSystem;
 
 namespace DWH.Core
 {
-    public enum GameState { OutGame, Stage, Bonus, Result }
+    public enum GameState { Title, OutGame, Stage, Bonus, Result }
 
     /// <summary>
-    /// 게임 상태 머신. OutGame → Stage(스타터 포함) → (Bonus) → Result → OutGame.
+    /// 게임 상태 머신. Title → OutGame → Stage(스타터 포함) → (Bonus) → Result → OutGame.
+    /// 타이틀: 새 게임(기록이 있으면 경고 후 초기화) → 바로 1-1 출격 / 이어하기 → OutGame. 일시정지의 "타이틀로 이동"은 이번 판을 기록하지 않는다.
     /// 일반 스테이지를 클리어한 순간 기력이 const.bonus_min_stamina 이상이면 보너스로 간다 (가이드 6.6).
     /// 저장 시점 (가이드 6.12): 정산 직후, 구매 직후, 환생 직후, "바로 다시 출격" 직전, 언어 변경.
     /// </summary>
@@ -36,6 +37,8 @@ namespace DWH.Core
         ResultScreen resultScreen;
         BattleHud hud;
         PauseMenu pauseMenu;
+        TitleScreen title;
+        SettingsPopup settings;
         float timeScaleBeforePause = 1f;
         double goldAtDeparture;
         float departTime;
@@ -52,6 +55,8 @@ namespace DWH.Core
         public bool IsInitialized => Save != null;
         public bool IsPaused { get; private set; }
         public OutGameScreen OutGame => outGame;
+        public TitleScreen Title => title;
+        public SettingsPopup Settings => settings;
 
         public event Action<GameState> StateChanged;
 
@@ -60,11 +65,12 @@ namespace DWH.Core
         void Start()
         {
             if (!IsInitialized)
-                Initialize(SaveSystem.DefaultStorage(), cam => new MouseGuideInput(cam, (float)database.Const("mouse_idle_sec")));
+                Initialize(SaveSystem.DefaultStorage(), cam => new MouseGuideInput(cam, (float)database.Const("mouse_idle_sec")), showTitle: true);
         }
 
         /// <summary>저장소와 입력을 바꿔 끼울 수 있게 분리했다. 테스트는 메모리 저장소와 자동 입력을 넣는다.</summary>
-        public void Initialize(ISaveStorage saveStorage, Func<Camera, IGuideInput> guideInputFactory)
+        /// <param name="showTitle">타이틀 화면부터 시작한다. 테스트·봇은 바로 아웃게임으로 간다</param>
+        public void Initialize(ISaveStorage saveStorage, Func<Camera, IGuideInput> guideInputFactory, bool showTitle = false)
         {
             storage = saveStorage;
             inputFactory = guideInputFactory;
@@ -73,20 +79,27 @@ namespace DWH.Core
             if (database.OrderIndex(Save.currentStage) < 0) Save.currentStage = database.StageOrder[0];
             if (database.OrderIndex(Save.highestStage) < 0) Save.highestStage = Save.currentStage;
             Localization.Current = Localization.Parse(Save.language);
+            BattleCamera.ShakeEnabled = Save.settings.screenShake;
             view = Camera.main != null ? Camera.main : new GameObject("Main Camera") { tag = "MainCamera" }.AddComponent<Camera>();
 
             if (uiTheme != null) UiTheme.Active = uiTheme;
             Upgrades = new UpgradeTree(database, Save);
             BuildScreens();
             Analytics.SessionStart(database, Save);
-            EnterOutGame();
+            if (showTitle) EnterTitle();
+            else EnterOutGame();
         }
+
+        /// <summary>이어할 기록이 있는지 (한 판이라도 했거나 환생했으면)</summary>
+        public bool HasProgress => Save.playCount > 0 || Save.rebirthCount > 0;
 
         void BuildScreens()
         {
             if (outGame != null) Destroy(outGame.gameObject);
             if (resultScreen != null) Destroy(resultScreen.gameObject);
             if (pauseMenu != null) Destroy(pauseMenu.gameObject);
+            if (title != null) Destroy(title.gameObject);
+            if (settings != null) Destroy(settings.gameObject);
             outGame = OutGameScreen.Create(database, art, Upgrades, new OutGameActions
             {
                 Depart = StartStage,
@@ -98,7 +111,74 @@ namespace DWH.Core
                 ToggleLanguage = ToggleLanguage,
             });
             resultScreen = ResultScreen.Create(database, ConfirmResult, RetryFromResult);
-            pauseMenu = PauseMenu.Create(() => SetPaused(false));
+            pauseMenu = PauseMenu.Create(() => SetPaused(false), OpenSettings, ReturnToTitle);
+            title = TitleScreen.Create(database, art, new TitleActions
+            {
+                NewGame = StartNewGame,
+                Continue = ContinueGame,
+                OpenSettings = OpenSettings,
+            });
+            settings = SettingsPopup.Create(new SettingsActions
+            {
+                ToggleLanguage = ToggleLanguage,
+                CanChangeLanguage = () => State is GameState.Title or GameState.OutGame,
+                SetScreenShake = on =>
+                {
+                    Save.settings.screenShake = on;
+                    SaveSystem.Save(storage, Save);
+                },
+            });
+        }
+
+        void EnterTitle()
+        {
+            resultScreen.Hide();
+            outGame.Hide();
+            title.Show(HasProgress);
+            SetState(GameState.Title);
+        }
+
+        public void OpenSettings() => settings.Show();
+
+        /// <summary>타이틀 "이어하기": 저장된 기록으로 아웃게임(둥지)에 간다</summary>
+        public void ContinueGame()
+        {
+            if (State != GameState.Title || !HasProgress) return;
+            title.Hide();
+            EnterOutGame();
+        }
+
+        /// <summary>
+        /// 타이틀 "새 게임": 기록을 지우고(경고 팝업은 TitleScreen이 띄운다) 바로 1-1로 출격한다.
+        /// 언어·환경설정·사용자 ID는 남긴다.
+        /// </summary>
+        public void StartNewGame()
+        {
+            if (State != GameState.Title) return;
+            if (HasProgress)
+            {
+                var keep = Save;
+                storage.Delete();
+                Save = SaveSystem.Load(storage, database.StageOrder[0]);
+                Save.language = keep.language;
+                Save.userId = keep.userId;
+                Save.settings = keep.settings;
+                SaveSystem.Save(storage, Save);
+                Upgrades = new UpgradeTree(database, Save);
+                BuildScreens();
+            }
+            title.Hide();
+            SetState(GameState.OutGame);
+            StartStage(false, fromTitle: true);
+        }
+
+        /// <summary>일시정지 "타이틀로 이동": 이번 판은 정산하지 않고 버린다</summary>
+        public void ReturnToTitle()
+        {
+            if (Battle != null) CloseBattle();
+            Time.timeScale = 1f;
+            settings.Hide();
+            EnterTitle();
         }
 
         void EnterOutGame()
@@ -113,10 +193,10 @@ namespace DWH.Core
         public void StartStage() => StartStage(false);
 
         /// <param name="retry">결과 화면 "바로 다시 출격"으로 왔는지 (지표 entry)</param>
-        void StartStage(bool retry)
+        void StartStage(bool retry, bool fromTitle = false)
         {
             if (State != GameState.OutGame) return;
-            if (!retry) Analytics.OutgameExit(database, Save, Upgrades.AffordableCount());
+            if (!retry && !fromTitle) Analytics.OutgameExit(database, Save, Upgrades.AffordableCount());
             outGame.Hide();
             goldAtDeparture = Save.goldCoin;
             departTime = Time.time;
@@ -256,17 +336,23 @@ namespace DWH.Core
             return true;
         }
 
-        /// <summary>한/영 전환. 화면을 다시 만든다</summary>
+        /// <summary>한/영 전환. 화면을 다시 만든다 (타이틀·아웃게임에서만)</summary>
         public void ToggleLanguage()
         {
-            if (State != GameState.OutGame) return;
+            if (State is not (GameState.Title or GameState.OutGame)) return;
             Localization.Current = Localization.Current == Language.Ko ? Language.En : Language.Ko;
             Save.language = Localization.Code(Localization.Current);
             SaveSystem.Save(storage, Save);
             int tab = outGame.Tab;
+            bool settingsOpen = settings.IsOpen;
             BuildScreens();
-            outGame.Show(Save);
-            outGame.SetTab(tab);
+            if (State == GameState.Title) title.Show(HasProgress);
+            else
+            {
+                outGame.Show(Save);
+                outGame.SetTab(tab);
+            }
+            if (settingsOpen) settings.Show();
         }
 
         /// <summary>결과 화면 "둥지로": 전투를 정리하고 아웃게임으로 돌아간다</summary>
@@ -319,13 +405,26 @@ namespace DWH.Core
         {
             var keyboard = Keyboard.current;
             if (keyboard == null) return;
-            if (keyboard.escapeKey.wasPressedThisFrame || keyboard.pKey.wasPressedThisFrame)
+            bool escape = keyboard.escapeKey.wasPressedThisFrame;
+            // 열린 팝업이 있으면 Esc는 팝업부터 닫는다
+            if (escape && settings.IsOpen)
+            {
+                settings.Hide();
+                return;
+            }
+            if (escape && title.WarningOpen)
+            {
+                title.HideWarning();
+                return;
+            }
+            if (escape || keyboard.pKey.wasPressedThisFrame)
                 TogglePause();
-            if (IsPaused) return;
+            if (IsPaused || settings.IsOpen) return;
             bool confirm = keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame;
             if (confirm)
             {
-                if (State == GameState.OutGame) StartStage();
+                if (State == GameState.Title) title.SubmitDefault();
+                else if (State == GameState.OutGame) StartStage();
                 else if (State == GameState.Result) ConfirmResult();
             }
             if (keyboard.rKey.wasPressedThisFrame && State == GameState.Result)

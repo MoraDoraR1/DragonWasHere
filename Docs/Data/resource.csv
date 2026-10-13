@@ -313,7 +313,7 @@ res6000136,60,warning-drop.png,Fix_Resource/UI&폰트/01_UI에셋/assets/11_스�
 res6000137,60,title_en.png,Fix_Resource/UI&폰트/01_UI에셋/assets/12_타이틀/title_en.png,,,,,타이틀 (영문)
 res6000138,60,title_kr.png,Fix_Resource/UI&폰트/01_UI에셋/assets/12_타이틀/title_kr.png,,,,,타이틀 (한글)
 res8000001,80,sheet.png,Fix_Resource/스킬 이펙트/A1. 메테오/sheet.png,0,,12,12,"스킬 이펙트 · 메테오 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
-res8000002,80,sheet.png,Fix_Resource/스킬 이펙트/A2. 허리케인/sheet.png,0,,12,12,"스킬 이펙트 · 허리케인 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
+res8000002,80,sheet.png,Fix_Resource/스킬 이펙트/A2. 허리케인/sheet.png,0,,18,12,"스킬 이펙트 · 허리케인 (시트 3×6, 프레임 400×340px. 낱장은 frames 폴더)"
 res8000003,80,sheet.png,Fix_Resource/스킬 이펙트/A3. 지진/sheet.png,0,,12,12,"스킬 이펙트 · 지진 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
 res8000004,80,sheet.png,Fix_Resource/스킬 이펙트/P1. 파이어볼/sheet.png,0,,12,12,"스킬 이펙트 · 파이어볼 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"
 res8000005,80,sheet.png,Fix_Resource/스킬 이펙트/P2. 파이어브레스/sheet.png,0,,12,12,"스킬 이펙트 · 파이어브레스 (시트 4×3, 프레임 540×540px. 낱장은 frames 폴더)"

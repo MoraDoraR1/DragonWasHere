@@ -81,7 +81,8 @@ namespace DWH.InGame.Fx
 
         void LateUpdate()
         {
-            if (dragon == null) return;
+            // 일시정지 중에는 조준선과 드래곤 시선을 그대로 둔다
+            if (dragon == null || Time.timeScale <= 0) return;
             Vector2 cursor = default;
             bool show = dragon.Controllable && dragon.IsAlive && dragon.IsGuided && input.TryGetCursor(out cursor);
             if (!show)

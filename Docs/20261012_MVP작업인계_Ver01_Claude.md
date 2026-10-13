@@ -5,6 +5,8 @@
 
 ---
 
+> 집 PC로 옮길 때는 `Docs/20261012_집PC작업인계_Ver01_Claude.md`를 먼저 본다 (미커밋 변경 압축 사용법).
+
 ## 1. 이어받는 Claude가 먼저 할 일
 
 1. `README.md`(작업 규칙), `작업내용.md`, `메모.md`를 읽는다 (CLAUDE.md가 자동으로 불러온다).
@@ -29,7 +31,7 @@
 ## 3. 현재 상태 (10-12)
 
 - **M1~M9 완료** (상세는 `작업내용.md` 10-12 "MVP 전환"). 커밋은 아직 안 했다(마지막 커밋 `1b26602`).
-- 테스트: EditMode 67개, PlayMode 13개 모두 통과(10-12).
+- 테스트: EditMode 67개, PlayMode 17개 모두 통과(10-12, 피드백 반영 후).
 - **M10 진행 중**
   - 지표: 바탕화면 `DWH_AnalyticsTest` 프로젝트의 수집 묶음(`Assets/DWHAnalytics/`, `Assets/WebGLTemplates/DragonFirebase/`)을 복사했고, `DWH.Runtime.asmdef`가 `DWH.Analytics`를 참조한다. 게임 쪽 `Assets/_Project/Scripts/Core/Analytics.cs`가 P0 8개(game_session_start, run_start, run_end, upgrade_purchase, outgame_exit, rebirth_unlocked, rebirth, game_complete)를 계획 페이지 명세 파라미터로 보낸다. firebase-config.js는 테스트용 프로젝트(temporary-project-just-for) 값이 들어 있다.
   - WebGL 빌드: 메뉴 `DWH > Analytics > Build Web (Team Test)` 또는 배치 `-executeMethod DWH.Analytics.Editor.DwhWebBuild.BuildTestBatch` → `Builds/Web_Test.zip`. **10-12 성공**, 브라우저에서 동작 확인. Emscripten clang이 가끔 0xC0000005로 죽는데 다시 돌리면 이어서 된다(캐시).
@@ -66,4 +68,4 @@
 | `Tests/` | EditMode: `DataIntegrityTests`, `RulesTests`, `StarterGaugeTests`, `InGameLogicTests` 등 / PlayMode: `MvpBattleTests`, `MvpFlowTests` |
 
 ---
-마지막 갱신: 2026-10-12, MVP Ver01 커밋. WebGL 빌드 성공, 밸런스 조정안 팀 피드백 대기
+마지막 갱신: 2026-10-12, MVP Ver01 커밋 뒤 타이틀 화면 + 플레이 피드백 3차 + QA 티켓 DWH-51~60 + QA 2차(트리 이름표·테두리·좁은 화면·이펙트 리소스 재적용) 반영(미커밋, EditMode 67·PlayMode 22 통과). 밸런스 조정안 팀 피드백 대기

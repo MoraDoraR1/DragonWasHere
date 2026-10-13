@@ -22,6 +22,8 @@ namespace DWH.UI
         const float Unit = 175f;
         const float TileSize = 128f;
         const float LineWidth = 10f;
+        /// <summary>레벨 배지가 노드 아래로 튀어나온 만큼 (배지 아래 끝 -16 + 여유). 테두리 아래 변을 이만큼 늘린다</summary>
+        const float BadgeDrop = 22f;
         const float PunchScale = 1.18f;
         static readonly int[] Quantities = { 1, 10, UpgradeTree.MaxQuantity };
         static readonly string[] QuantityKeys = { null, "ui_buy_x10", "ui_buy_max" };
@@ -31,6 +33,7 @@ namespace DWH.UI
             public UpgradeRow node;
             public RectTransform rect;
             public Image body, glow, icon, lockIcon;
+            public RectTransform namePlate;
             public TMP_Text name, level;
             public float punch;
         }
@@ -113,6 +116,7 @@ namespace DWH.UI
             stageChip = UiFactory.Text(chip, "Id", UiFactory.Center, Vector2.zero, new Vector2(120, 64), 34, TextAlignmentOptions.Center,
                 UiFactory.LabelColorFor(FrameStyle.ChipGold), bold: true);
             stageInfo = UiFactory.Text(bar, "StageInfo", left, new Vector2(836, 0), new Vector2(560, 84), 26, TextAlignmentOptions.Left);
+            UiFactory.Fit(stageInfo, 18, false);
 
             var language = UiFactory.Button(bar, "Language", new Vector2(1, 0.5f), new Vector2(-292, 0), new Vector2(150, 64), "", 22,
                 () => actions.ToggleLanguage?.Invoke(), FrameStyle.ButtonDark);
@@ -178,7 +182,8 @@ namespace DWH.UI
             foreach (var node in db.upgrades)
                 tiles.Add(CreateTile(nodeLayer, node));
 
-            selection = UiFactory.Rect(nodeLayer, "Selection", UiFactory.Center, Vector2.zero, Vector2.one * (TileSize + 18));
+            // 선택 테두리: 아래 변만 늘려 노드 아래로 튀어나온 레벨 배지(0/12, [잠김])까지 감싼다
+            selection = UiFactory.Rect(nodeLayer, "Selection", UiFactory.Center, Vector2.zero, new Vector2(TileSize + 18, TileSize + 18 + BadgeDrop));
             var sel = selection.gameObject.AddComponent<Image>();
             sel.sprite = UiTheme.KitSprite("node-selected-border");
             sel.color = sel.sprite != null ? Color.white : UiTheme.Ember;
@@ -223,6 +228,7 @@ namespace DWH.UI
             tile.rect = UiFactory.Rect(layer, node.upgradeId, UiFactory.Center, Position(node), Vector2.one * TileSize);
 
             var glow = UiFactory.Stretch(tile.rect, "Glow", -12);
+            glow.offsetMin = new Vector2(glow.offsetMin.x, -12 - BadgeDrop);
             tile.glow = glow.gameObject.AddComponent<Image>();
             tile.glow.sprite = UiTheme.KitSprite("node-selected-border");
             tile.glow.type = Image.Type.Sliced;
@@ -237,8 +243,14 @@ namespace DWH.UI
             button.onClick.AddListener(() => OnTileClicked(node));
 
             tile.icon = UiFactory.Icon(tile.rect, "Icon", UiFactory.Center, new Vector2(0, 6), new Vector2(92, 92), Icon(node.resId));
-            tile.name = UiFactory.Text(tile.rect, "Name", UiFactory.TopCenter, new Vector2(0, -TileSize - 24), new Vector2(TileSize + 60, 34), 21,
-                TextAlignmentOptions.Center, UiTheme.InkText, bold: true);
+            // 이름은 레벨 배지 아래. 길면(영어) 두 줄까지 줄여서 맞춘다 (DWH-53)
+            // 이름표 바탕: 연결선은 노드 뒤 레이어라 이름표에 가려진다. 이름이 선에 씹히지 않게 한다 (크기는 이름 길이에 맞춘다, Refresh)
+            tile.namePlate = UiFactory.Panel(tile.rect, "NamePlate", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 10), new Vector2(TileSize + 40, 44),
+                FrameStyle.ChipCream, new Color(1f, 1f, 1f, 0.95f));
+            tile.namePlate.GetComponent<Image>().raycastTarget = false;
+            tile.name = UiFactory.Text(tile.rect, "Name", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 12), new Vector2(TileSize + 40, 44), 21,
+                TextAlignmentOptions.Top, UiTheme.InkText, bold: true);
+            UiFactory.Fit(tile.name, 14, false);
             tile.lockIcon = UiFactory.Icon(tile.rect, "Lock", UiFactory.TopRight, new Vector2(-4, -4), new Vector2(36, 36), "icon-lock");
 
             var badge = UiFactory.Panel(tile.rect, "Badge", UiFactory.BottomCenter, new Vector2(0, -16), new Vector2(104, 36), FrameStyle.ChipCream);
@@ -260,11 +272,13 @@ namespace DWH.UI
 
             eyebrow = UiFactory.Text(panel, "Eyebrow", tl, new Vector2(x, -26), new Vector2(w, 32), 22, TextAlignmentOptions.Left, UiTheme.InkDim, bold: true);
             title = UiFactory.Text(panel, "Title", tl, new Vector2(x, -58), new Vector2(w - 110, 62), 40, TextAlignmentOptions.Left, UiTheme.InkText, bold: true);
+            UiFactory.Fit(title, 24, true);
             var iconRect = UiFactory.Rect(panel, "Icon", UiFactory.TopRight, new Vector2(-24, -20), new Vector2(104, 104));
             detailIcon = iconRect.gameObject.AddComponent<Image>();
             detailIcon.preserveAspect = true;
             detailIcon.raycastTarget = false;
             description = UiFactory.Text(panel, "Description", tl, new Vector2(x, -130), new Vector2(w, 100), 23, TextAlignmentOptions.TopLeft, UiTheme.InkText);
+            UiFactory.Fit(description, 16, false);
 
             var nowBox = UiFactory.Panel(panel, "Now", tl, new Vector2(x, -238), new Vector2(w, 90), FrameStyle.Card);
             now = UiFactory.Text(nowBox, "Text", UiFactory.Center, Vector2.zero, new Vector2(w - 32, 90), 23, TextAlignmentOptions.Left, UiTheme.InkText);
@@ -318,7 +332,7 @@ namespace DWH.UI
         {
             selected = node;
             var tile = tiles.First(t => t.node == node);
-            selection.anchoredPosition = tile.rect.anchoredPosition;
+            selection.anchoredPosition = tile.rect.anchoredPosition + new Vector2(0, -BadgeDrop / 2f);
             selection.SetAsLastSibling();
             if (save != null) RefreshDetail();
         }
@@ -387,6 +401,7 @@ namespace DWH.UI
             if (tile.lockIcon != null) tile.lockIcon.enabled = locked;
             tile.glow.enabled = status == NodeStatus.Affordable;
             tile.name.text = db.Text(node.nameStr);
+            FitNamePlate(tile);
             tile.name.color = locked ? UiTheme.InkDim : UiTheme.InkText;
             tile.level.text = status switch
             {
@@ -394,6 +409,16 @@ namespace DWH.UI
                 NodeStatus.Maxed => UiText.Get("ui_max"),
                 _ => node.maxLevel > 0 ? $"{level}/{node.maxLevel}" : $"Lv {level}",
             };
+        }
+
+        /// <summary>이름표 바탕을 실제 글자 크기(+여백)에 맞춘다</summary>
+        static void FitNamePlate(Tile tile)
+        {
+            tile.name.ForceMeshUpdate();
+            var size = tile.name.textBounds.size;
+            if (size.x <= 0 || float.IsNaN(size.x)) return;
+            var max = tile.name.rectTransform.sizeDelta;
+            tile.namePlate.sizeDelta = new Vector2(Mathf.Min(max.x + 8, size.x + 18), Mathf.Min(max.y + 4, size.y + 8));
         }
 
         void RefreshDetail()

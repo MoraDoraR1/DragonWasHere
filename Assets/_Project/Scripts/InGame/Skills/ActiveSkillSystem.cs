@@ -24,6 +24,8 @@ namespace DWH.InGame.Skills
     {
         const float MeteorFallSeconds = 0.35f;
         const float MeteorStagger = 0.12f;
+        /// <summary>메테오가 비스듬히 떨어지는 정도: 떨어지는 높이당 가로 이동 (0.6 ≈ 세로에서 31도)</summary>
+        const float MeteorSlant = 0.6f;
         const float HurricaneSpeed = 1f;
         const float HurricaneWidth = 1.2f;
         const float HurricaneHeight = 6f;
@@ -156,7 +158,9 @@ namespace DWH.InGame.Skills
                 var target = targets.Count > 0 ? targets[i % targets.Count] : null;
                 float x = target != null ? target.Hitbox.center.x : Mathf.Lerp(min, max, (i + 0.5f) / count);
                 float y = target != null ? target.Hitbox.center.y : Tuning.GroundHeight;
-                StartCoroutine(MeteorFall(multiplier, target, new Vector2(x + 1.5f, top), new Vector2(x, y)));
+                // 드래곤 뒤쪽 하늘에서 바라보는 쪽으로 비스듬히 떨어진다 (DWH-59: 방향이 고정돼 있었다)
+                float slant = (top - y) * MeteorSlant;
+                StartCoroutine(MeteorFall(multiplier, target, new Vector2(x - facing * slant, top), new Vector2(x, y)));
                 yield return new WaitForSeconds(MeteorStagger);
             }
             yield return new WaitForSeconds(MeteorFallSeconds);
@@ -165,6 +169,8 @@ namespace DWH.InGame.Skills
         IEnumerator MeteorFall(double multiplier, ICombatTarget target, Vector2 from, Vector2 to)
         {
             var fx = SkillFx.Meteor(transform.parent, db, art, from);
+            // 메테오 그림은 오른쪽 아래로 떨어지는 모습이다. 실제로 떨어지는 방향에 맞춰 뒤집고 돌린다
+            if (fx != null && fx.TryGetComponent(out SpriteAnim anim)) anim.Orient(new Vector2(1f, -1f), to - from);
             float t = 0;
             while (t < 1f)
             {
@@ -184,6 +190,9 @@ namespace DWH.InGame.Skills
             var box = dragon.Hitbox;
             float x = dragon.Facing > 0 ? box.xMax + HurricaneWidth / 2 : box.xMin - HurricaneWidth / 2;
             float direction = dragon.Facing;
+            // 왕복 범위는 쓴 순간의 화면(월드 좌표)으로 고정한다. 드래곤이 움직여도 회오리가 화면 끝에 붙어 따라오지 않는다 (DWH-58)
+            var (left, right) = ViewRange();
+            x = Mathf.Clamp(x, left + HurricaneWidth / 2, right - HurricaneWidth / 2);
             float ground = Tuning.GroundHeight;
             var fx = SkillFx.Column(transform.parent, db, art, new Vector2(x, ground + HurricaneHeight / 2), new Vector2(HurricaneWidth, HurricaneHeight), duration + 0.3f);
             int ticks = Mathf.Max(1, Mathf.RoundToInt(duration / ActiveSpecs.HurricaneTick));
@@ -192,7 +201,6 @@ namespace DWH.InGame.Skills
             while (done < ticks)
             {
                 float dt = Time.deltaTime;
-                var (left, right) = ViewRange();
                 x += direction * HurricaneSpeed * dt;
                 if (x > right - HurricaneWidth / 2) { x = right - HurricaneWidth / 2; direction = -1; }
                 if (x < left + HurricaneWidth / 2) { x = left + HurricaneWidth / 2; direction = 1; }
@@ -212,18 +220,32 @@ namespace DWH.InGame.Skills
             if (fx != null) Destroy(fx);
         }
 
-        /// <summary>지진: 화면 안의 모든 건물과 공중 유닛을 0.5초마다 때린다. 지속 중에 화면에 들어온 대상도 포함</summary>
+        /// <summary>
+        /// 지진: 화면 안의 모든 건물과 공중 유닛을 0.5초마다 때린다. 지속 중에 화면에 들어온 대상도 포함.
+        /// 균열은 지속 시간 내내 지면 위에 끊김 없이 깔리고 화면을 따라간다 (DWH-57)
+        /// </summary>
         IEnumerator Earthquake(double multiplier, float duration)
         {
             int ticks = Mathf.Max(1, Mathf.RoundToInt(duration / ActiveSpecs.EarthquakeTick));
-            for (int i = 0; i < ticks; i++)
+            float total = ticks * ActiveSpecs.EarthquakeTick;
+            var (l0, r0) = ViewRange();
+            var strip = SkillFx.QuakeStrip(transform.parent, db, art, l0, r0, Tuning.GroundHeight, total + 0.3f);
+            float tickTimer = 0;
+            int done = 0;
+            if (shaker != null) shaker.Shake(total, 0.1f);
+            while (done < ticks)
             {
-                yield return new WaitForSeconds(ActiveSpecs.EarthquakeTick);
-                if (shaker != null) shaker.Shake(ActiveSpecs.EarthquakeTick, 0.12f);
-                var (left, right) = ViewRange();
-                SkillFx.Ground(transform.parent, db, art, (left + right) / 2, right - left, Tuning.GroundHeight);
-                foreach (var t in AliveTargets.Where(OnScreen).ToList())
-                    Hit(ActiveSkillId.Earthquake, t, multiplier);
+                var (left, _) = ViewRange();
+                SkillFx.LayQuakeStrip(strip, left, Tuning.GroundHeight);
+                tickTimer += Time.deltaTime;
+                if (tickTimer >= ActiveSpecs.EarthquakeTick)
+                {
+                    tickTimer -= ActiveSpecs.EarthquakeTick;
+                    done++;
+                    foreach (var t in AliveTargets.Where(OnScreen).ToList())
+                        Hit(ActiveSkillId.Earthquake, t, multiplier);
+                }
+                yield return null;
             }
         }
     }

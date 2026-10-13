@@ -30,6 +30,8 @@ namespace DWH.Tests
         public void SetUp()
         {
             db = AssetDatabase.LoadAssetAtPath<GameDatabase>("Assets/_Project/Data/GameDatabase.asset");
+            // 전투는 Random(치명타·드랍·이펙트)을 쓴다. 앞 테스트가 쓴 만큼 결과가 바뀌지 않게 시드를 고정한다
+            Random.InitState(20261012);
             camera = new GameObject("Main Camera") { tag = "MainCamera" }.AddComponent<Camera>();
             camera.orthographic = true;
 

@@ -115,7 +115,7 @@ namespace DWH.InGame.Dragon
 
         void LateUpdate()
         {
-            if (rig == null) return;
+            if (rig == null || Time.timeScale <= 0) return;
             float dt = Time.deltaTime;
             time += dt;
 

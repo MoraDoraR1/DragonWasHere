@@ -9009,10 +9009,10 @@ MonoBehaviour:
     resPath: "Fix_Resource/\uC2A4\uD0AC \uC774\uD399\uD2B8/A2. \uD5C8\uB9AC\uCF00\uC778/sheet.png"
     loop: 0
     volume: NaN
-    frameCount: 12
+    frameCount: 18
     frameRate: 12
     memo: "\uC2A4\uD0AC \uC774\uD399\uD2B8 \xB7 \uD5C8\uB9AC\uCF00\uC778 (\uC2DC\uD2B8
-      4\xD73, \uD504\uB808\uC784 540\xD7540px. \uB0B1\uC7A5\uC740 frames \uD3F4\uB354)"
+      3\xD76, \uD504\uB808\uC784 400\xD7340px. \uB0B1\uC7A5\uC740 frames \uD3F4\uB354)"
   - resId: res8000003
     type: 80
     resName: sheet.png

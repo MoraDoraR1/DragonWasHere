@@ -115,6 +115,26 @@ namespace DWH.Data
             ["ui_pause"] = ("일시정지", "Paused"),
             ["ui_resume"] = ("계속하기", "Resume"),
             ["ui_give_up"] = ("포기하고 나가기", "Give up"),
+            ["ui_settings"] = ("환경설정", "Settings"),
+            ["ui_settings_language"] = ("언어", "Language"),
+            ["ui_settings_screen"] = ("화면 모드", "Display"),
+            ["ui_settings_fullscreen"] = ("전체 화면", "Fullscreen"),
+            ["ui_settings_windowed"] = ("창 모드", "Windowed"),
+            ["ui_settings_shake"] = ("화면 흔들림", "Screen shake"),
+            ["ui_settings_on"] = ("켜기", "On"),
+            ["ui_settings_off"] = ("끄기", "Off"),
+            ["ui_to_title"] = ("타이틀로 이동", "Back to Title"),
+            ["ui_to_title_hint"] = ("타이틀로 가면 이번 출격은 기록되지 않아요", "Leaving now discards this run"),
+            // 타이틀
+            ["ui_title_name"] = ("다녀가 용!", "Dragon Was Here!"),
+            ["ui_title_new"] = ("새 게임", "New Game"),
+            ["ui_title_continue"] = ("이어하기", "Continue"),
+            ["ui_title_version"] = ("버전 v{0}", "Version v{0}"),
+            ["ui_title_warning"] = ("주의!", "Warning!"),
+            ["ui_title_reset_body"] = ("저장된 기록을 초기화하고 다시 처음부터 하시겠습니까?", "Erase your saved progress and start over?"),
+            ["ui_title_reset_sub"] = ("다시 되돌릴 수 없습니다", "This cannot be undone"),
+            ["ui_title_yes"] = ("네!", "Yes!"),
+            ["ui_title_no"] = ("아니요!", "No!"),
         };
 
         public static IEnumerable<string> Keys => Defaults.Keys;
