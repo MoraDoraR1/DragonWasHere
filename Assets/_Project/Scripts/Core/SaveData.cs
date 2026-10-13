@@ -44,7 +44,8 @@ namespace DWH.Core
         public int playCount;
 
         // 설정·지표
-        public string language = "ko";
+        /// <summary>처음 시작(저장 없음)은 영어. 바꾼 언어는 저장해 다음에도 유지한다 (10-13 사용자 요청)</summary>
+        public string language = "en";
         /// <summary>지표용 사용자 ID (게임이 만든 UUID)</summary>
         public string userId = "";
         public SaveSettings settings = new();

@@ -46,10 +46,22 @@ namespace DWH.Tests
                 // DWH_SIM_LM_SCALE가 있으면 랜드마크(유형 3)만 따로 배율
                 double lm = double.TryParse(System.Environment.GetEnvironmentVariable("DWH_SIM_LM_SCALE"), System.Globalization.NumberStyles.Float,
                     System.Globalization.CultureInfo.InvariantCulture, out double l) && l > 0 ? l : scale;
-                foreach (var b in db.buildings) b.atk *= b.buildingType == BuildingType.Landmark ? lm : scale;
+                // DWH_SIM_LM_HP_SCALE가 있으면 랜드마크 체력도 배율
+                double lmHp = double.TryParse(System.Environment.GetEnvironmentVariable("DWH_SIM_LM_HP_SCALE"), System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out double h) && h > 0 ? h : 1;
+                // DWH_SIM_ATKB_HP_SCALE가 있으면 공격 건물 체력도 배율
+                double atkHp = double.TryParse(System.Environment.GetEnvironmentVariable("DWH_SIM_ATKB_HP_SCALE"), System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out double ah) && ah > 0 ? ah : 1;
+                foreach (var b in db.buildings)
+                {
+                    b.atk *= b.buildingType == BuildingType.Landmark ? lm : scale;
+                    if (b.buildingType == BuildingType.Landmark) b.hp *= lmHp;
+                    if (b.buildingType == BuildingType.Attack) b.hp *= atkHp;
+                }
                 foreach (var u in db.units) u.atk *= scale;
                 atkScale = scale;
             }
+            ApplyStageOverrides();
             camera = new GameObject("Main Camera") { tag = "MainCamera" }.AddComponent<Camera>();
             var go = new GameObject("GameManager");
             go.SetActive(false);
@@ -62,6 +74,43 @@ namespace DWH.Tests
             manager.Initialize(new MemorySaveStorage(), _ => new AutoOnlyInput());
             Time.captureFramerate = FrameRate;
         }
+
+        /// <summary>
+        /// 실험용 스테이지별 배율: 환경 변수 DWH_SIM_OVERRIDES = 파일 경로. 한 줄에 "stage_id 항목 배율" (예: stg202 nhp 0.6).
+        /// 항목: nhp(일반·황금 건물 체력) ahp/aatk(공격 건물) lhp/latk(랜드마크) uhp/uatk(공중 유닛). 데이터 파일은 그대로, 메모리 복사본만 바꾼다
+        /// </summary>
+        void ApplyStageOverrides()
+        {
+            string path = System.Environment.GetEnvironmentVariable("DWH_SIM_OVERRIDES");
+            if (string.IsNullOrEmpty(path) || !File.Exists(path)) return;
+            if (atkScale == 1) { db = Object.Instantiate(db); db.Invalidate(); }
+            overrideName = Path.GetFileNameWithoutExtension(path);
+            foreach (var raw in File.ReadAllLines(path))
+            {
+                var p = raw.Split('#')[0].Split(new[] { ' ', '	' }, System.StringSplitOptions.RemoveEmptyEntries);
+                if (p.Length < 3) continue;
+                double k = double.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture);
+                foreach (var b in db.buildings.Where(b => b.stageId == p[0]))
+                {
+                    bool attack = b.buildingType == BuildingType.Attack, landmark = b.buildingType == BuildingType.Landmark;
+                    switch (p[1])
+                    {
+                        case "nhp": if (!attack && !landmark) b.hp *= k; break;
+                        case "ahp": if (attack) b.hp *= k; break;
+                        case "aatk": if (attack) b.atk *= k; break;
+                        case "lhp": if (landmark) b.hp *= k; break;
+                        case "latk": if (landmark) b.atk *= k; break;
+                    }
+                }
+                foreach (var u in db.units.Where(u => u.stageId == p[0]))
+                {
+                    if (p[1] == "uhp") u.hp *= k;
+                    if (p[1] == "uatk") u.atk *= k;
+                }
+            }
+        }
+
+        string overrideName;
 
         [TearDown]
         public void TearDown()
@@ -136,7 +185,7 @@ namespace DWH.Tests
                 BuyGreedy();
             }
             log.AppendLine($"\n총 {runs}판, 전투 시간 합계 {totalSeconds / 60:0.0}분(전투만), 엔딩 {(manager.Save.gameCompleted ? "도달" : "못 함")}");
-            File.WriteAllText(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs", atkScale == 1 ? "balance_sim.md" : $"balance_sim_atk{atkScale:0.##}_lm{System.Environment.GetEnvironmentVariable("DWH_SIM_LM_SCALE") ?? "same"}.md"), $"적 공격력 배율 {atkScale}\n\n" + log);
+            File.WriteAllText(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs", overrideName != null ? $"balance_sim_{overrideName}.md" : atkScale == 1 ? "balance_sim.md" : $"balance_sim_atk{atkScale:0.##}_lm{System.Environment.GetEnvironmentVariable("DWH_SIM_LM_SCALE") ?? "same"}_lmhp{System.Environment.GetEnvironmentVariable("DWH_SIM_LM_HP_SCALE") ?? "1"}_abhp{System.Environment.GetEnvironmentVariable("DWH_SIM_ATKB_HP_SCALE") ?? "1"}.md"), $"적 공격력 배율 {atkScale}\n\n" + log);
             Debug.Log("[DWH] 밸런스 시뮬레이션\n" + log);
         }
     }

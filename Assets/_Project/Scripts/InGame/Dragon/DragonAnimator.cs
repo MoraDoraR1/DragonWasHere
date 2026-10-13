@@ -33,7 +33,11 @@ namespace DWH.InGame.Dragon
         public FxParticles Fx { get; set; }
         /// <summary>마우스 유도 조준 지점 (AimGuide가 넣는다). 있으면 고개를 그쪽으로 돌린다</summary>
         public Vector2? Aim { get; set; }
-        float aimNeck;
+        /// <summary>마우스 조준이 없을 때(자동 이동) 브레스가 겨누는 곳. 브레스 중 하늘의 공중 유닛을 올려다볼 때 쓴다</summary>
+        public Vector2? AutoAim { get; set; }
+        float aimNeck, aimHead;
+        /// <summary>커서 조준 각도 한계(도). 원본 그림 기준 음수 = 듦</summary>
+        const float AimNeckUp = 40f, AimNeckDown = 18f, AimHeadUp = 20f, AimHeadDown = 8f;
         public bool IsSpinning => spinTimer > 0;
         public bool IsBreathing => breathing;
         /// <summary>아래턱이 벌어진 정도 0~1 (테스트용)</summary>
@@ -100,17 +104,31 @@ namespace DWH.InGame.Dragon
 
         /// <summary>
         /// 불이 나오는 입 위치 (월드). 윗머리 아래 변(아래턱이 붙는 선)의 주둥이 쪽.
-        /// 10-13 피드백: 예전 값(아래에서 32%, 끝에서 6%)은 콧구멍 높이라 코에서 불이 나왔다
+        /// 10-13 피드백: 예전 값(아래에서 32%, 끝에서 6%)은 콧구멍 높이라 코에서 불이 나왔다.
+        /// 머리 그림 안의 한 점(왼쪽을 보는 원본 기준 주둥이 끝에서 12%, 아래에서 8%)을 머리의 실제 회전·뒤집기로 옮긴다.
+        /// 예전에는 회전된 그림의 바깥 상자 모서리를 써서, 머리가 커서를 따라 기울면 입과 어긋났다 (10-13 피드백)
         /// </summary>
         public Vector2 Mouth
         {
             get
             {
                 var r = rig.PartRenderer("UpHead");
-                if (r == null) return transform.position;
-                var bb = r.bounds;
-                float x = Facing > 0 ? bb.max.x - bb.size.x * 0.12f : bb.min.x + bb.size.x * 0.12f;
-                return new Vector2(x, bb.min.y + bb.size.y * 0.08f);
+                if (r == null || r.sprite == null) return transform.position;
+                var b = r.sprite.bounds;
+                var local = new Vector3(b.min.x + b.size.x * 0.12f, b.min.y + b.size.y * 0.08f, 0);
+                return r.transform.TransformPoint(local);
+            }
+        }
+
+        /// <summary>머리가 실제로 향한 방향 (월드, 단위 벡터). 원본 그림은 왼쪽을 보므로 머리의 왼쪽 축을 회전·뒤집기와 함께 옮긴다</summary>
+        public Vector2 MouthDirection
+        {
+            get
+            {
+                var r = rig.PartRenderer("UpHead");
+                if (r == null) return new Vector2(Facing, 0);
+                var d = (Vector2)r.transform.TransformVector(Vector3.left);
+                return d.sqrMagnitude > 1e-6f ? d.normalized : new Vector2(Facing, 0);
             }
         }
 
@@ -195,16 +213,22 @@ namespace DWH.InGame.Dragon
             // 목·머리·턱: 포효는 고개를 들고, 브레스는 살짝 숙여 앞을 겨눈다
             float roarK = roar > 0 ? 1f : 0f;
             // 조준: 목 기준으로 조준 지점이 위면 고개를 들고 아래면 숙인다 (원본 그림 기준 음수 = 듦)
-            float aimTarget = 0;
-            if (Aim is Vector2 aim && neck != null)
+            // 10-13: 브레스로 공중 유닛을 맞힐 수 있게 하늘까지 올려다본다. 목이 최대 40도, 머리가 20도를 더 든다 (아래는 18+8도)
+            float aimTarget = 0, aimHeadTarget = 0;
+            if ((Aim ?? AutoAim) is Vector2 aim && neck != null)
             {
                 var d = aim - (Vector2)neck.position;
                 if (d.x * Facing > 0.2f)
-                    aimTarget = Mathf.Clamp(-Mathf.Atan2(d.y, Mathf.Abs(d.x)) * Mathf.Rad2Deg * 0.45f, -14f, 16f);
+                {
+                    float up = Mathf.Atan2(d.y, Mathf.Abs(d.x)) * Mathf.Rad2Deg;   // 위 = 양수
+                    aimTarget = Mathf.Clamp(-up * 0.7f, -AimNeckUp, AimNeckDown);
+                    aimHeadTarget = Mathf.Clamp(-up * 0.3f, -AimHeadUp, AimHeadDown);
+                }
             }
             aimNeck = Mathf.Lerp(aimNeck, aimTarget, 1f - Mathf.Exp(-10f * dt));
+            aimHead = Mathf.Lerp(aimHead, aimHeadTarget, 1f - Mathf.Exp(-10f * dt));
             SetRot(neck, -12f * roarK + (breathing && Aim == null ? 4f : 0f) + aimNeck + Mathf.Sin(time * 1.6f) * 1.5f);
-            SetRot(upHead, -10f * roarK + (breathing ? 3f : 0f));
+            SetRot(upHead, -10f * roarK + (breathing && Aim == null ? 3f : 0f) + aimHead);
             SetRot(downHead, 30f * jaw);
 
             // 몸 전체: 들이밀기(앞으로 기울며 전진), 발 구르기(들었다 내려찍기), 회오리(띄워서 회전), 걸을 때 출렁임

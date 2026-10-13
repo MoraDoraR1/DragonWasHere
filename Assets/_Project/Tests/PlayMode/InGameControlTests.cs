@@ -133,6 +133,44 @@ namespace DWH.Tests
             camera.ResetAspect();
         }
 
+        /// <summary>인게임(일시정지 중) 환경설정으로 언어를 바꾼다. 전투·일시정지는 그대로, HUD는 새 언어로 다시 만든다</summary>
+        [UnityTest]
+        public IEnumerator Language_ChangesDuringBattle()
+        {
+            manager.StartStage();
+            yield return Frames(30);
+            manager.SetPaused(true);
+            var before = Localization.Current;
+            manager.ToggleLanguage();
+            Assert.AreNotEqual(before, Localization.Current);
+            Assert.IsTrue(manager.IsPaused, "일시정지 유지");
+            Assert.IsNotNull(manager.Battle);
+            yield return null;   // 옛 HUD는 프레임 끝에 지워진다
+            Assert.AreEqual(1, Object.FindObjectsByType<DWH.UI.BattleHud>(FindObjectsSortMode.None).Length, "HUD는 하나");
+            yield return TestScreens.Capture(camera, "battle_lang_paused");
+            manager.SetPaused(false);
+            yield return Frames(30);
+            Assert.AreEqual(GameState.Stage, manager.State);
+        }
+
+        /// <summary>공격 건물·공중 유닛 투사체가 데이터(const)의 그림으로 나온다</summary>
+        [UnityTest]
+        public IEnumerator Projectiles_UseDataSprites()
+        {
+            Assert.IsTrue(manager.database.HasConst("projectile_res_building"));
+            Assert.IsTrue(manager.art.Has(manager.database.ConstRow("projectile_res_air_unit").value));
+            manager.StartStage();
+            DWH.InGame.Fx.SpriteAnim shot = null;
+            for (int i = 0; i < FrameRate * 20 && shot == null; i++)
+            {
+                yield return null;
+                foreach (var p in Object.FindObjectsByType<DWH.InGame.Buildings.Projectile>(FindObjectsSortMode.None))
+                    if (p.TryGetComponent(out shot)) break;
+            }
+            Assert.IsNotNull(shot, "투사체가 그림(SpriteAnim)으로 나와야 한다");
+            yield return TestScreens.Capture(camera, "projectile");
+        }
+
         [UnityTest]
         public IEnumerator AirUnits_HoverOverDragon_AndAttackOnlyInRange()
         {

@@ -24,6 +24,8 @@ namespace DWH.UI
         const float LineWidth = 10f;
         /// <summary>레벨 배지가 노드 아래로 튀어나온 만큼 (배지 아래 끝 -16 + 여유). 테두리 아래 변을 이만큼 늘린다</summary>
         const float BadgeDrop = 22f;
+        /// <summary>노드 이름 글자 칸 폭과 이름표 최대 폭. 글자 칸이 이름표보다 좁아야 양옆 여백이 남는다</summary>
+        const float NameWidth = TileSize + 24f, NamePlateMaxWidth = TileSize + 58f;
         const float PunchScale = 1.18f;
         static readonly int[] Quantities = { 1, 10, UpgradeTree.MaxQuantity };
         static readonly string[] QuantityKeys = { null, "ui_buy_x10", "ui_buy_max" };
@@ -245,10 +247,10 @@ namespace DWH.UI
             tile.icon = UiFactory.Icon(tile.rect, "Icon", UiFactory.Center, new Vector2(0, 6), new Vector2(92, 92), Icon(node.resId));
             // 이름은 레벨 배지 아래. 길면(영어) 두 줄까지 줄여서 맞춘다 (DWH-53)
             // 이름표 바탕: 연결선은 노드 뒤 레이어라 이름표에 가려진다. 이름이 선에 씹히지 않게 한다 (크기는 이름 길이에 맞춘다, Refresh)
-            tile.namePlate = UiFactory.Panel(tile.rect, "NamePlate", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 10), new Vector2(TileSize + 40, 44),
+            tile.namePlate = UiFactory.Panel(tile.rect, "NamePlate", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 6), new Vector2(NamePlateMaxWidth, 52),
                 FrameStyle.ChipCream, new Color(1f, 1f, 1f, 0.95f));
             tile.namePlate.GetComponent<Image>().raycastTarget = false;
-            tile.name = UiFactory.Text(tile.rect, "Name", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 12), new Vector2(TileSize + 40, 44), 21,
+            tile.name = UiFactory.Text(tile.rect, "Name", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 12), new Vector2(NameWidth, 44), 21,
                 TextAlignmentOptions.Top, UiTheme.InkText, bold: true);
             UiFactory.Fit(tile.name, 14, false);
             tile.lockIcon = UiFactory.Icon(tile.rect, "Lock", UiFactory.TopRight, new Vector2(-4, -4), new Vector2(36, 36), "icon-lock");
@@ -418,7 +420,8 @@ namespace DWH.UI
             var size = tile.name.textBounds.size;
             if (size.x <= 0 || float.IsNaN(size.x)) return;
             var max = tile.name.rectTransform.sizeDelta;
-            tile.namePlate.sizeDelta = new Vector2(Mathf.Min(max.x + 8, size.x + 18), Mathf.Min(max.y + 4, size.y + 8));
+            // 글자 양옆·위아래에 넉넉한 여백 (영어 긴 이름이 테두리에 꽉 차지 않게, 10-13 사용자 요청)
+            tile.namePlate.sizeDelta = new Vector2(Mathf.Min(NamePlateMaxWidth, size.x + 34), Mathf.Min(max.y + 12, size.y + 14));
         }
 
         void RefreshDetail()

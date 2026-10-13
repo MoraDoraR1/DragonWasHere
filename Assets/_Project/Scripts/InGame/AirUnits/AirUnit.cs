@@ -38,6 +38,9 @@ namespace DWH.InGame.AirUnits
 
         /// <summary>unit 테이블 행 (체력, 공격, 공격 속도, 이동 속도, 드랍 그룹)</summary>
         public UnitRow Row { get; private set; }
+        /// <summary>투사체 그림을 찾을 데이터·카탈로그 (AirUnitSquad가 넣는다)</summary>
+        public GameDatabase Database { get; set; }
+        public ArtCatalog Art { get; set; }
         public int Slot => Row.slot;
         /// <summary>현재 언어의 유닛 이름</summary>
         public string UnitName { get; private set; }
@@ -178,17 +181,12 @@ namespace DWH.InGame.AirUnits
 
         void Fire(Vector2 origin)
         {
-            var go = new GameObject("AirProjectile");
-            go.transform.SetParent(transform.parent, false);
-            go.transform.position = origin;
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = bulletSprite;
-            sr.color = GrayboxColors.AirProjectile;
-            sr.sortingOrder = SortingOrders.Projectile;
-            go.transform.localScale = Vector3.one * shotSize;
+            var go = ProjectileVisual.Create(transform.parent, Database, Art, ProjectileVisual.AirUnitConst, origin,
+                bulletSprite, GrayboxColors.AirProjectile, shotSize);
             // 드래곤의 현재 위치를 조준한 대각선 탄. 지면 탄이 아니라 점프로 피할 수 없다(패링은 된다)
             var aim = dragon.Hitbox.center - origin;
             go.AddComponent<Projectile>().Launch(aim, shotSpeed, AttackDamage, false, dragon, view);
+            ProjectileVisual.Orient(go, aim);
         }
     }
 }

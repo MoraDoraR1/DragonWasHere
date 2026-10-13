@@ -141,6 +141,18 @@ MonoBehaviour:
     unit: 
     desc: "\uD658\uC0DD \uD3EC\uC778\uD2B8 = floor(\u221A(\uC774\uBC88 \uD68C\uCC28
       \uB204\uC801 \uD68D\uB4DD \uACE8\uB4DC) \xF7 \uC774 \uAC12)"
+  - constKey: projectile_res_building
+    value: res8000018
+    valueType: res_id
+    unit: 
+    desc: "\uACF5\uACA9\uD615 \uAC74\uBB3C\xB7\uB79C\uB4DC\uB9C8\uD06C \uACF5\uD1B5
+      \uD22C\uC0AC\uCCB4 \uB9AC\uC18C\uC2A4 (resource.res_id)"
+  - constKey: projectile_res_air_unit
+    value: res8000019
+    valueType: res_id
+    unit: 
+    desc: "\uACF5\uC911 \uC720\uB2DB \uACF5\uD1B5 \uD22C\uC0AC\uCCB4 \uB9AC\uC18C\uC2A4
+      (resource.res_id)"
   enums:
   - enumType: growth_stage
     value: 1
@@ -1504,8 +1516,8 @@ MonoBehaviour:
     stageId: stg101
     buildingType: 2
     count: 1
-    hp: 130
-    atk: 5
+    hp: 52
+    atk: 2
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2101
@@ -1528,7 +1540,7 @@ MonoBehaviour:
     stageId: stg102
     buildingType: 1
     count: 12
-    hp: 170
+    hp: 119
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1540,8 +1552,8 @@ MonoBehaviour:
     stageId: stg102
     buildingType: 2
     count: 3
-    hp: 287
-    atk: 9
+    hp: 115
+    atk: 4
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2102
@@ -1552,8 +1564,8 @@ MonoBehaviour:
     stageId: stg102
     buildingType: 3
     count: 1
-    hp: 1105
-    atk: 14
+    hp: 216
+    atk: 1
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3102
@@ -1564,7 +1576,7 @@ MonoBehaviour:
     stageId: stg102
     buildingType: 4
     count: 11
-    hp: 255
+    hp: 178
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1588,8 +1600,8 @@ MonoBehaviour:
     stageId: stg103
     buildingType: 2
     count: 2
-    hp: 200
-    atk: 7
+    hp: 80
+    atk: 3
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2103
@@ -1624,8 +1636,8 @@ MonoBehaviour:
     stageId: stg104
     buildingType: 2
     count: 3
-    hp: 325
-    atk: 9
+    hp: 130
+    atk: 4
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2104
@@ -1636,8 +1648,8 @@ MonoBehaviour:
     stageId: stg104
     buildingType: 3
     count: 1
-    hp: 1235
-    atk: 14
+    hp: 370
+    atk: 1
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3104
@@ -1672,8 +1684,8 @@ MonoBehaviour:
     stageId: stg201
     buildingType: 2
     count: 3
-    hp: 234
-    atk: 10
+    hp: 94
+    atk: 4
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2201
@@ -1696,7 +1708,7 @@ MonoBehaviour:
     stageId: stg202
     buildingType: 1
     count: 16
-    hp: 480
+    hp: 216
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1708,8 +1720,8 @@ MonoBehaviour:
     stageId: stg202
     buildingType: 2
     count: 5
-    hp: 811
-    atk: 17
+    hp: 178
+    atk: 8
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2202
@@ -1720,8 +1732,8 @@ MonoBehaviour:
     stageId: stg202
     buildingType: 3
     count: 1
-    hp: 3120
-    atk: 27
+    hp: 515
+    atk: 2
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3202
@@ -1732,7 +1744,7 @@ MonoBehaviour:
     stageId: stg202
     buildingType: 4
     count: 13
-    hp: 720
+    hp: 324
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1756,8 +1768,8 @@ MonoBehaviour:
     stageId: stg203
     buildingType: 2
     count: 4
-    hp: 460
-    atk: 14
+    hp: 184
+    atk: 6
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2203
@@ -1792,8 +1804,8 @@ MonoBehaviour:
     stageId: stg204
     buildingType: 2
     count: 5
-    hp: 748
-    atk: 17
+    hp: 299
+    atk: 8
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2204
@@ -1804,8 +1816,8 @@ MonoBehaviour:
     stageId: stg204
     buildingType: 3
     count: 1
-    hp: 2860
-    atk: 27
+    hp: 858
+    atk: 2
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3204
@@ -1840,8 +1852,8 @@ MonoBehaviour:
     stageId: stg301
     buildingType: 2
     count: 5
-    hp: 667
-    atk: 20
+    hp: 267
+    atk: 9
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2301
@@ -1864,7 +1876,7 @@ MonoBehaviour:
     stageId: stg302
     buildingType: 1
     count: 20
-    hp: 6300
+    hp: 3780
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1876,8 +1888,8 @@ MonoBehaviour:
     stageId: stg302
     buildingType: 2
     count: 7
-    hp: 10647
-    atk: 34
+    hp: 2130
+    atk: 7
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2302
@@ -1888,8 +1900,8 @@ MonoBehaviour:
     stageId: stg302
     buildingType: 3
     count: 1
-    hp: 40950
-    atk: 54
+    hp: 6757
+    atk: 2
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3302
@@ -1900,7 +1912,7 @@ MonoBehaviour:
     stageId: stg302
     buildingType: 4
     count: 15
-    hp: 2100
+    hp: 1260
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1924,8 +1936,8 @@ MonoBehaviour:
     stageId: stg303
     buildingType: 2
     count: 6
-    hp: 1050
-    atk: 28
+    hp: 420
+    atk: 13
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2303
@@ -1960,8 +1972,8 @@ MonoBehaviour:
     stageId: stg304
     buildingType: 2
     count: 7
-    hp: 1690
-    atk: 34
+    hp: 676
+    atk: 15
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2304
@@ -1972,8 +1984,8 @@ MonoBehaviour:
     stageId: stg304
     buildingType: 3
     count: 1
-    hp: 6500
-    atk: 54
+    hp: 1950
+    atk: 4
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3304
@@ -2008,8 +2020,8 @@ MonoBehaviour:
     stageId: stg401
     buildingType: 2
     count: 7
-    hp: 1872
-    atk: 40
+    hp: 749
+    atk: 18
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2401
@@ -2044,8 +2056,8 @@ MonoBehaviour:
     stageId: stg402
     buildingType: 2
     count: 9
-    hp: 16562
-    atk: 68
+    hp: 6625
+    atk: 93
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2402
@@ -2056,8 +2068,8 @@ MonoBehaviour:
     stageId: stg402
     buildingType: 3
     count: 1
-    hp: 63700
-    atk: 108
+    hp: 57330
+    atk: 45
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3402
@@ -2092,8 +2104,8 @@ MonoBehaviour:
     stageId: stg403
     buildingType: 2
     count: 8
-    hp: 2340
-    atk: 57
+    hp: 936
+    atk: 26
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2403
@@ -2128,8 +2140,8 @@ MonoBehaviour:
     stageId: stg404
     buildingType: 2
     count: 9
-    hp: 3803
-    atk: 68
+    hp: 1521
+    atk: 31
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2404
@@ -2140,8 +2152,8 @@ MonoBehaviour:
     stageId: stg404
     buildingType: 3
     count: 1
-    hp: 14625
-    atk: 108
+    hp: 4388
+    atk: 9
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3404
@@ -2176,8 +2188,8 @@ MonoBehaviour:
     stageId: stg501
     buildingType: 2
     count: 9
-    hp: 14040
-    atk: 80
+    hp: 5616
+    atk: 36
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2501
@@ -2212,8 +2224,8 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 2
     count: 11
-    hp: 359632
-    atk: 138
+    hp: 143853
+    atk: 62
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2502
@@ -2224,8 +2236,8 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 3
     count: 1
-    hp: 1383200
-    atk: 218
+    hp: 414960
+    atk: 17
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3502
@@ -2260,8 +2272,8 @@ MonoBehaviour:
     stageId: stg503
     buildingType: 2
     count: 10
-    hp: 5330
-    atk: 115
+    hp: 2132
+    atk: 52
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2503
@@ -2296,8 +2308,8 @@ MonoBehaviour:
     stageId: stg504
     buildingType: 2
     count: 11
-    hp: 8619
-    atk: 138
+    hp: 3448
+    atk: 62
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2504
@@ -2308,8 +2320,8 @@ MonoBehaviour:
     stageId: stg504
     buildingType: 3
     count: 1
-    hp: 33150
-    atk: 218
+    hp: 9945
+    atk: 17
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3504
@@ -2344,8 +2356,8 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 2
     count: 11
-    hp: 39780
-    atk: 165
+    hp: 15912
+    atk: 74
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2601
@@ -2380,8 +2392,8 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 2
     count: 13
-    hp: 338000
-    atk: 285
+    hp: 135200
+    atk: 384
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2602
@@ -2392,8 +2404,8 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 3
     count: 1
-    hp: 1300000
-    atk: 450
+    hp: 1170000
+    atk: 180
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3602
@@ -2428,8 +2440,8 @@ MonoBehaviour:
     stageId: stg603
     buildingType: 2
     count: 12
-    hp: 12090
-    atk: 238
+    hp: 4836
+    atk: 107
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2603
@@ -2464,8 +2476,8 @@ MonoBehaviour:
     stageId: stg604
     buildingType: 2
     count: 13
-    hp: 19604
-    atk: 285
+    hp: 7842
+    atk: 128
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2604
@@ -2476,8 +2488,8 @@ MonoBehaviour:
     stageId: stg604
     buildingType: 3
     count: 1
-    hp: 75400
-    atk: 450
+    hp: 22620
+    atk: 36
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3604
@@ -2512,8 +2524,8 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 2
     count: 13
-    hp: 292500
-    atk: 340
+    hp: 117000
+    atk: 153
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2701
@@ -2548,8 +2560,8 @@ MonoBehaviour:
     stageId: stg702
     buildingType: 2
     count: 15
-    hp: 1605500
-    atk: 590
+    hp: 642200
+    atk: 399
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2702
@@ -2560,8 +2572,8 @@ MonoBehaviour:
     stageId: stg702
     buildingType: 3
     count: 1
-    hp: 6175000
-    atk: 940
+    hp: 2778750
+    atk: 150
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3702
@@ -2596,8 +2608,8 @@ MonoBehaviour:
     stageId: stg703
     buildingType: 2
     count: 14
-    hp: 27300
-    atk: 490
+    hp: 10920
+    atk: 220
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2703
@@ -2632,8 +2644,8 @@ MonoBehaviour:
     stageId: stg704
     buildingType: 2
     count: 15
-    hp: 43940
-    atk: 590
+    hp: 17576
+    atk: 266
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2704
@@ -2644,8 +2656,8 @@ MonoBehaviour:
     stageId: stg704
     buildingType: 3
     count: 1
-    hp: 169000
-    atk: 940
+    hp: 50700
+    atk: 75
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3704
@@ -2671,7 +2683,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_111
     hp: 60
-    atk: 3
+    atk: 1
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5101
@@ -2682,7 +2694,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_111
     hp: 60
-    atk: 3
+    atk: 1
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5101
@@ -2693,7 +2705,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_111
     hp: 60
-    atk: 3
+    atk: 1
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5101
@@ -2704,7 +2716,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_111
     hp: 102
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5102
@@ -2715,7 +2727,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_111
     hp: 102
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5102
@@ -2726,7 +2738,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_112
     hp: 177
-    atk: 7
+    atk: 3
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6102
@@ -2737,7 +2749,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_121
     hp: 90
-    atk: 4
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5103
@@ -2748,7 +2760,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_121
     hp: 90
-    atk: 4
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5103
@@ -2759,7 +2771,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_121
     hp: 90
-    atk: 4
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5103
@@ -2770,7 +2782,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_121
     hp: 114
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5104
@@ -2781,7 +2793,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_121
     hp: 114
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5104
@@ -2792,7 +2804,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_122
     hp: 200
-    atk: 7
+    atk: 3
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6104
@@ -2803,7 +2815,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_211
     hp: 120
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5201
@@ -2814,7 +2826,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_211
     hp: 120
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5201
@@ -2825,7 +2837,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_211
     hp: 120
-    atk: 5
+    atk: 2
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5201
@@ -2836,7 +2848,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_211
     hp: 288
-    atk: 9
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5202
@@ -2847,7 +2859,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_211
     hp: 288
-    atk: 9
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5202
@@ -2858,7 +2870,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_212
     hp: 499
-    atk: 14
+    atk: 6
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6202
@@ -2869,7 +2881,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_221
     hp: 210
-    atk: 7
+    atk: 3
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5203
@@ -2880,7 +2892,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_221
     hp: 210
-    atk: 7
+    atk: 3
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5203
@@ -2891,7 +2903,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_221
     hp: 210
-    atk: 7
+    atk: 3
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5203
@@ -2902,7 +2914,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_221
     hp: 264
-    atk: 9
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5204
@@ -2913,7 +2925,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_221
     hp: 264
-    atk: 9
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5204
@@ -2924,7 +2936,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_222
     hp: 460
-    atk: 14
+    atk: 6
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6204
@@ -2935,7 +2947,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_311
     hp: 342
-    atk: 10
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5301
@@ -2946,7 +2958,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_311
     hp: 342
-    atk: 10
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5301
@@ -2957,7 +2969,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_311
     hp: 342
-    atk: 10
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5301
@@ -2968,7 +2980,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_311
     hp: 840
-    atk: 17
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5302
@@ -2979,7 +2991,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_311
     hp: 840
-    atk: 17
+    atk: 4
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5302
@@ -2990,7 +3002,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_312
     hp: 1456
-    atk: 27
+    atk: 6
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6302
@@ -3001,7 +3013,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_321
     hp: 480
-    atk: 14
+    atk: 6
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5303
@@ -3012,7 +3024,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_321
     hp: 480
-    atk: 14
+    atk: 6
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5303
@@ -3023,7 +3035,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_321
     hp: 480
-    atk: 14
+    atk: 6
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5303
@@ -3034,7 +3046,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_321
     hp: 600
-    atk: 17
+    atk: 8
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5304
@@ -3045,7 +3057,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_321
     hp: 600
-    atk: 17
+    atk: 8
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5304
@@ -3056,7 +3068,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_322
     hp: 1040
-    atk: 27
+    atk: 12
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6304
@@ -3067,7 +3079,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_411
     hp: 960
-    atk: 20
+    atk: 9
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5401
@@ -3078,7 +3090,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_411
     hp: 960
-    atk: 20
+    atk: 9
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5401
@@ -3089,7 +3101,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_411
     hp: 960
-    atk: 20
+    atk: 9
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5401
@@ -3100,7 +3112,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_411
     hp: 5880
-    atk: 34
+    atk: 15
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5402
@@ -3111,7 +3123,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_411
     hp: 5880
-    atk: 34
+    atk: 15
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5402
@@ -3122,7 +3134,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_412
     hp: 10192
-    atk: 54
+    atk: 24
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6402
@@ -3133,7 +3145,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_421
     hp: 1080
-    atk: 29
+    atk: 13
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5403
@@ -3144,7 +3156,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_421
     hp: 1080
-    atk: 29
+    atk: 13
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5403
@@ -3155,7 +3167,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_421
     hp: 1080
-    atk: 29
+    atk: 13
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5403
@@ -3166,7 +3178,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_421
     hp: 1350
-    atk: 34
+    atk: 15
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5404
@@ -3177,7 +3189,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_421
     hp: 1350
-    atk: 34
+    atk: 15
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5404
@@ -3188,7 +3200,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_422
     hp: 2340
-    atk: 54
+    atk: 24
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6404
@@ -3199,7 +3211,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_511
     hp: 7200
-    atk: 40
+    atk: 18
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5501
@@ -3210,7 +3222,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_511
     hp: 7200
-    atk: 40
+    atk: 18
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5501
@@ -3221,7 +3233,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_511
     hp: 7200
-    atk: 40
+    atk: 18
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5501
@@ -3232,7 +3244,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_511
     hp: 16800
-    atk: 69
+    atk: 31
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5502
@@ -3243,7 +3255,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_511
     hp: 16800
-    atk: 69
+    atk: 31
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5502
@@ -3254,7 +3266,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_512
     hp: 29120
-    atk: 110
+    atk: 50
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6502
@@ -3265,7 +3277,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_521
     hp: 2460
-    atk: 58
+    atk: 26
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5503
@@ -3276,7 +3288,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_521
     hp: 2460
-    atk: 58
+    atk: 26
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5503
@@ -3287,7 +3299,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_521
     hp: 2460
-    atk: 58
+    atk: 26
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5503
@@ -3298,7 +3310,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_521
     hp: 3060
-    atk: 69
+    atk: 31
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5504
@@ -3309,7 +3321,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_521
     hp: 3060
-    atk: 69
+    atk: 31
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5504
@@ -3320,7 +3332,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_522
     hp: 5304
-    atk: 110
+    atk: 50
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6504
@@ -3331,7 +3343,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_611
     hp: 20400
-    atk: 83
+    atk: 37
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5601
@@ -3342,7 +3354,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_611
     hp: 20400
-    atk: 83
+    atk: 37
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5601
@@ -3353,7 +3365,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_611
     hp: 20400
-    atk: 83
+    atk: 37
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5601
@@ -3364,7 +3376,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_611
     hp: 120000
-    atk: 143
+    atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5602
@@ -3375,7 +3387,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_611
     hp: 120000
-    atk: 143
+    atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5602
@@ -3386,7 +3398,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_612
     hp: 208000
-    atk: 228
+    atk: 103
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6602
@@ -3397,7 +3409,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_621
     hp: 5580
-    atk: 119
+    atk: 54
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5603
@@ -3408,7 +3420,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_621
     hp: 5580
-    atk: 119
+    atk: 54
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5603
@@ -3419,7 +3431,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_621
     hp: 5580
-    atk: 119
+    atk: 54
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5603
@@ -3430,7 +3442,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_621
     hp: 6960
-    atk: 143
+    atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5604
@@ -3441,7 +3453,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_621
     hp: 6960
-    atk: 143
+    atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5604
@@ -3452,7 +3464,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_622
     hp: 12064
-    atk: 228
+    atk: 103
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6604
@@ -3463,7 +3475,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_711
     hp: 150000
-    atk: 170
+    atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5701
@@ -3474,7 +3486,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_711
     hp: 150000
-    atk: 170
+    atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5701
@@ -3485,7 +3497,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_711
     hp: 150000
-    atk: 170
+    atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5701
@@ -3496,7 +3508,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_711
     hp: 570000
-    atk: 295
+    atk: 133
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5702
@@ -3507,7 +3519,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_711
     hp: 570000
-    atk: 295
+    atk: 133
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5702
@@ -3518,7 +3530,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_712
     hp: 988000
-    atk: 472
+    atk: 212
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6702
@@ -3529,7 +3541,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_721
     hp: 12600
-    atk: 245
+    atk: 110
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5703
@@ -3540,7 +3552,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_721
     hp: 12600
-    atk: 245
+    atk: 110
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5703
@@ -3551,7 +3563,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_721
     hp: 12600
-    atk: 245
+    atk: 110
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5703
@@ -3562,7 +3574,7 @@ MonoBehaviour:
     spawnSec: 3
     nameStr: unit_name_721
     hp: 15600
-    atk: 295
+    atk: 133
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5704
@@ -3573,7 +3585,7 @@ MonoBehaviour:
     spawnSec: 10
     nameStr: unit_name_721
     hp: 15600
-    atk: 295
+    atk: 133
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5704
@@ -3584,7 +3596,7 @@ MonoBehaviour:
     spawnSec: 25
     nameStr: unit_name_722
     hp: 27040
-    atk: 472
+    atk: 212
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6704
@@ -5232,7 +5244,7 @@ MonoBehaviour:
     costMult: NaN
     effectType1: 26
     baseValue1: 7
-    addValue1: -0.6
+    addValue1: -0.35
     valueOp1: 1
     effectType2: 0
     baseValue2: NaN
@@ -9165,6 +9177,30 @@ MonoBehaviour:
     frameRate: 24
     memo: "\uD53C\uACA9 \uC774\uD399\uD2B8 \xB7 \uD30C\uC774\uC5B4\uBCFC \uD3ED\uBC1C
       (\uC5F0\uC18D \uC774\uBBF8\uC9C0 frame_00~frame_38)"
+  - resId: res8000018
+    type: 80
+    resName: sheet.png
+    resPath: "Fix_Resource/\uD22C\uC0AC\uCCB4/\uACF5\uACA9\uD615 \uAC74\uBB3C \uD22C\uC0AC\uCCB4/sheet.png"
+    loop: 1
+    volume: NaN
+    frameCount: 16
+    frameRate: 24
+    memo: "\uD22C\uC0AC\uCCB4 \xB7 \uACF5\uACA9\uD615 \uAC74\uBB3C \uACF5\uD1B5 (\uC2DC\uD2B8
+      4\xD74, \uD504\uB808\uC784 256\xD7128px, \uACF5\uC774 \uC67C\uCABD\xB7\uAF2C\uB9AC
+      \uC624\uB978\uCABD = \uC67C\uCABD\uC73C\uB85C \uB0A0\uC544\uAC00\uB294 \uADF8\uB9BC.
+      \uB0B1\uC7A5\uC740 frames \uD3F4\uB354)"
+  - resId: res8000019
+    type: 80
+    resName: sheet.png
+    resPath: "Fix_Resource/\uD22C\uC0AC\uCCB4/\uACF5\uC911 \uC720\uB2DB \uD22C\uC0AC\uCCB4/sheet.png"
+    loop: 1
+    volume: NaN
+    frameCount: 16
+    frameRate: 24
+    memo: "\uD22C\uC0AC\uCCB4 \xB7 \uACF5\uC911 \uC720\uB2DB \uACF5\uD1B5 (\uC2DC\uD2B8
+      4\xD74, \uD504\uB808\uC784 256\xD7128px, \uACF5\uC774 \uC67C\uCABD\xB7\uAF2C\uB9AC
+      \uC624\uB978\uCABD = \uC67C\uCABD\uC73C\uB85C \uB0A0\uC544\uAC00\uB294 \uADF8\uB9BC.
+      \uB0B1\uC7A5\uC740 frames \uD3F4\uB354)"
   - resId: res9000001
     type: 90
     resName: title-background.webm

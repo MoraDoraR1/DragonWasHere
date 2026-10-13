@@ -72,6 +72,8 @@ namespace DWH.Data
 
         // ───── const ─────
 
+        public bool HasConst(string key) => consts.Exists(c => c.constKey == key);
+
         public ConstRow ConstRow(string key)
         {
             constIndex ??= Index(consts, c => c.constKey, "const");

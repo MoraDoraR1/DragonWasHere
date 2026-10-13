@@ -117,7 +117,7 @@ namespace DWH.InGame.Stage
             camera.orthographicSize = Tuning.CameraOrthoSize;
             camera.transform.position = new Vector3(0, camera.orthographicSize, -10);
 
-            float groundY = Tuning.GroundHeight;
+            float groundY = Tuning.StandHeight;
             float dragonStartX = 0f;
 
             // 건물 배치 (가이드 6.2): 간격 const.building_spacing_px, 랜드마크는 가운데, 공격 건물은 고르게 분산
@@ -181,7 +181,7 @@ namespace DWH.InGame.Stage
                 turret.Init(building, Dragon, camera, GrayboxSprites.Square, building.Row.atk, (float)building.Row.atkSpeed,
                     Tuning.Px(double.IsNaN(building.Row.atkRange) ? 0 : building.Row.atkRange),
                     Tuning.ProjectileSpeed, Tuning.ProjectileSize,
-                    isLandmark ? Tuning.LandmarkShotHeights : new[] { Tuning.AttackShotHeight });
+                    isLandmark ? Tuning.LandmarkShotHeights : new[] { Tuning.AttackShotHeight }, db, art);
                 turrets.Add(turret);
             }
 

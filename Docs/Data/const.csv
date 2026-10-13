@@ -21,3 +21,5 @@ starter_leave_sec,0.5,float,sec,드래곤이 화면 위로 이탈하는 시간
 starter_drop_sec,0.25,float,sec,드래곤이 표적으로 수직 낙하하는 시간
 mvp_mode,1,bool,,1 = MVP 빌드. stage.mvp_order가 있는 14개(각 시대 앞 테마 x-1·x-2)만 mvp_next_stage_id 순서로 진행하고 x-2를 보스로 처리. 0 = 28스테이지 전체 (CBT)
 rebirth_rp_divisor,10,float,,환생 포인트 = floor(√(이번 회차 누적 획득 골드) ÷ 이 값)
+projectile_res_building,res8000018,res_id,,공격형 건물·랜드마크 공통 투사체 리소스 (resource.res_id)
+projectile_res_air_unit,res8000019,res_id,,공중 유닛 공통 투사체 리소스 (resource.res_id)

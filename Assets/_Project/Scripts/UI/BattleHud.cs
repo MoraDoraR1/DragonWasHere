@@ -161,9 +161,11 @@ namespace DWH.UI
             hpFill = VitalBar("Hp", "icon-heart", -110, UiTheme.Hp, out hpChip, out hpFillImage, out hpText);
             staminaFill = VitalBar("Stamina", "icon-energy", -170, UiTheme.Energy, out staminaChip, out staminaFillImage, out staminaText);
 
-            var fatigue = UiFactory.Panel(root, "Fatigue", UiFactory.TopLeft, new Vector2(28, -230), new Vector2(300, 46), FrameStyle.ChipCream);
-            fatigueText = UiFactory.Text(fatigue, "Text", UiFactory.Center, Vector2.zero, new Vector2(290, 46), 22, TextAlignmentOptions.Center,
+            // 영어 문구가 더 길어 칸을 조금 넓히고 한 줄로 줄여 맞춘다 (처음 시작이 영어, 10-13)
+            var fatigue = UiFactory.Panel(root, "Fatigue", UiFactory.TopLeft, new Vector2(28, -230), new Vector2(340, 46), FrameStyle.ChipCream);
+            fatigueText = UiFactory.Text(fatigue, "Text", UiFactory.Center, Vector2.zero, new Vector2(320, 46), 22, TextAlignmentOptions.Center,
                 UiTheme.InkText, bold: true);
+            UiFactory.Fit(fatigueText, 15, true);
         }
 
         RectTransform VitalBar(string name, string icon, float y, Color color, out Image chip, out Image fillImage, out TMP_Text value)

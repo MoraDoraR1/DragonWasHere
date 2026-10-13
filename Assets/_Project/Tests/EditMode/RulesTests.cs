@@ -153,6 +153,20 @@ namespace DWH.Tests
                 }
         }
 
+        [Test]
+        public void Letterbox_KeepsSixteenByNine()
+        {
+            const float target = 16f / 9f;
+            foreach (float screen in new[] { 16f / 9f, 21f / 9f, 4f / 3f, 1f, 9f / 16f })
+            {
+                var r = DWH.InGame.Stage.LetterboxCamera.ViewportFor(screen, target);
+                Assert.AreEqual(target, screen * r.width / r.height, 1e-4f, $"창 {screen}: 그리는 영역이 16:9가 아니다");
+                Assert.That(r.width <= 1f && r.height <= 1f && Mathf.Approximately(Mathf.Max(r.width, r.height), 1f), $"창 {screen}: 한쪽은 꽉 채워야 한다");
+                Assert.AreEqual(0.5f, r.center.x, 1e-4f);
+                Assert.AreEqual(0.5f, r.center.y, 1e-4f);
+            }
+        }
+
         // ───── 환생 ─────
 
         [Test]

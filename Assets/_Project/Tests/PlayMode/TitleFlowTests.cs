@@ -130,7 +130,7 @@ namespace DWH.Tests
             Assert.AreEqual(GameState.Stage, manager.State);
             Assert.AreEqual(0, manager.Save.goldCoin);
             Assert.AreEqual(0, manager.Save.playCount);
-            Assert.AreEqual("en", manager.Save.language);
+            Assert.AreEqual("ko", manager.Save.language, "바꾼 언어(처음 영어 → 한국어)는 새 게임에도 남는다");
             Assert.AreEqual(userId, manager.Save.userId);
         }
     }

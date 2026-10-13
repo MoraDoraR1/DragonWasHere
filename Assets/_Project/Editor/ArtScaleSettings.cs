@@ -66,6 +66,8 @@ namespace DWH.Editor
             // 스킬·피격 이펙트 540px 프레임 → 2.7 unit [임시]
             new Rule(FixRoot + "스킬 이펙트/", 200f, SpriteAlignment.Center),
             new Rule(FixRoot + "피격 이펙트/", 200f, SpriteAlignment.Center),
+            // 투사체(공격 건물·공중 유닛 공통) 256×128px 프레임 → 1 × 0.5 unit, 공 지름 약 0.31 unit (10-13 추가)
+            new Rule(FixRoot + "투사체/", 256f, SpriteAlignment.Center),
         };
 
         public Rule FindRule(string artRelativePath)
@@ -91,7 +93,22 @@ namespace DWH.Editor
         public static ArtScaleSettings LoadOrCreate()
         {
             var settings = AssetDatabase.LoadAssetAtPath<ArtScaleSettings>(AssetPath);
-            if (settings != null) return settings;
+            if (settings != null)
+            {
+                // 코드에 새로 생긴 기본 규칙(예: 투사체)이 저장된 에셋에 없으면 채운다. 이미 있는 규칙(사람이 바꾼 값)은 그대로 둔다
+                var defaults = CreateInstance<ArtScaleSettings>();
+                int added = 0;
+                foreach (var rule in defaults.rules)
+                    if (!settings.rules.Exists(r => r.pathPrefix == rule.pathPrefix)) { settings.rules.Add(rule); added++; }
+                DestroyImmediate(defaults);
+                if (added > 0)
+                {
+                    EditorUtility.SetDirty(settings);
+                    AssetDatabase.SaveAssets();
+                    Debug.Log($"[DWH] ArtScaleSettings에 새 기본 규칙 {added}개 추가");
+                }
+                return settings;
+            }
             settings = CreateInstance<ArtScaleSettings>();
             AssetDatabase.CreateAsset(settings, AssetPath);
             AssetDatabase.SaveAssets();

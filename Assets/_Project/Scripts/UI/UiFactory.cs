@@ -37,7 +37,14 @@ namespace DWH.UI
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
             go.AddComponent<GraphicRaycaster>();
             EnsureEventSystem();
-            return (RectTransform)go.transform;
+            // 화면 고정: 모든 UI는 가운데 1920×1080 틀 안에 그린다. Expand 배율이라 틀이 화면에 꼭 맞고,
+            // 16:9가 아닌 창에서는 남는 곳이 카메라 레터박스(검은 띠)와 겹친다. 틀을 지우면 캔버스도 같이 지운다
+            var frame = new GameObject("Frame", typeof(RectTransform)).GetComponent<RectTransform>();
+            frame.SetParent(go.transform, false);
+            frame.anchorMin = frame.anchorMax = frame.pivot = new Vector2(0.5f, 0.5f);
+            frame.sizeDelta = ReferenceResolution;
+            frame.gameObject.AddComponent<CanvasFrame>();
+            return frame;
         }
 
         public static void EnsureEventSystem()
@@ -332,6 +339,15 @@ namespace DWH.UI
             if (lastInteractable == on) return;
             lastInteractable = on;
             label.color = on ? active : UiTheme.InkDim;
+        }
+    }
+
+    /// <summary>UiFactory.Canvas가 돌려주는 고정 틀. 화면 코드가 틀을 지우면 빈 캔버스가 남지 않게 함께 지운다</summary>
+    public class CanvasFrame : MonoBehaviour
+    {
+        void OnDestroy()
+        {
+            if (transform.parent != null) Destroy(transform.parent.gameObject);
         }
     }
 

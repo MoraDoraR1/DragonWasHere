@@ -21,19 +21,77 @@
           init: function () { call("init", arguments); },
           log: function () { call("log", arguments); },
           setUserProps: function () { call("setUserProps", arguments); },
+          // 게임이 보내는 지금 화면 + 공통 파라미터. page_exit에 쓴다.
+          setContext: function (ctx) { exitTracker.context = ctx || {}; },
           _attach: function (i) {
             impl = i;
             for (var k = 0; k < queue.length; k++) impl[queue[k][0]].apply(null, queue[k][1]);
             queue = [];
+          },
+          _call: call
+        };
+      })();
+
+      // ── 이탈 추적 ──
+      // 브라우저는 떠나는 순간 새로고침·탭 닫기·다른 사이트 이동을 구분해 주지 않는다(모두 pagehide).
+      // 그래서 (1) 떠날 때 page_exit를 보내고 시각을 남기고, (2) 다음 실행의 game_session_start에
+      // 직전 이탈과의 간격(return_gap_sec)과 분류(return_type: first / quick(60초 안, 새로고침 추정) / later)를 붙인다.
+      // itch는 게임을 iframe으로 띄워 navigation type이 늘 "navigate"라서 reload 판정을 쓸 수 없다.
+      var exitTracker = (function () {
+        var KEY = "dwh_last_exit", QUICK_SEC = 60;
+        var loadedAt = Date.now();
+        var last = null;
+        try { last = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+        var sent = false;
+
+        function remember(reason) {
+          try {
+            var ctx = tracker.context || {};
+            localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), scene: ctx.scene || "title", reason: reason }));
+          } catch (e) {}
+        }
+
+        var tracker = {
+          context: {},
+          // game_session_start에 붙일 직전 이탈 정보
+          returnInfo: function () {
+            if (!last || !last.t) return { return_type: "first", return_gap_sec: -1, prev_exit_scene: "" };
+            var gap = Math.max(0, Math.round((loadedAt - last.t) / 1000));
+            return { return_type: gap <= QUICK_SEC ? "quick" : "later", return_gap_sec: gap, prev_exit_scene: last.scene || "" };
+          },
+          exit: function (persisted) {
+            remember("pagehide");
+            if (sent) return;
+            sent = true;
+            var p = {};
+            var ctx = tracker.context || {};
+            for (var k in ctx) p[k] = ctx[k];
+            if (!p.scene) p.scene = "title";
+            p.session_sec = Math.round((Date.now() - loadedAt) / 1000);
+            p.persisted = persisted ? 1 : 0;
+            window.DwhAnalyticsBridge._call("log", ["page_exit", p]);
           }
         };
+
+        // 모바일은 pagehide가 빠질 수 있어 hidden이 될 때 시각만 먼저 남긴다(복귀 간격 계산용).
+        document.addEventListener("visibilitychange", function () {
+          // 떠날 때는 pagehide 다음에 hidden이 오므로, 이미 page_exit를 보냈으면 덮어쓰지 않는다.
+          if (document.visibilityState === "hidden" && !sent) remember("hidden");
+        });
+        addEventListener("pagehide", function (e) { tracker.exit(e.persisted); });
+        // 뒤로 가기 캐시(bfcache)에서 되살아나면 다음 이탈도 다시 보낸다.
+        addEventListener("pageshow", function (e) { if (e.persisted) sent = false; });
+        return tracker;
       })();
     </script>
     <script type="module">
       const FIREBASE_VERSION = "10.12.2";
       const consoleOnly = {
         init(uid, props, isDev) { console.log("[DWH] init (콘솔 전용)", uid, props, isDev); },
-        log(name, params) { console.log("[DWH]", name, params); },
+        log(name, params) {
+          if (name === "game_session_start") Object.assign(params, exitTracker.returnInfo());
+          console.log("[DWH]", name, params);
+        },
         setUserProps(props) { console.log("[DWH] user props", props); }
       };
       const bridge = window.DwhAnalyticsBridge;
@@ -64,6 +122,7 @@
               console.log("[DWH] Firebase 연결됨", { uid, dev: isDev });
             },
             log(name, params) {
+              if (name === "game_session_start") Object.assign(params, exitTracker.returnInfo());
               // debug_mode가 붙은 이벤트만 GA4 DebugView에 실시간으로 보인다.
               if (isDev) params.debug_mode = true;
               fa.logEvent(analytics, name, params);

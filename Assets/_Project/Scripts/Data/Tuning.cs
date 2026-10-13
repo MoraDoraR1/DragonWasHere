@@ -30,6 +30,11 @@ namespace DWH.Data
         public const float CameraTurnSeconds = 0.6f;
         /// <summary>지면 높이 = 바닥 배경 이미지 높이(244 px)</summary>
         public const float GroundHeight = 2.44f;
+        /// <summary>
+        /// 건물·랜드마크·드래곤이 서는 높이. 바닥 그림 맨 위는 테두리선이고 그 아래 0.45~0.66 unit이 밝은 지표 띠라,
+        /// 테두리선 위에 세우면 떠 보인다 → 지표 띠 안쪽으로 0.25 내려 세운다 (10-13 사용자 요청)
+        /// </summary>
+        public const float StandHeight = GroundHeight - 0.25f;
         /// <summary>중경 스크롤 = 바닥의 1/3 (가이드 6.5)</summary>
         public const float ParallaxMidFactor = 1f / 3f;
         /// <summary>드래곤 시작 위치에서 첫 건물까지</summary>
@@ -57,6 +62,8 @@ namespace DWH.Data
         // ───── 탄 (8.5.2) ─────
         public const float ProjectileSpeed = 5f;
         public const float ProjectileSize = 0.2f;
+        /// <summary>투사체 그림 배율 (256px 프레임 = 1 unit, 공 지름 약 0.31 unit)</summary>
+        public const float ProjectileSpriteScale = 1f;
         /// <summary>공격 건물 탄 높이(드래곤 충돌 박스 높이 대비). 1 미만은 지면 탄이라 점프로 피한다</summary>
         public const float AttackShotHeight = 0.6f;
         /// <summary>랜드마크 3발(아래·중간·위) 높이 비율</summary>

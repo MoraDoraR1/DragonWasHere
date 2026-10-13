@@ -45,4 +45,5 @@ DwhAnalytics.Log(AnalyticsEvents.RunStart, new EventParams()
 
 - `user_id`: 첫 실행 때 만든 무작위 ID(PlayerPrefs). 개인정보 없음.
 - 누적 플레이 시간과 실행 횟수(session_index)는 자동으로 셉니다.
+- 이탈: index.html이 페이지를 떠날 때(pagehide) `page_exit`(scene·session_sec·persisted + 공통 파라미터)를 보낸다. 화면은 `DwhAnalytics.SetScene`으로 알려 준다. 다음 실행의 `game_session_start`에는 `return_type`(first/quick=60초 안 복귀·새로고침 추정/later), `return_gap_sec`, `prev_exit_scene`이 붙는다. 새로고침·탭 닫기·브라우저 종료는 떠나는 순간 구분할 수 없다.
 - GA4 예약 이벤트(session_start 등)와 겹치지 않게 이름을 정했습니다. 새 이벤트는 `AnalyticsEvents`에 추가합니다.

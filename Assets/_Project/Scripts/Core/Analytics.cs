@@ -45,6 +45,19 @@ namespace DWH.Core
             Recent.Add(AnalyticsEvents.GameSessionStart);
         }
 
+        /// <summary>화면 전환. 브라우저가 이탈(page_exit) 때 이 화면을 보낸다.</summary>
+        public static void SceneChanged(GameState state)
+        {
+            DwhAnalytics.SetScene(state switch
+            {
+                GameState.OutGame => AnalyticsValues.SceneOutGame,
+                GameState.Stage => AnalyticsValues.SceneStage,
+                GameState.Bonus => AnalyticsValues.SceneBonus,
+                GameState.Result => AnalyticsValues.SceneResult,
+                _ => AnalyticsValues.SceneTitle,
+            });
+        }
+
         /// <summary>아웃게임(트리)에 들어왔다. outgame_exit의 체류 시간·구매 수 기준</summary>
         public static void OutgameEnter()
         {

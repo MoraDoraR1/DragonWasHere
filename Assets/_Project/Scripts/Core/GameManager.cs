@@ -81,6 +81,8 @@ namespace DWH.Core
             Localization.Current = Localization.Parse(Save.language);
             BattleCamera.ShakeEnabled = Save.settings.screenShake;
             view = Camera.main != null ? Camera.main : new GameObject("Main Camera") { tag = "MainCamera" }.AddComponent<Camera>();
+            // 화면 고정: 창 비율이 바뀌어도 16:9로 그리고 남는 곳은 검은 띠 (테스트·배치모드는 렌더 텍스처로 찍으므로 제외)
+            if (!Application.isBatchMode && !view.TryGetComponent(out LetterboxCamera _)) view.gameObject.AddComponent<LetterboxCamera>();
 
             if (uiTheme != null) UiTheme.Active = uiTheme;
             Upgrades = new UpgradeTree(database, Save);
@@ -121,7 +123,7 @@ namespace DWH.Core
             settings = SettingsPopup.Create(new SettingsActions
             {
                 ToggleLanguage = ToggleLanguage,
-                CanChangeLanguage = () => State is GameState.Title or GameState.OutGame,
+                CanChangeLanguage = () => true,
                 SetScreenShake = on =>
                 {
                     Save.settings.screenShake = on;
@@ -218,7 +220,11 @@ namespace DWH.Core
             // 정산 후에는 보유 골드에 세션 골드가 더해지므로, HUD는 출발 시점 보유량 + 앞 구간 골드 + 현재 구간 획득량으로 표시한다
             double shown = goldAtDeparture + goldBefore;
             hud = BattleHud.Create(Battle, () => shown, art, TogglePause, mode == BattleMode.Normal && Save.playCount < 2, goldBefore);
+            // 전투 중 언어를 바꾸면 HUD를 새 언어로 다시 만든다 (첫 판 안내는 다시 띄우지 않는다)
+            rebuildHud = () => BattleHud.Create(Battle, () => shown, art, TogglePause, false, goldBefore);
         }
+
+        Func<BattleHud> rebuildHud;
 
         void OnBattleEnded(BattleController battle)
         {
@@ -336,10 +342,9 @@ namespace DWH.Core
             return true;
         }
 
-        /// <summary>한/영 전환. 화면을 다시 만든다 (타이틀·아웃게임에서만)</summary>
+        /// <summary>한/영 전환. 화면을 다시 만든다. 전투·일시정지·결과 화면에서도 된다 (환경설정, 10-13 사용자 요청)</summary>
         public void ToggleLanguage()
         {
-            if (State is not (GameState.Title or GameState.OutGame)) return;
             Localization.Current = Localization.Current == Language.Ko ? Language.En : Language.Ko;
             Save.language = Localization.Code(Localization.Current);
             SaveSystem.Save(storage, Save);
@@ -347,10 +352,23 @@ namespace DWH.Core
             bool settingsOpen = settings.IsOpen;
             BuildScreens();
             if (State == GameState.Title) title.Show(HasProgress);
-            else
+            else if (State == GameState.OutGame)
             {
                 outGame.Show(Save);
                 outGame.SetTab(tab);
+            }
+            else
+            {
+                // 전투 중: HUD를 다시 만들고, 열려 있던 일시정지·결과 화면을 다시 띄운다
+                outGame.Hide();
+                if (hud != null && Battle != null && rebuildHud != null)
+                {
+                    Destroy(hud.gameObject);
+                    hud = rebuildHud();
+                }
+                if (IsPaused) pauseMenu.Show();
+                if (State == GameState.Result && LastResult != null)
+                    resultScreen.Show(LastResult, Save, Upgrades.AffordableCount(), Save.playCount > 1);
             }
             if (settingsOpen) settings.Show();
         }
@@ -467,6 +485,7 @@ namespace DWH.Core
         void SetState(GameState next)
         {
             State = next;
+            Analytics.SceneChanged(next);
             StateChanged?.Invoke(next);
         }
     }

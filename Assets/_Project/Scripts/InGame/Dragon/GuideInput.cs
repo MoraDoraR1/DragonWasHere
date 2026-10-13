@@ -71,7 +71,8 @@ namespace DWH.InGame.Dragon
                 lastMoveTime = Time.unscaledTime;
             }
 
-            bool onScreen = pos.x >= 0 && pos.y >= 0 && pos.x <= Screen.width && pos.y <= Screen.height;
+            // 레터박스(검은 띠) 위의 커서는 화면 밖으로 본다
+            bool onScreen = camera.pixelRect.Contains(pos);
             if (!onScreen || Time.unscaledTime - lastMoveTime >= idleSeconds)
                 return false;
 

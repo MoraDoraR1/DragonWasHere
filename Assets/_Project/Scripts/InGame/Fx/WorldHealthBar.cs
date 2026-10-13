@@ -9,7 +9,8 @@ using UnityEngine;
 namespace DWH.InGame.Fx
 {
     /// <summary>
-    /// 건물·공중 유닛 아래의 체력바 (월드 좌표). UI 패키지 v1의 바 그림(fill-empty, fill-hp, fill-bonus)을 9-slice 스프라이트로 쓴다.
+    /// 건물·공중 유닛 아래의 체력바 (월드 좌표). 드래곤 체력바(HUD)와 같은 UI 에셋 V15 게이지 그림을 9-slice로 쓴다:
+    /// 바탕 gauge-track, 채움 gauge-fill-health(황금 건물은 gauge-fill-goal). 크기는 예전 건물 체력바 그대로 (10-13 사용자 요청).
     /// 일반 건물·공중 유닛은 체력색, 황금 건물(보너스·감별안)은 금색. 맞으면 줄어든 부분이 잠깐 흰색으로 남았다가 따라 줄어든다.
     /// 대상 오브젝트의 자식이라 대상이 파괴되어 꺼지면 같이 사라진다.
     /// </summary>
@@ -17,8 +18,6 @@ namespace DWH.InGame.Fx
     {
         const float Height = 0.16f;
         const float GapBelow = 0.18f;
-        /// <summary>9-slice 경계(0.14 unit)가 바 높이보다 커서, 두 배 크기로 그린 뒤 반으로 줄인다</summary>
-        const float SliceScale = 0.5f;
         const float TrailDelay = 0.35f;
         const float TrailSpeed = 1.5f;
         const int Order = SortingOrders.Building + 5;
@@ -58,8 +57,8 @@ namespace DWH.InGame.Fx
             maxHp = Math.Max(1e-9, max);
             width = Mathf.Clamp(owner.Hitbox.width * 0.8f, 0.6f, 3.2f);
 
-            var backSprite = UiTheme.KitSprite("fill-empty");
-            var fillSprite = UiTheme.KitSprite(golden ? "fill-bonus" : "fill-hp");
+            var backSprite = UiTheme.KitSprite("gauge-track");
+            var fillSprite = UiTheme.KitSprite(golden ? "gauge-fill-goal" : "gauge-fill-health");
             back = Part("Back", backSprite, backSprite != null ? Color.white : new Color(0.12f, 0.1f, 0.1f, 0.85f), Order);
             trail = Part("Trail", GrayboxSprites.Square, new Color(1f, 0.97f, 0.9f, 0.85f), Order + 1);
             fill = Part("Fill", fillSprite ?? GrayboxSprites.Square, fillSprite != null ? Color.white : golden ? GoldColor : HpColor, Order + 2);
@@ -97,8 +96,10 @@ namespace DWH.InGame.Fx
             float left = -width / 2 + inset;
             if (sr.drawMode == SpriteDrawMode.Sliced)
             {
-                sr.size = new Vector2(Mathf.Max(w, 0.0001f) / SliceScale, h / SliceScale);
-                sr.transform.localScale = new Vector3(SliceScale, SliceScale, 1);
+                // 9-slice 경계가 바 높이보다 두꺼우면 크게 그린 뒤 줄여서 모서리가 겹치지 않게 한다 (HUD의 BorderFit과 같은 방식)
+                float k = SliceScaleFor(sr.sprite, h);
+                sr.size = new Vector2(Mathf.Max(w, 0.0001f) / k, h / k);
+                sr.transform.localScale = new Vector3(k, k, 1);
             }
             else
             {
@@ -106,6 +107,13 @@ namespace DWH.InGame.Fx
                 sr.transform.localScale = new Vector3(w / native.x, h / native.y, 1);
             }
             sr.transform.localPosition = new Vector3(left + w / 2, 0, 0);
+        }
+
+        static float SliceScaleFor(Sprite sprite, float height)
+        {
+            var b = sprite.border;
+            float borderUnits = (b.y + b.w) / Mathf.Max(1f, sprite.pixelsPerUnit);
+            return borderUnits <= 0 ? 1f : Mathf.Min(1f, height * 0.9f / borderUnits);
         }
 
         void Draw()

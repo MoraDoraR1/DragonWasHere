@@ -24,6 +24,9 @@ namespace DWH.Analytics
         public static int RebirthCount;
         public static int GrowthStage = 1;
 
+        /// <summary>지금 화면 (AnalyticsValues.Scene*). SetScene으로 바꾼다. 브라우저가 page_exit에 쓴다.</summary>
+        public static string Scene { get; private set; } = AnalyticsValues.SceneTitle;
+
         public static string UserId { get; private set; }
         public static int SessionIndex { get; private set; }
         public static bool IsDev { get; private set; }
@@ -48,6 +51,7 @@ namespace DWH.Analytics
         [DllImport("__Internal")] static extern void DwhFb_Init(string userId, string userPropsJson, int isDev);
         [DllImport("__Internal")] static extern void DwhFb_LogEvent(string name, string paramsJson);
         [DllImport("__Internal")] static extern void DwhFb_SetUserProps(string userPropsJson);
+        [DllImport("__Internal")] static extern void DwhFb_SetContext(string contextJson);
 #endif
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -125,6 +129,32 @@ namespace DWH.Analytics
 #endif
             if (LogToConsole) Debug.Log($"[DWH Analytics] {eventName} {json}");
             OnLogged?.Invoke(eventName, json);
+            PushContext();
+        }
+
+        /// <summary>화면이 바뀔 때 호출. 브라우저가 이탈 순간에 이 화면과 공통 파라미터를 page_exit로 보낸다.</summary>
+        public static void SetScene(string scene)
+        {
+            if (!_initialized) Init();
+            Scene = string.IsNullOrEmpty(scene) ? AnalyticsValues.SceneTitle : scene;
+            PushContext();
+        }
+
+        /// <summary>page_exit에 붙일 공통 파라미터 + 지금 화면. 이벤트를 보낼 때마다, 화면이 바뀔 때마다 갱신한다.</summary>
+        public static EventParams ExitContext() => new EventParams()
+            .Add(AnalyticsParams.Scene, Scene)
+            .Add(AnalyticsParams.StageId, StageId)
+            .Add(AnalyticsParams.RebirthCount, RebirthCount)
+            .Add(AnalyticsParams.GrowthStage, GrowthStage)
+            .Add(AnalyticsParams.SessionIndex, SessionIndex)
+            .Add(AnalyticsParams.BuildVersion, BuildVersion)
+            .Add(AnalyticsParams.IsDev, IsDev);
+
+        static void PushContext()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            DwhFb_SetContext(ExitContext().ToJson());
+#endif
         }
 
         /// <summary>유저 속성 (이름 24자, 값 36자 이내). rebirth_count, max_stage 등.</summary>

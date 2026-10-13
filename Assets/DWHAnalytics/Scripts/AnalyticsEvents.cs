@@ -16,6 +16,9 @@ namespace DWH.Analytics
         public const string Rebirth = "rebirth";
         public const string GameComplete = "game_complete";
 
+        // 이탈: 브라우저(index.html)가 페이지를 떠날 때 보낸다. 게임 코드에서 직접 보내지 않는다.
+        public const string PageExit = "page_exit";
+
         // P1
         public const string ResultAction = "result_action";
         public const string BonusEnd = "bonus_end";
@@ -81,6 +84,14 @@ namespace DWH.Analytics
         public const string GaugeResult = "gauge_result";
         public const string Damage = "damage";
         public const string Scene = "scene";
+
+        // page_exit (index.html이 붙임): scene, session_sec, persisted
+        public const string SessionSec = "session_sec";
+        public const string Persisted = "persisted";
+        // game_session_start에 index.html이 덧붙이는 직전 이탈 정보
+        public const string ReturnType = "return_type";
+        public const string ReturnGapSec = "return_gap_sec";
+        public const string PrevExitScene = "prev_exit_scene";
     }
 
     /// <summary>파라미터 값으로 쓰는 고정 문자열.</summary>
@@ -95,5 +106,17 @@ namespace DWH.Analytics
 
         public const string ActionRetryNow = "retry_now";
         public const string ActionToTree = "to_tree";
+
+        // scene: 지금 화면 (page_exit의 이탈 화면)
+        public const string SceneTitle = "title";
+        public const string SceneOutGame = "outgame";
+        public const string SceneStage = "stage";
+        public const string SceneBonus = "bonus";
+        public const string SceneResult = "result";
+
+        // return_type: first(이탈 기록 없음) / quick(60초 안에 다시 실행, 새로고침 추정) / later
+        public const string ReturnFirst = "first";
+        public const string ReturnQuick = "quick";
+        public const string ReturnLater = "later";
     }
 }

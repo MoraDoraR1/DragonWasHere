@@ -157,7 +157,7 @@ namespace DWH.InGame.Skills
             {
                 var target = targets.Count > 0 ? targets[i % targets.Count] : null;
                 float x = target != null ? target.Hitbox.center.x : Mathf.Lerp(min, max, (i + 0.5f) / count);
-                float y = target != null ? target.Hitbox.center.y : Tuning.GroundHeight;
+                float y = target != null ? target.Hitbox.center.y : Tuning.StandHeight;
                 // 드래곤 뒤쪽 하늘에서 바라보는 쪽으로 비스듬히 떨어진다 (DWH-59: 방향이 고정돼 있었다)
                 float slant = (top - y) * MeteorSlant;
                 StartCoroutine(MeteorFall(multiplier, target, new Vector2(x - facing * slant, top), new Vector2(x, y)));
@@ -193,7 +193,7 @@ namespace DWH.InGame.Skills
             // 왕복 범위는 쓴 순간의 화면(월드 좌표)으로 고정한다. 드래곤이 움직여도 회오리가 화면 끝에 붙어 따라오지 않는다 (DWH-58)
             var (left, right) = ViewRange();
             x = Mathf.Clamp(x, left + HurricaneWidth / 2, right - HurricaneWidth / 2);
-            float ground = Tuning.GroundHeight;
+            float ground = Tuning.StandHeight;
             var fx = SkillFx.Column(transform.parent, db, art, new Vector2(x, ground + HurricaneHeight / 2), new Vector2(HurricaneWidth, HurricaneHeight), duration + 0.3f);
             int ticks = Mathf.Max(1, Mathf.RoundToInt(duration / ActiveSpecs.HurricaneTick));
             float tickTimer = 0;
@@ -229,14 +229,14 @@ namespace DWH.InGame.Skills
             int ticks = Mathf.Max(1, Mathf.RoundToInt(duration / ActiveSpecs.EarthquakeTick));
             float total = ticks * ActiveSpecs.EarthquakeTick;
             var (l0, r0) = ViewRange();
-            var strip = SkillFx.QuakeStrip(transform.parent, db, art, l0, r0, Tuning.GroundHeight, total + 0.3f);
+            var strip = SkillFx.QuakeStrip(transform.parent, db, art, l0, r0, Tuning.StandHeight, total + 0.3f);
             float tickTimer = 0;
             int done = 0;
             if (shaker != null) shaker.Shake(total, 0.1f);
             while (done < ticks)
             {
                 var (left, _) = ViewRange();
-                SkillFx.LayQuakeStrip(strip, left, Tuning.GroundHeight);
+                SkillFx.LayQuakeStrip(strip, left, Tuning.StandHeight);
                 tickTimer += Time.deltaTime;
                 if (tickTimer >= ActiveSpecs.EarthquakeTick)
                 {

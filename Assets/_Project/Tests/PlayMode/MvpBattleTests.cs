@@ -185,7 +185,11 @@ namespace DWH.Tests
             var hit = new HashSet<ActiveSkillId>();
             battle.Actives.SkillHit += (id, _, _, _) => hit.Add(id);
             for (int i = 0; i < FrameRate * 2; i++) yield return null;
-            foreach (var id in levels.Keys) Assert.IsTrue(battle.Actives.Use(id));
+            // 허리케인을 먼저 쓴다. 메테오·지진이 먼저 가까운 건물을 다 부수면 허리케인이 칠 건물이 남지 않는다 (10-13 1-2 건물 체력 하향 뒤)
+            Assert.IsTrue(battle.Actives.Use(ActiveSkillId.Hurricane));
+            for (int i = 0; i < FrameRate; i++) yield return null;
+            Assert.IsTrue(battle.Actives.Use(ActiveSkillId.Meteor));
+            Assert.IsTrue(battle.Actives.Use(ActiveSkillId.Earthquake));
             Assert.IsFalse(battle.Actives.Use(ActiveSkillId.Meteor), "0회면 쓸 수 없다");
             yield return TestScreens.Capture(camera, "actives_1-2");
             // 메테오 낙하 방향·지진 균열·허리케인 확인용 (DWH-57~59)
@@ -256,7 +260,12 @@ namespace DWH.Tests
             Assert.AreEqual(expected, battle.Starter.HitCount);
             double damage = PlayerStats.Base(db).AttackPower * 2;
             Assert.AreEqual(expected, hp.Count(kv => kv.Key.MaxHp - kv.Value >= damage - 1e-6 || !kv.Key.IsAlive));
-            Assert.AreEqual(Tuning.GroundHeight, battle.Dragon.transform.position.y, 1e-3);
+            Assert.AreEqual(Tuning.StandHeight, battle.Dragon.transform.position.y, 1e-3);
+            // 건물(랜드마크 포함) 위에 떨어졌으면 폴짝 뛰어 옆에 착지한다: 건물 안에 서지 않는다.
+            // 옆 틈이 드래곤 폭보다 좁으면 멀리 날아가지 않고 틈 가운데에 내려앉아 0.3칸까지 겹칠 수 있다 (10-13)
+            var box = battle.Dragon.Hitbox;
+            foreach (var b in battle.Buildings.Where(b => b.IsAlive))
+                Assert.IsFalse(Mathf.Min(box.xMax, b.Right) - Mathf.Max(box.xMin, b.Left) > 0.3f || (box.center.x > b.Left && box.center.x < b.Right), $"드래곤이 {b.name} 안에 겹쳐 있다: 드래곤 {box.xMin:F2}~{box.xMax:F2}, 건물 {b.Left:F2}~{b.Right:F2}, 표적 {battle.Starter.Target.name} {battle.Starter.Target.Left:F2}~{battle.Starter.Target.Right:F2}");
         }
     }
 }

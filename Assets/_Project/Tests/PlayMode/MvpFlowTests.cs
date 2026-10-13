@@ -129,13 +129,15 @@ namespace DWH.Tests
         [UnityTest]
         public IEnumerator Language_TogglesAndPersists()
         {
-            manager.ToggleLanguage();
+            // 처음 시작은 영어
             Assert.AreEqual(Language.En, Localization.Current);
             Assert.AreEqual("en", manager.Save.language);
             Assert.AreEqual("Fire Dragon", db.Text(db.Dragon.nameStr));
             yield return TestScreens.Capture(Camera.main, "hub_en");
             manager.ToggleLanguage();
             Assert.AreEqual(Language.Ko, Localization.Current);
+            Assert.AreEqual("ko", manager.Save.language);
+            yield return TestScreens.Capture(Camera.main, "hub_ko");
         }
 
         [UnityTest]

@@ -110,7 +110,7 @@ namespace DWH.InGame.Starter
             follow = followCamera;
             input = starterInput;
             normalSize = camera.orthographicSize;
-            groundY = Tuning.GroundHeight;
+            groundY = Tuning.StandHeight;
             Gauge = StarterGauge.ForStage(db.StarterStage(battle.Stage.stageId));
             BuildUi();
             StartCoroutine(Run());
@@ -120,7 +120,7 @@ namespace DWH.InGame.Starter
         {
             canvas = UiFactory.Canvas("Starter", 3);
             // 안내 문구와 게이지는 클릭을 가로채지 않는다
-            Destroy(canvas.GetComponent<GraphicRaycaster>());
+            Destroy(canvas.GetComponentInParent<GraphicRaycaster>());
             // 드래곤은 화면 가운데보다 조금 위를 난다. 글자·안내·게이지는 그 아래 빈 하늘에 둬서 드래곤과 지면의 건물을 가리지 않는다 (DWH-56)
             title = UiFactory.Text(canvas, "Title", UiFactory.Center, new Vector2(0, -150), new Vector2(1400, 180), 120, TextAlignmentOptions.Center,
                 UiTheme.Gold, bold: true, outline: true);
@@ -269,15 +269,78 @@ namespace DWH.InGame.Starter
             view.orthographicSize = normalSize;
             follow.Suspended = false;
             float dropFrom = normalSize * 2f + dragon.Hitbox.height;
+            // 떨어지는 자리에 건물(랜드마크 포함)이 있으면 지붕 위에서 멈춘다. 그대로 땅까지 내려오면 건물 안에 겹쳐 서서
+            // 드래곤만 때리고 건물 공격은 맞지 않았다 (10-13 사용자 제보)
+            // 몸 판정 상자는 드래곤 위치와 가운데가 조금 다를 수 있어 실제 상자로 계산한다
+            dragon.transform.position = new Vector3(TargetX, dropFrom, 0);
+            var body = dragon.Hitbox;
+            float half = body.width / 2f, offset = body.center.x - TargetX;
+            var roof = battle.Buildings.Where(b => b.IsAlive && body.xMax > b.Left && body.xMin < b.Right)
+                .OrderBy(b => Mathf.Abs(b.CenterX - body.center.x)).FirstOrDefault();
+            float landY = roof != null ? roof.Hitbox.yMax : groundY;
             for (float t = 0; t < DropSeconds; t += Time.deltaTime)
             {
-                dragon.transform.position = new Vector3(TargetX, Mathf.Lerp(dropFrom, groundY, t / DropSeconds), 0);
+                dragon.transform.position = new Vector3(TargetX, Mathf.Lerp(dropFrom, landY, t / DropSeconds), 0);
                 yield return null;
             }
-            dragon.transform.position = new Vector3(TargetX, groundY, 0);
+            dragon.transform.position = new Vector3(TargetX, landY, 0);
             Impact();
+            // 지붕을 내리찍은 뒤 건물 옆 빈자리로 튕겨 나가 착지한다
+            if (roof != null) yield return BounceOff(dragon, roof, half, offset);
             Finish();
         }
+
+        /// <summary>
+        /// 지붕 착지 후 내려오기 (10-13 수정: 너무 격하다 → 그 건물 제자리에서 폴짝 뛰어 바로 옆에 내려앉는 느낌).
+        /// 지붕에서 낮게(BounceHeight) 뛰어 지붕 건물 바로 옆(낙하 지점에 가까운 쪽)으로 내려온다. 그쪽이 다른 건물과 겹치면 반대쪽,
+        /// 둘 다 막히면 가까운(HopLimit 안) 빈자리, 그것도 없으면 옆 틈 가운데(살짝 겹침). 높은 건물(랜드마크)은 내려오는 거리만큼 시간이 조금 늘어난다. 착지하면 그 건물을 바라본다
+        /// </summary>
+        IEnumerator BounceOff(DragonController dragon, Building roof, float half, float offset)
+        {
+            const float Gap = 0.15f, BounceHeight = 0.4f, HopLimit = 2.5f;
+            // 지붕 건물도 장애물에 넣는다. 빼면 옆 건물 가장자리 후보가 지붕 건물과 겹쳐도 빈자리로 골랐다 (건물 사이 2칸 < 드래곤 폭일 때)
+            var alive = battle.Buildings.Where(b => b.IsAlive).ToList();
+            bool Free(float c) => c - half >= battle.StageLeft && c + half <= battle.StageRight
+                && alive.All(b => c + half <= b.Left - 0.02f || c - half >= b.Right + 0.02f);
+            float near = TargetX + offset <= roof.CenterX ? roof.Left - half - Gap : roof.Right + half + Gap;
+            float far = TargetX + offset <= roof.CenterX ? roof.Right + half + Gap : roof.Left - half - Gap;
+            float center = Free(near) ? near : Free(far) ? far : SqueezeOrNearby();
+            float landX = center - offset;
+
+            // 양옆이 막혔을 때: 가까운(HopLimit 안) 빈자리가 있으면 거기, 없으면 멀리 날아가지 않고 지붕 건물 옆 틈 가운데에 내려앉는다
+            // (1-2처럼 건물 사이 틈(2칸)이 드래곤 폭(2.27)보다 좁으면 양쪽 건물과 0.1~0.2칸 겹친다. 겹친 건물은 바로 공격한다)
+            float SqueezeOrNearby()
+            {
+                var nearby = alive.SelectMany(b => new[] { b.Left - half - Gap, b.Right + half + Gap })
+                    .Concat(alive.OrderBy(b => b.Left).Zip(alive.OrderBy(b => b.Left).Skip(1), (l, r) => (l.Right + r.Left) / 2f))
+                    .Where(c => Free(c) && Mathf.Abs(c - near) <= HopLimit).OrderBy(c => Mathf.Abs(c - near)).ToList();
+                if (nearby.Count > 0) return nearby[0];
+                bool right = near > roof.CenterX;
+                var next = right ? alive.Where(b => b.Left >= roof.Right - 0.01f && b != roof).OrderBy(b => b.Left).FirstOrDefault()
+                    : alive.Where(b => b.Right <= roof.Left + 0.01f && b != roof).OrderByDescending(b => b.Right).FirstOrDefault();
+                if (next == null) return near;
+                return right ? (roof.Right + next.Left) / 2f : (next.Right + roof.Left) / 2f;
+            }
+
+            Vector2 from = dragon.transform.position;
+            float drop = Mathf.Max(0, from.y - groundY);
+            // 가로로 조금 더 옮겨야 하면(HopLimit 안 빈자리) 그만큼 시간을 늘려 급하게 날아가지 않게 한다
+            float seconds = 0.35f + Mathf.Sqrt(drop) * 0.08f + Mathf.Max(0f, Mathf.Abs(landX - from.x) - 2f) * 0.06f;
+            dragon.Rig.SetFacing(Mathf.Sign(roof.CenterX - center));
+            for (float t = 0; t < seconds; t += Time.deltaTime)
+            {
+                float k = t / seconds;
+                // 처음엔 살짝 위로 뜨고(포물선 BounceHeight), 옆으로 짧게 옮겨 가며 땅으로 내려온다
+                float y = Mathf.Lerp(from.y, groundY, k * k) + BounceHeight * 4f * k * (1f - k);
+                dragon.transform.position = new Vector3(Mathf.Lerp(from.x, landX, Mathf.SmoothStep(0, 1, k)), y, 0);
+                yield return null;
+            }
+            dragon.transform.position = new Vector3(landX, groundY, 0);
+            Particles(landX);
+        }
+
+        void Particles(float x) =>
+            SkillFx.Burst(transform, db, art, FxIds.GroundDust, new Vector2(x, groundY + 0.3f), 1.2f, new Color(0.8f, 0.7f, 0.5f, 0.6f));
 
         /// <summary>상공 높이: 화면 높이의 약 57% (카메라 아래 끝이 지면 바닥 0). 왼쪽 위 HUD에 가리지 않게 2/3에서 내렸다 (DWH-56)</summary>
         static float SkyY(float cameraSize) => cameraSize * 1.15f;
@@ -355,7 +418,7 @@ namespace DWH.InGame.Starter
                     HitCount = hits.Count;
                 }
             }
-            SkillFx.Burst(transform, db, art, FxIds.Landing, new Vector2(TargetX, groundY + 0.6f), multiplier > 0 ? 3f : 1.5f, new Color(1f, 0.8f, 0.4f, 0.8f));
+            SkillFx.Burst(transform, db, art, FxIds.Landing, new Vector2(TargetX, battle.Dragon.transform.position.y + 0.6f), multiplier > 0 ? 3f : 1.5f, new Color(1f, 0.8f, 0.4f, 0.8f));
             follow.Shake(0.3f, multiplier > 0 ? 0.25f : 0.08f);
         }
 

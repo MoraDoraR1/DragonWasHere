@@ -1,0 +1,390 @@
+<title>다녀가 용! 지표 현황</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 관제실 보드. 맨 위 요약 줄 → 판 결과 → 성장(업그레이드) → 수집 목록 표. 카드 없이 구획선으로 나눈다. */
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #14171c;
+  --ink-2: #4a505b;
+  --ink-3: #7b8290;
+  --rule: #dfe2e8;
+  --bar: #2a78d6;
+  --bar-soft: #c9dcf4;
+  --accent: #c2410c;
+  --good: #1a7f37;
+  --warn: #b7791f;
+  --crit: #c93030;
+  --chip: #eef1f5;
+  --f-display: "Black Han Sans", "IBM Plex Sans KR", "Malgun Gothic", sans-serif;
+  --f-body: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111318; --panel: #181b21; --ink: #f1f3f6; --ink-2: #b9bfca; --ink-3: #868d9a;
+    --rule: #2b3039; --bar: #3987e5; --bar-soft: #23344c; --accent: #f08a4b;
+    --good: #3fb26a; --warn: #e0a43a; --crit: #ef6464; --chip: #222730; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111318; --panel: #181b21; --ink: #f1f3f6; --ink-2: #b9bfca; --ink-3: #868d9a;
+  --rule: #2b3039; --bar: #3987e5; --bar-soft: #23344c; --accent: #f08a4b;
+  --good: #3fb26a; --warn: #e0a43a; --crit: #ef6464; --chip: #222730; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 64px; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+h2 { font-size: 20px; margin: 0; text-wrap: balance; }
+h3 { font-size: 15px; margin: 0 0 4px; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--ink-2); }
+.small { font-size: 13px; color: var(--ink-3); }
+header { display: grid; gap: 10px; padding-bottom: 24px; border-bottom: 2px solid var(--ink); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--f-mono); font-size: 12px; background: var(--chip); color: var(--ink-2); padding: 3px 9px; border-radius: 999px; }
+.chip b { color: var(--ink); font-weight: 500; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--rule); border-bottom: 1px solid var(--rule); }
+.kpi { background: var(--bg); padding: 18px 16px 16px 0; display: grid; gap: 2px; }
+.kpi .v { font-family: var(--f-mono); font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.kpi .v small { font-size: 15px; color: var(--ink-3); }
+.kpi .l { font-size: 13px; color: var(--ink-2); }
+
+section { padding-block: 36px 8px; display: grid; gap: 20px; }
+.sec-head { display: grid; gap: 6px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px 36px; }
+.fig { min-width: 0; display: grid; gap: 8px; align-content: start; }
+.fig .note { font-size: 13px; color: var(--ink-2); }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { font-family: var(--f-mono); fill: var(--ink-2); font-size: 11px; }
+svg .lbl { font-family: var(--f-body); fill: var(--ink); font-size: 12px; }
+svg .val { fill: var(--ink); font-weight: 500; }
+svg .grid { stroke: var(--rule); stroke-width: 1; }
+svg .axis { stroke: var(--ink-3); stroke-width: 1; }
+svg rect.m { fill: var(--bar); }
+svg rect.m:hover, svg rect.m.on { fill: var(--accent); }
+svg rect.hit { fill: transparent; }
+
+.stack { display: flex; height: 34px; gap: 2px; border-radius: 4px; overflow: hidden; }
+.stack span { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.legend b { font-family: var(--f-mono); color: var(--ink); font-weight: 500; }
+
+.callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.callout { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; display: grid; gap: 4px; }
+.callout h3 { margin: 0; }
+.callout p { font-size: 14px; color: var(--ink-2); }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; color: var(--ink-3); font-weight: 500; letter-spacing: .03em; background: var(--chip); }
+tr:last-child td { border-bottom: 0; }
+td code { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink); }
+td .params { font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.st { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; white-space: nowrap; }
+.st::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.st.ok { color: var(--good); } .st.no { color: var(--ink-3); } .st.p1 { color: var(--warn); }
+.group td { background: var(--chip); font-weight: 700; font-size: 12.5px; color: var(--ink-2); }
+
+.tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font-family: var(--f-mono); font-size: 12px; padding: 6px 9px; border-radius: 4px; transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; z-index: 10; }
+ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 80ch; }
+ul.plain li { color: var(--ink-2); font-size: 14px; }
+ul.plain b { color: var(--ink); }
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); }
+@media (max-width: 560px) { .kpi .v { font-size: 24px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Firebase · GA4 실시간 · 팀 테스트 빌드</span>
+    <h1>다녀가 용! 지표 현황</h1>
+    <p class="muted">itch.io Draft 페이지(MVP Ver02)에서 플레이한 기록이 Firebase로 들어온 내용입니다. GA4 실시간 보고서가 보여 주는 <b>최근 30분</b> 데이터를 2026-10-13 14:50쯤 그대로 옮겼습니다.</p>
+    <div class="meta">
+      <span class="chip">속성 <b>temporary-project-just-for</b></span>
+      <span class="chip">build_version <b>0.2.0</b></span>
+      <span class="chip">is_dev <b>1</b> (전부 테스트)</span>
+      <span class="chip">활성 사용자 <b>2</b></span>
+      <span class="chip">rebirth_count <b>0</b></span>
+    </div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">이벤트</span>
+      <h2>어떤 이벤트가 몇 번 들어왔나</h2>
+      <p class="muted">게임이 직접 보내는 이벤트 5종과 GA4가 자동으로 붙이는 2종(<code>user_engagement</code>, <code>session_start</code>)이 들어왔습니다.</p>
+    </div>
+    <div class="fig panel"><svg id="evChart" role="img" aria-label="이벤트별 발생 수 막대 그래프"></svg></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">run_end · 판 결과</span>
+      <h2>판은 대부분 체력이 바닥나서 끝났다</h2>
+      <p class="muted">판이 끝날 때마다 보내는 <code>run_end</code> 28건입니다. 결과, 걸린 시간, 건물 파괴율, 스테이지를 봅니다.</p>
+    </div>
+    <div class="fig">
+      <div class="stack" id="resultStack" role="img" aria-label="판 결과 비율"></div>
+      <div class="legend" id="resultLegend"></div>
+    </div>
+    <div class="grid2">
+      <div class="fig"><h3>판 길이 (duration_sec)</h3><svg id="durChart" role="img" aria-label="판 길이 분포"></svg><span class="note">거의 모든 판이 24~50초 사이에 끝났습니다.</span></div>
+      <div class="fig"><h3>건물 파괴율 (destroy_pct)</h3><svg id="dpChart" role="img" aria-label="건물 파괴율 분포"></svg><span class="note">50%에서 멈춘 판이 12건으로 가장 많습니다. 100%는 클리어한 1판뿐입니다.</span></div>
+      <div class="fig"><h3>스테이지별 판 수 (stage_id)</h3><svg id="stageChart" role="img" aria-label="스테이지별 판 수"></svg><span class="note">1-2와 2-2에 판이 몰려 있습니다. 2-1은 한 번에 넘었습니다.</span></div>
+      <div class="fig"><h3>끝날 때 남은 기력 (stamina_left)</h3><svg id="stChart" role="img" aria-label="남은 기력 분포"></svg><span class="note">체력이 0이 될 때 기력은 대부분 40~86이 남아 있었습니다.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">run_start · 재도전</span>
+      <h2>한 사람이 41번째 도전까지 갔다</h2>
+      <p class="muted"><code>attempt_no</code>는 같은 스테이지를 몇 번째로 시작했는지 셉니다. 30분 안에 1~9번째와 25~41번째 도전이 모두 보여서, 같은 벽에서 오래 반복하고 있다는 뜻입니다.</p>
+    </div>
+    <div class="grid2">
+      <div class="fig"><h3>도전 번호 (attempt_no)</h3><svg id="attChart" role="img" aria-label="도전 번호 분포"></svg><span class="note">10~24번째는 30분 창 밖이라 빠져 있습니다.</span></div>
+      <div class="fig"><h3>시작할 때 가진 업그레이드 수 (nodes_owned)</h3><svg id="noChart" role="img" aria-label="보유 업그레이드 노드 수 분포"></svg><span class="note">8~12개 노드를 가진 상태로 출발했습니다.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">upgrade_purchase · outgame_exit · 성장</span>
+      <h2>골드는 거의 탐욕과 황금 감별안에 썼다</h2>
+      <p class="muted">업그레이드 구매 48건이 어떤 노드에 쓰였는지, 둥지(업그레이드 화면)에 얼마나 머물렀는지 봅니다.</p>
+    </div>
+    <div class="grid2">
+      <div class="fig"><h3>구매한 노드 (node_id)</h3><svg id="nodeChart" role="img" aria-label="노드별 구매 수"></svg><span class="note">구매의 약 2/3가 골드를 늘리는 쪽(탐욕·황금 감별안)입니다.</span></div>
+      <div class="fig"><h3>둥지에서 산 개수 (nodes_bought)</h3><svg id="nbChart" role="img" aria-label="둥지 방문당 구매 수"></svg><span class="note">둥지 방문 28번 중 11번은 아무것도 사지 않고 바로 출격했습니다.</span></div>
+      <div class="fig"><h3>둥지에 머문 시간 (time_in_tree_sec)</h3><svg id="ttChart" role="img" aria-label="둥지 체류 시간 분포"></svg><span class="note">대부분 11초 이내입니다. 265초 한 번은 오래 고민하거나 자리를 비운 경우로 보입니다.</span></div>
+      <div class="fig"><h3>판당 번 골드 (gold_earned)</h3><svg id="geChart" role="img" aria-label="판당 획득 골드 분포"></svg><span class="note">1-2에서는 수백, 2-2에서는 1,500~3,900골드를 벌었습니다.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">읽은 것</span>
+      <h2>이 30분에서 보이는 것</h2>
+    </div>
+    <div class="callouts">
+      <div class="callout"><h3>사망 원인이 한쪽으로 쏠림</h3><p>28판 중 26판이 체력 0(fail_hp)으로 끝났고 기력은 넉넉히 남았습니다. 1-2·2-2 구간은 기력보다 체력이 먼저 바닥나는 밸런스입니다.</p></div>
+      <div class="callout"><h3>50%에서 막히는 벽</h3><p>파괴율 50%에서 끝난 판이 12번입니다. 같은 지점에서 반복해서 죽는다면 그 지점의 적이나 건물이 벽일 가능성이 큽니다. 스테이지별로 나눠 보면 확인할 수 있습니다.</p></div>
+      <div class="callout"><h3>골드 쪽 업그레이드 편중</h3><p>탐욕(upg301) 20회, 황금 감별안(upg302) 12회로, 공격·생존 쪽 노드는 거의 사지 않았습니다. 체력 사망이 많은 것과 같이 보면 좋습니다.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">수집 목록</span>
+      <h2>지금 수집되는 데이터와 그 지표</h2>
+      <p class="muted">게임 코드(<code>Core/Analytics.cs</code>, <code>DWHAnalytics</code>)가 보내도록 되어 있는 이벤트 전체입니다. 공통 파라미터 <code>stage_id</code>, <code>rebirth_count</code>, <code>growth_stage</code>, <code>session_index</code>, <code>build_version</code>, <code>is_dev</code>는 모든 이벤트에 붙습니다.</p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>이벤트</th><th>보내는 시점</th><th>전용 파라미터</th><th>보려는 지표</th><th style="text-align:right">30분 건수</th><th>상태</th></tr></thead>
+        <tbody id="catalog"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">주의</span>
+      <h2>이 데이터를 볼 때 알아 둘 것</h2>
+    </div>
+    <ul class="plain">
+      <li><b>최근 30분만 담겼습니다.</b> GA4 실시간 보고서는 30분 창만 보여 줍니다. 오늘 오후 1시 무렵 테스트분은 표준 보고서에 24~48시간 뒤 반영됩니다.</li>
+      <li><b>숫자가 조금씩 다릅니다.</b> 이벤트 카드의 총계(예: run_end 23)와 파라미터별 건수(28)는 몇 분 간격으로 읽어서 30분 창이 움직인 만큼 차이가 납니다. 차트는 파라미터별 건수를 썼습니다.</li>
+      <li><b>보고서에서 나눠 볼 수 있는 파라미터는 3개뿐입니다.</b> GA4 맞춤 측정기준으로 등록한 <code>is_dev</code>, <code>build_version</code>, <code>stage_id</code>만 표준 보고서·탐색에서 쓸 수 있습니다. 나머지(result, destroy_pct, node_id 등)는 실시간·DebugView에서만 보이므로, 등록표 49칸을 등록해야 장기 집계가 됩니다.</li>
+      <li><b>run_start의 entry(출격/바로 재도전)는 이번에 읽지 못했습니다.</b> 화면에서 값 목록이 열리지 않았습니다.</li>
+      <li><b>골드 값에 소수가 섞여 있습니다</b>(예: 1003.84). 골드가 실수로 계산돼 그대로 전송됩니다. 합계에는 문제없지만 반올림해서 보내면 분포 보기가 쉽습니다.</li>
+      <li><b>모두 is_dev=1인 테스트 데이터입니다.</b> 출시 빌드(is_dev=0)와 섞이면 is_dev로 나눠 봐야 합니다.</li>
+    </ul>
+  </section>
+
+  <footer class="small">출처: GA4 속성 p558513759 실시간 개요 → 이벤트 이름별 → 매개변수 드릴다운. 수집 시각 2026-10-13 14:50 무렵.</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const D = {
+  events: [["upgrade_purchase",44],["run_start",25],["outgame_exit",24],["run_end",23],["user_engagement",3],["game_session_start",1],["session_start",1]],
+  result: [["fail_hp",26],["clear",1],["fail_stamina",1]],
+  duration: [["36",4],["37",4],["27",3],["28",3],["29",3],["30",3],["24",1],["32",1],["33",1],["35",1],["41",1],["43",1],["50",1]],
+  destroy: [["50",12],["36",5],["32",3],["41",2],["100",1],["23",1],["31",1],["44",1],["69",1]],
+  stage: [["1-2",15],["2-1",1],["2-2",13]],
+  stamina: [["76",5],["49",4],["52",3],["50",2],["54",2],["80",2],["0",1],["42",1],["55",1],["62",1],["67",1],["71",1],["72",1],["73",1],["77",1],["79",1],["86",1]],
+  goldEarned: [["309.6",5],["240.8",3],["172",2],["3718.32",2],["145",1],["1482",1],["153",1],["1584",1],["1839.6",1],["2102.4",1],["2361.24",1],["2436.72",1],["2686.8",1],["2923.44",1],["3455.28",1],["378.4",1],["3908.88",1],["3917.52",1],["412.8",1],["804",1]],
+  attempt: [["1",2],["2",1],["3",1],["4",1],["5",1],["6",1],["7",1],["8",1],["9",1],["25",1],["26",1],["27",1],["28",1],["29",1],["30",1],["31",1],["32",1],["33",1],["34",1],["35",1],["36",1],["37",1],["38",1],["39",1],["40",1],["41",1]],
+  nodesOwned: [["8",5],["9",7],["10",8],["11",1],["12",7]],
+  node: [["upg301","탐욕",20],["upg302","황금 감별안",12],["upg101","용의 각성",6],["upg303","연쇄 파괴",6],["upg203","강철 비늘",3],["upg204","용의 심장",1]],
+  nodesBought: [["0",11],["1",4],["2",3],["3",5],["4",3],["5",1],["9",1]],
+  timeTree: [["1",9],["2",1],["3",2],["4",3],["5",2],["6",1],["7",4],["8",3],["11",3],["265",1]]
+};
+
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS = "http://www.w3.org/2000/svg";
+const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const tip = document.getElementById("tip");
+function hover(target, text) {
+  target.addEventListener("mousemove", ev => { tip.hidden = false; tip.textContent = text; tip.style.left = ev.clientX + "px"; tip.style.top = ev.clientY + "px"; });
+  target.addEventListener("mouseleave", () => { tip.hidden = true; });
+}
+const niceMax = v => { const s = [1, 2, 5, 10, 20, 25, 50, 100]; for (const x of s) if (v <= x) return x; return Math.ceil(v / 10) * 10; };
+const tickStep = m => m <= 5 ? 1 : m <= 10 ? 2 : m <= 25 ? 5 : m <= 50 ? 10 : 20;
+
+// 가로 막대: rows [[label, value, sub?]]
+function hbar(id, rows, opt = {}) {
+  const svg = document.getElementById(id);
+  const W = 640, rowH = opt.rowH || 30, L = opt.left || 150, R = 44, T = 4;
+  const H = T + rows.length * rowH + 22;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const max = niceMax(Math.max(...rows.map(r => r[1])));
+  const x = v => L + (W - L - R) * v / max;
+  const st = tickStep(max);
+  for (let t = 0; t <= max; t += st) {
+    el("line", { x1: x(t), x2: x(t), y1: T, y2: H - 20, class: "grid" }, svg);
+    const tx = el("text", { x: x(t), y: H - 6, "text-anchor": "middle" }, svg); tx.textContent = t;
+  }
+  rows.forEach((r, i) => {
+    const y = T + i * rowH;
+    const lb = el("text", { x: L - 10, y: y + rowH / 2 + 4, "text-anchor": "end", class: "lbl" }, svg); lb.textContent = r[0];
+    const bh = Math.min(16, rowH - 10);
+    const w = Math.max(2, x(r[1]) - L);
+    el("rect", { x: L, y: y + (rowH - bh) / 2, width: w, height: bh, rx: 3, class: "m" }, svg);
+    const v = el("text", { x: L + w + 6, y: y + rowH / 2 + 4, class: "val" }, svg); v.textContent = r[1];
+    const hit = el("rect", { x: 0, y, width: W, height: rowH, class: "hit" }, svg);
+    hover(hit, `${r[0]}: ${r[1]}건`);
+  });
+  el("line", { x1: L, x2: L, y1: T, y2: H - 20, class: "axis" }, svg);
+}
+
+// 세로 막대(정수 x 위치 또는 구간): bins [[label, value]]
+function vbar(id, bins, opt = {}) {
+  const svg = document.getElementById(id);
+  const W = 640, H = 220, L = 34, R = 8, T = 18, B = 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const max = niceMax(Math.max(...bins.map(b => b[1]), 1));
+  const y = v => H - B - (H - B - T) * v / max;
+  const st = tickStep(max);
+  for (let t = 0; t <= max; t += st) {
+    el("line", { x1: L, x2: W - R, y1: y(t), y2: y(t), class: "grid" }, svg);
+    const tx = el("text", { x: L - 6, y: y(t) + 4, "text-anchor": "end" }, svg); tx.textContent = t;
+  }
+  const n = bins.length, slot = (W - L - R) / n, bw = Math.max(3, Math.min(42, slot - 2));
+  const every = opt.labelEvery || 1;
+  bins.forEach((b, i) => {
+    const cx = L + slot * i + slot / 2;
+    if (b[1] > 0) {
+      const h = (H - B) - y(b[1]);
+      const r = el("rect", { x: cx - bw / 2, y: y(b[1]), width: bw, height: h, rx: Math.min(3, bw / 3), class: "m" }, svg);
+      if (opt.peak && b[1] === Math.max(...bins.map(z => z[1]))) { const v = el("text", { x: cx, y: y(b[1]) - 5, "text-anchor": "middle", class: "val" }, svg); v.textContent = b[1]; }
+    }
+    if (i % every === 0 || i === n - 1) { const tx = el("text", { x: cx, y: H - B + 16, "text-anchor": "middle" }, svg); tx.textContent = b[0]; }
+    const hit = el("rect", { x: cx - slot / 2, y: T, width: slot, height: H - B - T, class: "hit" }, svg);
+    hover(hit, `${opt.unit ? b[0] + opt.unit : b[0]}: ${b[1]}건`);
+  });
+  el("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, class: "axis" }, svg);
+}
+
+const toMap = arr => { const m = new Map(); arr.forEach(([k, v]) => m.set(+k, (m.get(+k) || 0) + v)); return m; };
+function binned(arr, edges, fmt) {
+  const out = edges.slice(0, -1).map((e, i) => [fmt(e, edges[i + 1]), 0]);
+  arr.forEach(([k, v]) => { const x = +k; for (let i = 0; i < edges.length - 1; i++) if (x >= edges[i] && x < edges[i + 1]) { out[i][1] += v; break; } });
+  return out;
+}
+const sum = a => a.reduce((s, r) => s + r[1], 0);
+
+// KPI
+(function () {
+  const runs = sum(D.result), clear = D.result.find(r => r[0] === "clear")[1];
+  const gold = D.goldEarned.reduce((s, [k, v]) => s + (+k) * v, 0);
+  const k = [
+    [runs, "", "끝난 판 (run_end)"],
+    [clear, ` / ${runs}`, "클리어한 판"],
+    [Math.round(26 / runs * 100), "%", "체력 0으로 끝난 판"],
+    [41, "번째", "가장 긴 재도전"],
+    [Math.round(gold).toLocaleString("ko-KR"), "G", "30분 동안 번 골드"],
+    [48, "건", "업그레이드 구매"]
+  ];
+  document.getElementById("kpis").innerHTML = k.map(([v, s, l]) => `<div class="kpi"><span class="v">${v}<small>${s}</small></span><span class="l">${l}</span></div>`).join("");
+})();
+
+hbar("evChart", D.events, { left: 160 });
+
+// 결과 스택
+(function () {
+  const total = sum(D.result);
+  const col = { fail_hp: "var(--crit)", clear: "var(--good)", fail_stamina: "var(--warn)" };
+  const name = { fail_hp: "체력 0 (fail_hp)", clear: "클리어 (clear)", fail_stamina: "기력 소진 (fail_stamina)" };
+  const order = ["clear", "fail_stamina", "fail_hp"];
+  const rows = order.map(k => [k, D.result.find(r => r[0] === k)[1]]);
+  const stack = document.getElementById("resultStack");
+  rows.forEach(([k, v]) => { const s = document.createElement("span"); s.style.flex = v; s.style.background = col[k]; s.style.minWidth = "6px"; stack.appendChild(s); hover(s, `${name[k]}: ${v}판`); });
+  document.getElementById("resultLegend").innerHTML = rows.map(([k, v]) => `<span><i style="background:${col[k]}"></i>${name[k]} <b>${v}</b> (${Math.round(v / total * 100)}%)</span>`).join("");
+})();
+
+vbar("durChart", binned(D.duration, [20, 25, 30, 35, 40, 45, 50, 55], (a, b) => `${a}–${b - 1}초`), { peak: true });
+vbar("dpChart", binned(D.destroy, [20, 30, 40, 50, 60, 70, 80, 90, 101], (a, b) => b > 100 ? "90–100" : `${a}–${b - 1}`), { unit: "%", peak: true });
+hbar("stageChart", D.stage, { left: 60, rowH: 34 });
+vbar("stChart", binned(D.stamina, [0, 10, 20, 30, 40, 50, 60, 70, 80, 90], (a, b) => `${a}–${b - 1}`), { peak: true });
+
+(function () {
+  const m = toMap(D.attempt); const bins = [];
+  for (let i = 1; i <= 41; i++) bins.push([String(i), m.get(i) || 0]);
+  vbar("attChart", bins, { labelEvery: 5, unit: "번째" });
+})();
+vbar("noChart", D.nodesOwned, { unit: "개", peak: true });
+hbar("nodeChart", D.node.map(([id, n, v]) => [`${n} ${id}`, v]), { left: 190 });
+(function () {
+  const m = toMap(D.nodesBought); const bins = [];
+  for (let i = 0; i <= 9; i++) bins.push([String(i), m.get(i) || 0]);
+  vbar("nbChart", bins, { unit: "개", peak: true });
+})();
+(function () {
+  const b = binned(D.timeTree, [0, 3, 6, 9, 12, 60, 300], (a, c) => c === 300 ? "60초+" : c === 60 ? "12–59" : `${a}–${c - 1}`);
+  vbar("ttChart", b, { unit: "초", peak: true });
+})();
+vbar("geChart", binned(D.goldEarned, [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000], (a, b) => `${a / 1000}–${b / 1000}k`), { peak: true });
+
+// 수집 목록
+(function () {
+  const cnt = Object.fromEntries(D.events);
+  const rows = [
+    ["P0 · 게임이 보내는 핵심 이벤트"],
+    ["game_session_start", "게임을 켜고 세이브를 읽은 직후", "total_playtime_sec, max_stage", "DAU·재방문(session_index), 누적 플레이 시간, 도달 스테이지", "ok"],
+    ["run_start", "출격 또는 바로 재도전", "attempt_no, entry, gold_held, nodes_owned", "스테이지별 시도 횟수, 재도전 비율, 출격 시 성장 상태", "ok"],
+    ["run_end", "판이 끝날 때", "result, duration_sec, destroy_pct, gold_earned, hp_left, stamina_left, bonus_entered", "클리어율, 사망 원인, 판 길이, 파괴율, 골드 수입, 보너스 진입률", "ok"],
+    ["upgrade_purchase", "업그레이드를 살 때", "node_id, cost, gold_after", "인기 노드, 골드 사용처, 구매 후 잔액", "ok"],
+    ["outgame_exit", "둥지(업그레이드 화면)를 나갈 때", "time_in_tree_sec, nodes_bought, gold_left, affordable_nodes", "둥지 체류 시간, 살 수 있는데 안 산 노드, 방문당 구매 수", "ok"],
+    ["rebirth_unlocked", "환생 조건을 처음 채웠을 때", "wall, attempts_at_wall", "환생이 열리는 벽 스테이지, 벽에서 시도 횟수", "no"],
+    ["rebirth", "환생했을 때", "rebirth_no, points_gained, trait_chosen, attempts_since_unlock, time_since_unlock_sec", "환생 전환율, 해금 후 환생까지 걸린 시간, 선택 특성", "no"],
+    ["game_complete", "마지막 스테이지를 깼을 때", "total_playtime_sec, total_runs", "엔딩 도달률, 엔딩까지 시간·판 수", "no"],
+    ["P1 · 이름만 정의, 아직 보내지 않음"],
+    ["result_action", "결과 화면 버튼", "action", "바로 재도전 vs 둥지로", "p1"],
+    ["bonus_end", "보너스 스테이지 종료", "—", "보너스 성과", "p1"],
+    ["starter_result", "스타터 게이지 판정", "gauge_result", "Great/Good 판정 분포", "p1"],
+    ["growth_stage_up", "드래곤 성장 단계 상승", "—", "성장 속도", "p1"],
+    ["heartbeat", "주기 신호", "scene", "화면별 체류·이탈 지점", "p1"],
+    ["GA4 자동 이벤트"],
+    ["session_start · user_engagement", "GA4 SDK가 자동 전송", "page_location, engagement_time_msec", "세션 수, 참여 시간", "ok"]
+  ];
+  const label = { ok: ["ok", "수집 중"], no: ["no", "아직 발생 안 함"], p1: ["p1", "미구현 (P1)"] };
+  document.getElementById("catalog").innerHTML = rows.map(r => {
+    if (r.length === 1) return `<tr class="group"><td colspan="6">${r[0]}</td></tr>`;
+    const [ev, when, ps, kpi, st] = r;
+    const c = ev.includes("·") ? (cnt.session_start || 0) + (cnt.user_engagement || 0) : (cnt[ev] || 0);
+    return `<tr><td><code>${ev}</code></td><td>${when}</td><td class="params">${ps}</td><td>${kpi}</td><td class="num">${c || "—"}</td><td><span class="st ${label[st][0]}">${label[st][1]}</span></td></tr>`;
+  }).join("");
+})();
+</script>

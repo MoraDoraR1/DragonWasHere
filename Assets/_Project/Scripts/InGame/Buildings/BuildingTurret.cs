@@ -1,3 +1,4 @@
+using DWH.Data;
 using DWH.InGame.Dragon;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ namespace DWH.InGame.Buildings
         DragonController dragon;
         Camera view;
         Sprite projectileSprite;
+        GameDatabase db;
+        ArtCatalog art;
         float range, interval, speed, size;
         double damage;
         float[] shotHeights;
@@ -27,8 +30,11 @@ namespace DWH.InGame.Buildings
         public bool IsStunned => stunTimer > 0;
 
         public void Init(Building owner, DragonController target, Camera camera, Sprite bulletSprite,
-            double attackDamage, float attacksPerSecond, float attackRange, float projectileSpeed, float projectileSize, float[] heightRatios)
+            double attackDamage, float attacksPerSecond, float attackRange, float projectileSpeed, float projectileSize, float[] heightRatios,
+            GameDatabase database = null, ArtCatalog catalog = null)
         {
+            db = database;
+            art = catalog;
             building = owner;
             dragon = target;
             view = camera;
@@ -66,16 +72,11 @@ namespace DWH.InGame.Buildings
 
         void Fire(Vector2 origin, Vector2 direction, bool groundShot)
         {
-            var go = new GameObject("Projectile");
             // 전투 오브젝트 아래에 두어 전투를 정리할 때 날아가던 탄도 함께 지운다
-            go.transform.SetParent(building.transform.parent, false);
-            go.transform.position = origin;
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = projectileSprite;
-            sr.color = GrayboxColors.Projectile;
-            sr.sortingOrder = SortingOrders.Projectile;
-            go.transform.localScale = Vector3.one * size;
+            var go = ProjectileVisual.Create(building.transform.parent, db, art, ProjectileVisual.BuildingConst, origin,
+                projectileSprite, GrayboxColors.Projectile, size);
             go.AddComponent<Projectile>().Launch(direction, speed, damage, groundShot, dragon, view);
+            ProjectileVisual.Orient(go, direction);
         }
     }
 }

@@ -230,6 +230,55 @@ namespace DWH.InGame.Skills
 
         IEnumerable<AirUnit> AirIn(Rect area) => AliveAir.Where(u => u.Hitbox.Overlaps(area)).ToList();
 
+        /// <summary>
+        /// 브레스에 맞는 공중 유닛: 불길 그림이 실제로 뻗은 띠(입 → 머리 방향, 사거리 길이, 두께 ±BreathHalfWidth) 안이거나,
+        /// 불길이 아직 없으면 예전처럼 정면 상자 안 (10-13: 고개를 들어 하늘의 유닛도 태운다)
+        /// </summary>
+        IEnumerable<AirUnit> AirInBreath(float range)
+        {
+            if (breathFollow == null || breathFollow.Length <= 0) return AirIn(BreathArea(range));
+            var o = breathFollow.Origin;
+            var d = breathFollow.Direction;
+            float len = breathFollow.Length, half = BreathHalfWidth * dragon.SizeScale;
+            return AliveAir.Where(u =>
+            {
+                var c = u.Hitbox.center - o;
+                float along = Vector2.Dot(c, d);
+                float across = Mathf.Abs(c.x * d.y - c.y * d.x);
+                float pad = Mathf.Max(u.Hitbox.width, u.Hitbox.height) * 0.4f;
+                return along >= 0 && along <= len + pad && across <= half + pad;
+            }).ToList();
+        }
+
+        /// <summary>발동 판정: 고개를 들면 닿는 앞쪽 하늘(위 65도 안, 사거리 + 높이 거리)의 공중 유닛</summary>
+        IEnumerable<AirUnit> AirInCone(float range)
+        {
+            var mouth = dragon.Animator.Mouth;
+            float facing = dragon.Facing;
+            return AliveAir.Where(u =>
+            {
+                var c = u.Hitbox.center - mouth;
+                if (c.x * facing <= 0) return false;
+                float up = Mathf.Atan2(c.y, Mathf.Abs(c.x)) * Mathf.Rad2Deg;
+                return up <= 65f && up >= -35f && c.magnitude <= range + dragon.Hitbox.width + 2f;
+            }).ToList();
+        }
+
+        const float BreathHalfWidth = 0.55f;
+
+        /// <summary>마우스 조준이 없으면: 정면 사거리에 건물이 없고 하늘에 공중 유닛이 있을 때 그 유닛을 올려다본다</summary>
+        void AutoAimBreath(float range)
+        {
+            if (dragon.Animator.Aim != null || Alive.Any(b => Ahead(b) && Gap(b) <= range))
+            {
+                dragon.Animator.AutoAim = null;
+                return;
+            }
+            var mouth = dragon.Animator.Mouth;
+            var target = AirInCone(range).OrderBy(u => (u.Hitbox.center - mouth).sqrMagnitude).FirstOrDefault();
+            dragon.Animator.AutoAim = target != null ? target.Hitbox.center : null;
+        }
+
         /// <summary>정면에서 가까운 순서의 화면 안 건물</summary>
         List<Building> FrontTargets() =>
             Alive.Where(b => Ahead(b) && OnScreen(b)).OrderBy(b => Mathf.Abs(b.CenterX - dragon.Hitbox.center.x)).ToList();
@@ -249,7 +298,7 @@ namespace DWH.InGame.Skills
         {
             PassiveSkillId.Dash => FrontTargets().Count > 0,
             PassiveSkillId.FireBall => FireBallTargets().Count > 0,
-            PassiveSkillId.FireBreath => Alive.Any(b => Ahead(b) && Gap(b) <= BreathRange) || AirIn(BreathArea(BreathRange)).Any(),
+            PassiveSkillId.FireBreath => Alive.Any(b => Ahead(b) && Gap(b) <= BreathRange) || AirIn(BreathArea(BreathRange)).Any() || AirInCone(BreathRange).Any(),
             PassiveSkillId.Lightning => Alive.Any(OnScreen) || AliveAir.Any(OnScreen),
             PassiveSkillId.Shockwave => ShockwaveTargets().Count > 0,
             PassiveSkillId.Whirlwind => Alive.Any(b => Gap(b) <= WhirlwindRange),
@@ -326,16 +375,18 @@ namespace DWH.InGame.Skills
             float range = BreathRange;
             // 불길 그림 (DWH-54). 리소스가 없으면(테스트 등) 예전 파티클로 뿜는다
             breathFlame = SkillFx.Breath(transform.parent, db, art, (spec.hits + 1) * spec.interval + 1f);
+            if (breathFlame != null) breathFollow = breathFlame.gameObject.AddComponent<BreathFlameFollow>().Init(dragon, range);
             float tickTimer = 0;
             int ticks = 0;
             while (ticks < spec.hits)
             {
+                AutoAimBreath(range);
                 EmitBreath(range);
                 tickTimer += Time.deltaTime;
                 if (tickTimer < spec.interval && ticks > 0) { yield return null; continue; }
                 tickTimer = ticks == 0 ? 0 : tickTimer - spec.interval;
                 ticks++;
-                var inBreath = Alive.Where(b => Ahead(b) && Gap(b) <= range).Cast<ICombatTarget>().Concat(AirIn(BreathArea(range))).ToList();
+                var inBreath = Alive.Where(b => Ahead(b) && Gap(b) <= range).Cast<ICombatTarget>().Concat(AirInBreath(range)).ToList();
                 foreach (var b in inBreath)
                 {
                     Hit(PassiveSkillId.FireBreath, b, multiplier);
@@ -351,6 +402,7 @@ namespace DWH.InGame.Skills
                 yield return null;
             }
             dragon.Animator.SetBreathing(false);
+            dragon.Animator.AutoAim = null;
             if (breathFlame != null) Destroy(breathFlame.gameObject);
             breathFlame = null;
         }
@@ -359,8 +411,7 @@ namespace DWH.InGame.Skills
         const float DashMinCooldown = 1f;
 
         SpriteAnim breathFlame;
-        /// <summary>브레스 그림에서 불길이 차지하는 비율(프레임 폭 기준)과 뿜는 쪽 끝 위치(가운데 기준)</summary>
-        const float BreathFlameLength = 0.85f, BreathFlameTip = 0.44f;
+        BreathFlameFollow breathFollow;
 
         void EmitBreath(float range)
         {
@@ -378,12 +429,8 @@ namespace DWH.InGame.Skills
             float reach = Mathf.Abs((dragon.Facing > 0 ? dragon.Hitbox.xMax + range : dragon.Hitbox.xMin - range) - mouth.x);
             if (breathFlame != null)
             {
-                // 불길 끝이 입에 오고, 길이가 사거리에 닿게 키운다. 왼쪽을 보면 뒤집는다
-                float frameWidth = breathFlame.Renderer.sprite != null ? breathFlame.Renderer.sprite.bounds.size.x : 2.7f;
-                float size = Mathf.Max(0.7f * scale, reach / (BreathFlameLength * frameWidth));
-                breathFlame.transform.localScale = Vector3.one * size;
-                breathFlame.transform.position = mouth + dir * (BreathFlameTip * frameWidth * size);
-                breathFlame.Orient(Vector2.right, dir);
+                // 불길 위치·방향은 머리 자세가 정해진 뒤(BreathFlameFollow.LateUpdate)에 놓는다. 여기서는 사거리만 넘긴다
+                if (breathFollow != null) breathFollow.Range = range;
                 return;
             }
             int count = Mathf.Max(2, Mathf.RoundToInt(Time.deltaTime * 170f));
@@ -519,6 +566,57 @@ namespace DWH.InGame.Skills
             timer += interval;
             ticksLeft--;
             target.TakeDamage(damage, false);
+        }
+    }
+
+    /// <summary>
+    /// 파이어 브레스 불길이 입에 붙어 머리를 따라가게 한다 (10-13 피드백: 머리가 커서를 따라 돌 때 불길이 엉성함).
+    /// 드래곤 애니메이터(LateUpdate)가 머리 자세를 정한 뒤에 실행되도록 순서를 늦췄다.
+    /// 불길 끝은 입에, 방향은 머리의 실제 방향(앞쪽 ±35도 안), 길이는 정면 사거리 끝에 닿게 맞춘다
+    /// </summary>
+    [DefaultExecutionOrder(200)]
+    public class BreathFlameFollow : MonoBehaviour
+    {
+        /// <summary>브레스 그림에서 불길이 차지하는 비율(프레임 폭 기준)과 뿜는 쪽 끝 위치(가운데 기준)</summary>
+        const float FlameLength = 0.85f, FlameTip = 0.44f, MaxUp = 65f, MaxDown = 35f;
+        /// <summary>불길이 실제로 뻗은 선분 (공중 유닛 판정용): 입 위치, 방향, 길이</summary>
+        public Vector2 Origin { get; private set; }
+        public Vector2 Direction { get; private set; }
+        public float Length { get; private set; }
+
+        DragonController dragon;
+        SpriteAnim anim;
+        public float Range { get; set; }
+
+        public BreathFlameFollow Init(DragonController owner, float range)
+        {
+            dragon = owner;
+            Range = range;
+            anim = GetComponent<SpriteAnim>();
+            LateUpdate();
+            return this;
+        }
+
+        void LateUpdate()
+        {
+            if (dragon == null || anim == null || anim.Renderer == null) return;
+            var animator = dragon.Animator;
+            float facing = dragon.Facing;
+            Vector2 mouth = animator.Mouth;
+            Vector2 dir = animator.MouthDirection;
+            // 머리 방향을 앞쪽 위 65도·아래 35도 안으로 (뒤로 뿜지 않게, 하늘의 공중 유닛까지)
+            float angle = Mathf.Clamp(Mathf.Atan2(dir.y, Mathf.Abs(dir.x)) * Mathf.Rad2Deg, -MaxDown, MaxUp) * Mathf.Deg2Rad;
+            dir = new Vector2(facing * Mathf.Cos(angle), Mathf.Sin(angle));
+            float reachX = Mathf.Abs((facing > 0 ? dragon.Hitbox.xMax + Range : dragon.Hitbox.xMin - Range) - mouth.x);
+            float reach = reachX / Mathf.Max(0.5f, Mathf.Abs(dir.x));
+            Origin = mouth;
+            Direction = dir;
+            Length = reach;
+            float frameWidth = anim.Renderer.sprite != null ? anim.Renderer.sprite.bounds.size.x : 2.7f;
+            float size = Mathf.Max(0.7f * dragon.SizeScale, reach / (FlameLength * frameWidth));
+            transform.localScale = Vector3.one * size;
+            transform.position = mouth + dir * (FlameTip * frameWidth * size);
+            anim.Orient(Vector2.right, dir);
         }
     }
 }

@@ -21,5 +21,12 @@ mergeInto(LibraryManager.library, {
     var props = {};
     try { props = JSON.parse(UTF8ToString(propsJsonPtr)); } catch (e) {}
     if (window.DwhAnalyticsBridge) window.DwhAnalyticsBridge.setUserProps(props);
+  },
+
+  // 이탈(page_exit) 때 쓸 지금 화면과 공통 파라미터
+  DwhFb_SetContext: function (contextJsonPtr) {
+    var ctx = {};
+    try { ctx = JSON.parse(UTF8ToString(contextJsonPtr)); } catch (e) {}
+    if (window.DwhAnalyticsBridge && window.DwhAnalyticsBridge.setContext) window.DwhAnalyticsBridge.setContext(ctx);
   }
 });

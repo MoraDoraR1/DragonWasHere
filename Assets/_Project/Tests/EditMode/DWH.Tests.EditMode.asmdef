@@ -4,6 +4,7 @@
     "references": [
         "DWH.Runtime",
         "DWH.Editor",
+        "DWH.Analytics",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

@@ -64,3 +64,9 @@ MonoBehaviour:
     sliceBorder: 0
     uncompressed: 0
     clearAlphaAtOrBelow: 0
+  - pathPrefix: "Fix_Resource/\uD22C\uC0AC\uCCB4/"
+    pixelsPerUnit: 256
+    pivot: 0
+    sliceBorder: 0
+    uncompressed: 0
+    clearAlphaAtOrBelow: 0

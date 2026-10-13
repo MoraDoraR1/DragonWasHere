@@ -71,6 +71,8 @@ namespace DWH.InGame.AirUnits
             unit.Init(row, db.Text(row.nameStr), art.Sprite(row.resId), dragon, view,
                 phase, Mathf.Lerp(Tuning.AirUnitAltitudeMin, Tuning.AirUnitAltitudeMax, altitudeRatio), Tuning.GroundHeight,
                 stageLeft, stageRight, GrayboxSprites.Square, SortingOrders.AirUnit);
+            unit.Database = db;
+            unit.Art = art;
             units.Add(unit);
             Spawned?.Invoke(unit);
         }

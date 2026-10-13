@@ -329,5 +329,7 @@ res8000014,80,frame_00.png,Fix_Resource/피격 이펙트/일반타격/frame_00.p
 res8000015,80,frame_00.png,Fix_Resource/피격 이펙트/잔연기/frame_00.png,1,,45,24,피격 이펙트 · 잔연기 (연속 이미지 frame_00~frame_44)
 res8000016,80,frame_00.png,Fix_Resource/피격 이펙트/착지/frame_00.png,0,,27,24,피격 이펙트 · 착지 (연속 이미지 frame_00~frame_26)
 res8000017,80,frame_00.png,Fix_Resource/피격 이펙트/파이어볼 폭발/frame_00.png,0,,39,24,피격 이펙트 · 파이어볼 폭발 (연속 이미지 frame_00~frame_38)
+res8000018,80,sheet.png,Fix_Resource/투사체/공격형 건물 투사체/sheet.png,1,,16,24,"투사체 · 공격형 건물 공통 (시트 4×4, 프레임 256×128px, 공이 왼쪽·꼬리 오른쪽 = 왼쪽으로 날아가는 그림. 낱장은 frames 폴더)"
+res8000019,80,sheet.png,Fix_Resource/투사체/공중 유닛 투사체/sheet.png,1,,16,24,"투사체 · 공중 유닛 공통 (시트 4×4, 프레임 256×128px, 공이 왼쪽·꼬리 오른쪽 = 왼쪽으로 날아가는 그림. 낱장은 frames 폴더)"
 res9000001,90,title-background.webm,Fix_Resource/UI&폰트/01_UI에셋/assets/10_타이틀/title-background.webm,1,,,,타이틀 배경 영상
 res9100001,91,NotoSansKR-VariableFont_wght.ttf,Fix_Resource/UI&폰트/02_폰트/원본/NotoSansKR-VariableFont_wght.ttf,,,,,"본문 폰트 (가변). 굵기별 정적 폰트는 원본/static, Unity용은 NotoSansKR-TMP-20261012.unitypackage"
