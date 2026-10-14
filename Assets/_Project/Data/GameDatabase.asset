@@ -2212,7 +2212,7 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 1
     count: 28
-    hp: 18200
+    hp: 62200
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2224,8 +2224,8 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 2
     count: 11
-    hp: 12300
-    atk: 112
+    hp: 42000
+    atk: 392
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2502
@@ -2236,8 +2236,8 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 3
     count: 1
-    hp: 35500
-    atk: 34
+    hp: 122000
+    atk: 119
     atkSpeed: 1
     atkRange: 600
     dropGroup: drp3502
@@ -2248,7 +2248,7 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 4
     count: 19
-    hp: 3590
+    hp: 12300
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2344,7 +2344,7 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 1
     count: 29
-    hp: 25700
+    hp: 41400
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2356,8 +2356,8 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 2
     count: 11
-    hp: 13300
-    atk: 96
+    hp: 21400
+    atk: 513
     atkSpeed: 1
     atkRange: 400
     dropGroup: drp2601
@@ -2368,7 +2368,7 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 4
     count: 20
-    hp: 42800
+    hp: 69000
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2380,7 +2380,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 1
     count: 32
-    hp: 52200
+    hp: 71700
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2392,7 +2392,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 2
     count: 13
-    hp: 35300
+    hp: 48500
     atk: 192
     atkSpeed: 1
     atkRange: 400
@@ -2404,7 +2404,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 3
     count: 1
-    hp: 305000
+    hp: 419000
     atk: 180
     atkSpeed: 1
     atkRange: 600
@@ -2416,7 +2416,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 4
     count: 21
-    hp: 78300
+    hp: 108000
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2512,7 +2512,7 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 1
     count: 33
-    hp: 125000
+    hp: 146000
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2524,7 +2524,7 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 2
     count: 13
-    hp: 64800
+    hp: 75800
     atk: 199
     atkSpeed: 1
     atkRange: 400
@@ -2536,7 +2536,7 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 4
     count: 22
-    hp: 208000
+    hp: 243000
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -3243,8 +3243,8 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_511
-    hp: 5740
-    atk: 46
+    hp: 19600
+    atk: 161
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5502
@@ -3254,8 +3254,8 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_511
-    hp: 5740
-    atk: 46
+    hp: 19600
+    atk: 161
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5502
@@ -3265,8 +3265,8 @@ MonoBehaviour:
     slot: 2
     spawnSec: 25
     nameStr: unit_name_512
-    hp: 9950
-    atk: 75
+    hp: 34000
+    atk: 262
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp6502
@@ -3342,8 +3342,8 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_611
-    hp: 31100
-    atk: 37
+    hp: 50100
+    atk: 198
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5601
@@ -3353,8 +3353,8 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_611
-    hp: 31100
-    atk: 37
+    hp: 50100
+    atk: 198
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5601
@@ -3364,8 +3364,8 @@ MonoBehaviour:
     slot: 1
     spawnSec: 25
     nameStr: unit_name_611
-    hp: 31100
-    atk: 37
+    hp: 50100
+    atk: 198
     atkSpeed: 0.5
     moveSpeed: 300
     dropGroup: drp5601
@@ -3375,7 +3375,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_611
-    hp: 62600
+    hp: 86000
     atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3386,7 +3386,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_611
-    hp: 62600
+    hp: 86000
     atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3397,7 +3397,7 @@ MonoBehaviour:
     slot: 2
     spawnSec: 25
     nameStr: unit_name_612
-    hp: 109000
+    hp: 150000
     atk: 103
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3474,7 +3474,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_711
-    hp: 166000
+    hp: 194000
     atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3485,7 +3485,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_711
-    hp: 166000
+    hp: 194000
     atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3496,7 +3496,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 25
     nameStr: unit_name_711
-    hp: 166000
+    hp: 194000
     atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
@@ -5201,8 +5201,8 @@ MonoBehaviour:
     prereqId1: upg505
     prereqId2: 
     maxLevel: 4
-    baseCost: 270000
-    addCost: 405000
+    baseCost: 90000
+    addCost: 126000
     costMult: NaN
     effectType1: 24
     baseValue1: 1
