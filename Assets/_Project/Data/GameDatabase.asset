@@ -4823,7 +4823,7 @@ MonoBehaviour:
     maxLevel: 0
     baseCost: 30
     addCost: NaN
-    costMult: 1.5
+    costMult: 1.3
     effectType1: 1
     baseValue1: 0.2
     addValue1: 0.2
@@ -4953,10 +4953,10 @@ MonoBehaviour:
     category: 3
     prereqId1: upg101
     prereqId2: 
-    maxLevel: 20
+    maxLevel: 0
     baseCost: 45
-    addCost: 33
-    costMult: NaN
+    addCost: NaN
+    costMult: 1.35
     effectType1: 8
     baseValue1: 0.2
     addValue1: 0.2
@@ -5030,7 +5030,7 @@ MonoBehaviour:
     prereqId1: upg101
     prereqId2: 
     maxLevel: 25
-    baseCost: 60
+    baseCost: 30
     addCost: 33
     costMult: NaN
     effectType1: 13
@@ -5182,7 +5182,7 @@ MonoBehaviour:
     prereqId1: upg509
     prereqId2: 
     maxLevel: 0
-    baseCost: 90000
+    baseCost: 72000
     addCost: NaN
     costMult: 1.5
     effectType1: 23
@@ -5296,7 +5296,7 @@ MonoBehaviour:
     prereqId1: upg509
     prereqId2: 
     maxLevel: 0
-    baseCost: 18000
+    baseCost: 14400
     addCost: NaN
     costMult: 1.5
     effectType1: 30
@@ -5333,13 +5333,13 @@ MonoBehaviour:
     category: 5
     prereqId1: upg505
     prereqId2: upg511
-    maxLevel: 20
-    baseCost: 3000000
-    addCost: 2400000
-    costMult: NaN
+    maxLevel: 30
+    baseCost: 20000
+    addCost: NaN
+    costMult: 1.25
     effectType1: 32
-    baseValue1: 0.03
-    addValue1: 0.03
+    baseValue1: 0.02
+    addValue1: 0.02
     valueOp1: 2
     effectType2: 0
     baseValue2: NaN

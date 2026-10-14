@@ -113,6 +113,9 @@ namespace DWH.Tests
             yield return TestScreens.Capture(Camera.main, "title_en_saved");
             Assert.AreEqual(GameState.Title, manager.State);
             Assert.IsTrue(manager.HasProgress);
+            // 게임을 켤 때는 언제나 영어 (저장된 한국어가 있어도, 10-14)
+            Assert.AreEqual("en", manager.Save.language);
+            Assert.AreEqual(Language.En, Localization.Current);
             manager.ContinueGame();
             Assert.AreEqual(GameState.OutGame, manager.State);
             Assert.AreEqual(500, manager.Save.goldCoin);
@@ -125,12 +128,13 @@ namespace DWH.Tests
             yield return TestScreens.Capture(Camera.main, "title_warning");
             manager.Title.HideWarning();
 
-            // "네!" → 기록 초기화, 언어·사용자 ID는 유지
+            // "네!" → 기록 초기화, 언어·사용자 ID는 유지 (이번 실행 중에 바꾼 언어는 새 게임에도 남는다)
+            manager.ToggleLanguage();
             manager.StartNewGame();
             Assert.AreEqual(GameState.Stage, manager.State);
             Assert.AreEqual(0, manager.Save.goldCoin);
             Assert.AreEqual(0, manager.Save.playCount);
-            Assert.AreEqual("ko", manager.Save.language, "바꾼 언어(처음 영어 → 한국어)는 새 게임에도 남는다");
+            Assert.AreEqual("ko", manager.Save.language, "실행 중에 바꾼 언어(영어 → 한국어)는 새 게임에도 남는다");
             Assert.AreEqual(userId, manager.Save.userId);
         }
     }

@@ -99,6 +99,7 @@ namespace DWH.Core
                 {
                     SessionEnd.Cleared => AnalyticsValues.ResultClear,
                     SessionEnd.Defeated => AnalyticsValues.ResultFailHp,
+                    SessionEnd.Retired => AnalyticsValues.ResultRetired,
                     _ => AnalyticsValues.ResultFailStamina,
                 })
                 .Add(AnalyticsParams.DurationSec, Mathf.RoundToInt(r.playSeconds))
@@ -125,7 +126,7 @@ namespace DWH.Core
         {
             Context(db, save);
             string wall = Rebirth.NextWall(save);
-            PlayerPrefs.SetFloat(UnlockTimeKey, DwhAnalytics.TotalPlaytimeSec);
+            DwhPrefs.SetFloat(UnlockTimeKey, DwhAnalytics.TotalPlaytimeSec);
             DwhAnalytics.ResetCounter("since_unlock");
             Log(AnalyticsEvents.RebirthUnlocked, new EventParams()
                 .Add(AnalyticsParams.Wall, wall != null ? db.StageLabel(wall) : "")
@@ -142,7 +143,7 @@ namespace DWH.Core
                 .Add(AnalyticsParams.PointsGained, points)
                 .Add(AnalyticsParams.TraitChosen, trait?.key ?? "")
                 .Add(AnalyticsParams.AttemptsSinceUnlock, DwhAnalytics.GetCounter("since_unlock"))
-                .Add(AnalyticsParams.TimeSinceUnlockSec, Mathf.RoundToInt(DwhAnalytics.TotalPlaytimeSec - PlayerPrefs.GetFloat(UnlockTimeKey, DwhAnalytics.TotalPlaytimeSec))));
+                .Add(AnalyticsParams.TimeSinceUnlockSec, Mathf.RoundToInt(DwhAnalytics.TotalPlaytimeSec - DwhPrefs.GetFloat(UnlockTimeKey, DwhAnalytics.TotalPlaytimeSec))));
         }
 
         /// <summary>game_complete: 마지막 스테이지(7-2) 클리어</summary>

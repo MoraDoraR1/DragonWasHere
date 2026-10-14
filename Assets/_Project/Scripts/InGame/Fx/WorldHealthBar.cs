@@ -18,6 +18,8 @@ namespace DWH.InGame.Fx
     {
         const float Height = 0.16f;
         const float GapBelow = 0.18f;
+        /// <summary>바 아래 끝이 건물 바닥(서 있는 높이)보다 얼마나 아래인가. 마우스 유도에서 이보다 아래(근경)는 커서를 무시한다</summary>
+        public const float BottomBelowStand = GapBelow + Height / 2f;
         const float TrailDelay = 0.35f;
         const float TrailSpeed = 1.5f;
         const int Order = SortingOrders.Building + 5;

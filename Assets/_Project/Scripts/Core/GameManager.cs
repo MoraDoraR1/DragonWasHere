@@ -29,9 +29,12 @@ namespace DWH.Core
         public UiTheme uiTheme;
         /// <summary>일반 스테이지 앞의 스테이지 스타터. 자동 진행 테스트와 봇은 끈다</summary>
         public bool enableStarter = true;
+        /// <summary>스타터 입력 (없으면 마우스·스페이스). 테스트가 대본 입력을 넣는다</summary>
+        public Func<IStarterInput> starterInputFactory;
 
         ISaveStorage storage;
         Func<Camera, IGuideInput> inputFactory;
+        IGuideInput guideInput;
         Camera view;
         OutGameScreen outGame;
         ResultScreen resultScreen;
@@ -39,6 +42,7 @@ namespace DWH.Core
         PauseMenu pauseMenu;
         TitleScreen title;
         SettingsPopup settings;
+        TutorialOverlay tutorial;
         float timeScaleBeforePause = 1f;
         double goldAtDeparture;
         float departTime;
@@ -57,6 +61,9 @@ namespace DWH.Core
         public OutGameScreen OutGame => outGame;
         public TitleScreen Title => title;
         public SettingsPopup Settings => settings;
+        public TutorialOverlay Tutorial => tutorial;
+        /// <summary>튜토리얼(최초 1회 안내)을 띄운다. 실제 실행(타이틀부터 시작)에서만 켜고 테스트·봇은 끈다</summary>
+        public bool TutorialsEnabled { get; set; }
 
         public event Action<GameState> StateChanged;
 
@@ -65,7 +72,7 @@ namespace DWH.Core
         void Start()
         {
             if (!IsInitialized)
-                Initialize(SaveSystem.DefaultStorage(), cam => new MouseGuideInput(cam, (float)database.Const("mouse_idle_sec")), showTitle: true);
+                Initialize(SaveSystem.DefaultStorage(), cam => new MouseGuideInput(cam), showTitle: true);
         }
 
         /// <summary>저장소와 입력을 바꿔 끼울 수 있게 분리했다. 테스트는 메모리 저장소와 자동 입력을 넣는다.</summary>
@@ -76,9 +83,11 @@ namespace DWH.Core
             inputFactory = guideInputFactory;
             UiText.Database = database;
             Save = SaveSystem.Load(storage, database.StageOrder[0]);
-            if (database.OrderIndex(Save.currentStage) < 0) Save.currentStage = database.StageOrder[0];
-            if (database.OrderIndex(Save.highestStage) < 0) Save.highestStage = Save.currentStage;
-            Localization.Current = Localization.Parse(Save.language);
+            // 이전 빌드 저장을 지금 테이블에 맞춘다 (없어진 스테이지·노드 정리). 빌드가 바뀌어도 진행을 잇는다
+            if (SaveSystem.Migrate(Save, database)) SaveSystem.Save(storage, Save);
+            // 게임을 켤 때는 언제나 영어로 시작한다 (10-14 사용자 요청). 실행 중에 바꾼 언어는 그 실행 동안(새 게임 포함) 유지된다
+            Save.language = Localization.Code(Language.En);
+            Localization.Current = Language.En;
             BattleCamera.ShakeEnabled = Save.settings.screenShake;
             view = Camera.main != null ? Camera.main : new GameObject("Main Camera") { tag = "MainCamera" }.AddComponent<Camera>();
             // 화면 고정: 창 비율이 바뀌어도 16:9로 그리고 남는 곳은 검은 띠 (테스트·배치모드는 렌더 텍스처로 찍으므로 제외)
@@ -87,10 +96,37 @@ namespace DWH.Core
             if (uiTheme != null) UiTheme.Active = uiTheme;
             Upgrades = new UpgradeTree(database, Save);
             BuildScreens();
+            TutorialsEnabled = showTitle;
+            if (tutorial == null) tutorial = TutorialOverlay.Create(this, database);
             Analytics.SessionStart(database, Save);
             if (showTitle) EnterTitle();
             else EnterOutGame();
         }
+
+        /// <summary>HUD 모드 버튼: 지금 모드 표시와 누르면 바꾸기</summary>
+        BattleHud WireHud(BattleHud h)
+        {
+            h.MouseModeProvider = () => guideInput is IGuideModeInput m ? m.MouseMode : Battle != null && Battle.Dragon.IsGuided;
+            h.ToggleMode = ToggleGuideMode;
+            return h;
+        }
+
+        /// <summary>
+        /// 조작 모드 바꾸기: 마우스 유도 ↔ 자동 이동 (Space 또는 HUD 왼쪽 아래 모드 버튼, 10-14).
+        /// 전투 중에만, 스타터(Space로 낙하)·일시정지·튜토리얼 중에는 바꾸지 않는다. 바꾼 모드는 저장해 다음 판에도 쓴다
+        /// </summary>
+        public void ToggleGuideMode()
+        {
+            if (State is not (GameState.Stage or GameState.Bonus) || Battle == null || Battle.InStarter || IsPaused) return;
+            if (tutorial != null && tutorial.IsOpen) return;
+            if (guideInput is not IGuideModeInput m) return;
+            m.MouseMode = !m.MouseMode;
+            Save.settings.mouseGuide = m.MouseMode;
+            SaveSystem.Save(storage, Save);
+        }
+
+        /// <summary>지금 저장 (튜토리얼 완료 등)</summary>
+        public void SaveNow() => SaveSystem.Save(storage, Save);
 
         /// <summary>이어할 기록이 있는지 (한 판이라도 했거나 환생했으면)</summary>
         public bool HasProgress => Save.playCount > 0 || Save.rebirthCount > 0;
@@ -113,7 +149,7 @@ namespace DWH.Core
                 ToggleLanguage = ToggleLanguage,
             });
             resultScreen = ResultScreen.Create(database, ConfirmResult, RetryFromResult);
-            pauseMenu = PauseMenu.Create(() => SetPaused(false), OpenSettings, ReturnToTitle);
+            pauseMenu = PauseMenu.Create(() => SetPaused(false), OpenSettings, ReturnToTitle, EndSession, () => Battle != null);
             title = TitleScreen.Create(database, art, new TitleActions
             {
                 NewGame = StartNewGame,
@@ -169,9 +205,23 @@ namespace DWH.Core
                 Upgrades = new UpgradeTree(database, Save);
                 BuildScreens();
             }
+            // 새 게임은 언제나 튜토리얼을 처음부터 다시 보여 준다 (기록이 없어도 지난번에 본 튜토리얼이 남아 있을 수 있다, 10-14)
+            if (Save.tutorialsDone.Count > 0)
+            {
+                Save.tutorialsDone.Clear();
+                SaveSystem.Save(storage, Save);
+            }
             title.Hide();
             SetState(GameState.OutGame);
             StartStage(false, fromTitle: true);
+        }
+
+        /// <summary>일시정지 "세션 끝내기": 이번 판을 끝내고 지금까지 모은 골드로 정산해 결과창을 띄운다 (업그레이드하러 갈 수 있게, 10-14)</summary>
+        public void EndSession()
+        {
+            if (State is not (GameState.Stage or GameState.Bonus) || Battle == null) return;
+            SetPaused(false);
+            Battle.Retire();
         }
 
         /// <summary>일시정지 "타이틀로 이동": 이번 판은 정산하지 않고 버린다</summary>
@@ -213,15 +263,18 @@ namespace DWH.Core
 
         void StartBattle(string stageId, BattleMode mode, DragonVitals carriedVitals, double goldBefore)
         {
-            var starter = enableStarter && mode == BattleMode.Normal ? new MouseStarterInput() : null;
-            Battle = BattleController.Create(database, art, stageId, view, inputFactory(view), mode, carriedVitals, sessionStats, starter);
+            var starter = enableStarter && mode == BattleMode.Normal ? starterInputFactory?.Invoke() ?? new MouseStarterInput() : null;
+            guideInput = inputFactory(view);
+            // 조작 모드(마우스 유도 / 자동 이동)는 저장해 둔 것으로 시작한다 (처음은 마우스 유도)
+            if (guideInput is IGuideModeInput modeInput) modeInput.MouseMode = Save.settings.mouseGuide;
+            Battle = BattleController.Create(database, art, stageId, view, guideInput, mode, carriedVitals, sessionStats, starter);
             Battle.Ended += OnBattleEnded;
             Battle.Actives.Configure(activeLevels, sessionUses);
             // 정산 후에는 보유 골드에 세션 골드가 더해지므로, HUD는 출발 시점 보유량 + 앞 구간 골드 + 현재 구간 획득량으로 표시한다
             double shown = goldAtDeparture + goldBefore;
-            hud = BattleHud.Create(Battle, () => shown, art, TogglePause, mode == BattleMode.Normal && Save.playCount < 2, goldBefore);
+            hud = WireHud(BattleHud.Create(Battle, () => shown, art, TogglePause, mode == BattleMode.Normal && Save.playCount < 2 && !TutorialsEnabled, goldBefore));
             // 전투 중 언어를 바꾸면 HUD를 새 언어로 다시 만든다 (첫 판 안내는 다시 띄우지 않는다)
-            rebuildHud = () => BattleHud.Create(Battle, () => shown, art, TogglePause, false, goldBefore);
+            rebuildHud = () => WireHud(BattleHud.Create(Battle, () => shown, art, TogglePause, false, goldBefore));
         }
 
         Func<BattleHud> rebuildHud;
@@ -237,7 +290,7 @@ namespace DWH.Core
                 {
                     stageId = battle.Stage.stageId,
                     cleared = cleared,
-                    end = cleared ? SessionEnd.Cleared : battle.Dragon.Vitals.IsDead ? SessionEnd.Defeated : SessionEnd.Exhausted,
+                    end = cleared ? SessionEnd.Cleared : battle.Retired ? SessionEnd.Retired : battle.Dragon.Vitals.IsDead ? SessionEnd.Defeated : SessionEnd.Exhausted,
                     earnedGold = battle.Drops.CollectedGold,
                     destroyedBuildings = battle.DestroyedCount,
                     totalBuildings = battle.Buildings.Count,
@@ -397,6 +450,7 @@ namespace DWH.Core
         {
             bool canPause = (State is GameState.Stage or GameState.Bonus) && Battle != null && Battle.State == BattleState.Playing;
             if (paused == IsPaused || (paused && !canPause)) return;
+            if (paused && tutorial != null && tutorial.IsOpen) return;   // 튜토리얼이 이미 멈춰 두었다
             IsPaused = paused;
             if (paused)
             {
@@ -423,6 +477,7 @@ namespace DWH.Core
         {
             var keyboard = Keyboard.current;
             if (keyboard == null) return;
+            if (tutorial != null && tutorial.IsOpen) return;   // 튜토리얼 중에는 단축키(일시정지·출격·확인)를 막는다
             bool escape = keyboard.escapeKey.wasPressedThisFrame;
             // 열린 팝업이 있으면 Esc는 팝업부터 닫는다
             if (escape && settings.IsOpen)
@@ -438,6 +493,9 @@ namespace DWH.Core
             if (escape || keyboard.pKey.wasPressedThisFrame)
                 TogglePause();
             if (IsPaused || settings.IsOpen) return;
+            // 전투 중 Space = 조작 모드 바꾸기 (스타터 중에는 스타터가 Space를 낙하 입력으로 쓴다)
+            if (keyboard.spaceKey.wasPressedThisFrame && State is GameState.Stage or GameState.Bonus && Battle != null && !Battle.InStarter)
+                ToggleGuideMode();
             bool confirm = keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame;
             if (confirm)
             {

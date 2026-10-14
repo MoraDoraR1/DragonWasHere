@@ -72,15 +72,15 @@ namespace DWH.Analytics
 #endif
             LogToConsole = Application.isEditor || IsDev;
 
-            UserId = PlayerPrefs.GetString(KeyUserId, "");
+            UserId = DwhPrefs.GetString(KeyUserId, "");
             if (string.IsNullOrEmpty(UserId))
             {
                 UserId = Guid.NewGuid().ToString("N");
-                PlayerPrefs.SetString(KeyUserId, UserId);
+                DwhPrefs.SetString(KeyUserId, UserId);
             }
-            SessionIndex = PlayerPrefs.GetInt(KeySessionIndex, 0) + 1;
-            PlayerPrefs.SetInt(KeySessionIndex, SessionIndex);
-            PlayerPrefs.Save();
+            SessionIndex = DwhPrefs.GetInt(KeySessionIndex, 0) + 1;
+            DwhPrefs.SetInt(KeySessionIndex, SessionIndex);
+            DwhPrefs.Save();
 
             PlaytimeTracker.Create();
 
@@ -173,18 +173,18 @@ namespace DWH.Analytics
         /// <summary>저장되는 카운터를 1 올리고 새 값을 돌려준다. 예: 스테이지별 시도 횟수.</summary>
         public static int IncrementCounter(string key)
         {
-            int v = PlayerPrefs.GetInt(KeyCounterPrefix + key, 0) + 1;
-            PlayerPrefs.SetInt(KeyCounterPrefix + key, v);
-            PlayerPrefs.Save();
+            int v = DwhPrefs.GetInt(KeyCounterPrefix + key, 0) + 1;
+            DwhPrefs.SetInt(KeyCounterPrefix + key, v);
+            DwhPrefs.Save();
             return v;
         }
 
-        public static int GetCounter(string key) => PlayerPrefs.GetInt(KeyCounterPrefix + key, 0);
+        public static int GetCounter(string key) => DwhPrefs.GetInt(KeyCounterPrefix + key, 0);
 
         public static void ResetCounter(string key)
         {
-            PlayerPrefs.DeleteKey(KeyCounterPrefix + key);
-            PlayerPrefs.Save();
+            DwhPrefs.DeleteKey(KeyCounterPrefix + key);
+            DwhPrefs.Save();
         }
 
         /// <summary>회차·스테이지별 시도 횟수 키. 환생하면 새로 센다.</summary>
@@ -206,7 +206,7 @@ namespace DWH.Analytics
             public static void Create()
             {
                 if (_instance != null) return;
-                _baseSec = PlayerPrefs.GetFloat(KeyPlaytime, 0f);
+                _baseSec = DwhPrefs.GetFloat(KeyPlaytime, 0f);
                 var go = new GameObject("[DWH Analytics]");
                 go.hideFlags = HideFlags.HideInHierarchy;
                 DontDestroyOnLoad(go);
@@ -227,8 +227,8 @@ namespace DWH.Analytics
             void Save()
             {
                 _sinceSave = 0f;
-                PlayerPrefs.SetFloat(KeyPlaytime, TotalSec);
-                PlayerPrefs.Save();
+                DwhPrefs.SetFloat(KeyPlaytime, TotalSec);
+                DwhPrefs.Save();
             }
         }
     }

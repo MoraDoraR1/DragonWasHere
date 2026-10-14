@@ -49,12 +49,13 @@ namespace DWH.OutGame
 
         static Vector2 Place(UpgradeCategory category, int depth, float offset) => category switch
         {
-            UpgradeCategory.Vitality => new Vector2(offset * 1.15f, depth * 1.2f),
-            // 위아래로 붙은 노드는 위 노드 이름(배지 아래)이 아래 노드를 가리지 않게 1.2칸 이상 띄운다 (DWH-51)
+            UpgradeCategory.Vitality => new Vector2(offset * 1.15f, depth * 1.32f),
+            // 위아래로 붙은 노드는 위 노드 이름(배지 아래)이 아래 노드를 가리지 않게 띄운다 (DWH-51).
+            // 10-14: 아래 노드의 점멸·선택 테두리(타일 위로 17px)도 위 노드 이름표에 닿지 않게 1.2 → 1.32칸
             // 가로로 붙은 노드는 넓어진 이름표(최대 186px)가 겹치지 않게 1.15칸 이상 띄운다
-            UpgradeCategory.Gold => new Vector2(-depth * 1.15f - 0.3f, offset * 1.2f),
-            UpgradeCategory.Stats => new Vector2(depth * 1.15f + 0.3f, offset * 1.2f),
-            _ => new Vector2(offset * 1.15f, -depth * 1.25f - 0.15f),
+            UpgradeCategory.Gold => new Vector2(-depth * 1.15f - 0.3f, offset * 1.32f),
+            UpgradeCategory.Stats => new Vector2(depth * 1.15f + 0.3f, offset * 1.32f),
+            _ => new Vector2(offset * 1.15f, -depth * 1.38f - 0.15f),
         };
     }
 }

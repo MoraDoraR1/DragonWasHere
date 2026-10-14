@@ -3,7 +3,8 @@ using DWH.Data;
 namespace DWH.Core
 {
     /// <summary>일반 스테이지가 끝난 이유 (결과 화면 제목)</summary>
-    public enum SessionEnd { Cleared, Defeated, Exhausted }
+    /// <summary>Retired = 일시정지 메뉴 "세션 끝내기"로 직접 끝냄 (10-14)</summary>
+    public enum SessionEnd { Cleared, Defeated, Exhausted, Retired }
 
     /// <summary>세션 한 판의 결과. 정산(Progression.Settle)의 입력이다.</summary>
     public class SessionResult

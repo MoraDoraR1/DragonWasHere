@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using System.Linq;
 using DWH.Core;
 using DWH.Data;
 using DWH.InGame;
@@ -20,14 +21,15 @@ namespace DWH.Tests
         const int FrameRate = 60;
 
         /// <summary>테스트가 정하는 마우스 유도 위치. null이면 자동 이동</summary>
-        class ScriptedInput : IGuideInput
+        class ScriptedInput : IGuideInput, IGuideModeInput
         {
             public float? GuideX;
+            public bool MouseMode { get; set; } = true;
 
             public bool TryGetGuideX(out float worldX)
             {
                 worldX = GuideX ?? 0;
-                return GuideX.HasValue;
+                return MouseMode && GuideX.HasValue;
             }
 
             public bool TryGetCursor(out Vector2 world)
@@ -201,6 +203,85 @@ namespace DWH.Tests
             var dragonX = battle.Dragon.Hitbox.center.x;
             Assert.IsTrue(unit.InAttackRange(new Vector2(dragonX + 1f, 4f)));
             Assert.IsFalse(unit.InAttackRange(new Vector2(dragonX + Tuning.AirUnitAttackRange + 1f, 4f)));
+        }
+
+        [UnityTest]
+        public IEnumerator ControlMode_SpaceAndButtonToggle_AndPersist()
+        {
+            // 처음은 마우스 유도. Space(ToggleGuideMode)와 HUD 모드 버튼이 같은 일을 하고, 바꾼 모드는 저장해 다음 판에도 쓴다 (10-14)
+            manager.StartStage();
+            yield return Frames(10);
+            Assert.IsTrue(input.MouseMode);
+            input.GuideX = manager.Battle.Dragon.transform.position.x + 5f;
+            yield return Frames(2);
+            Assert.IsTrue(manager.Battle.Dragon.IsGuided);
+
+            manager.ToggleGuideMode();
+            yield return Frames(2);
+            Assert.IsFalse(input.MouseMode);
+            Assert.IsFalse(manager.Save.settings.mouseGuide);
+            Assert.IsFalse(manager.Battle.Dragon.IsGuided, "자동 이동이면 커서를 따라가지 않는다");
+
+            var modeButton = GameObject.Find("HUD").GetComponentsInChildren<UnityEngine.UI.Button>().First(b => b.name == "Mode");
+            modeButton.onClick.Invoke();
+            Assert.IsTrue(input.MouseMode);
+            Assert.IsTrue(manager.Save.settings.mouseGuide);
+            yield return TestScreens.Capture(camera, "control_mode");
+
+            // 일시정지 중에는 바꾸지 않는다
+            manager.SetPaused(true);
+            manager.ToggleGuideMode();
+            Assert.IsTrue(input.MouseMode);
+            manager.SetPaused(false);
+        }
+
+        [UnityTest]
+        public IEnumerator EndSession_SettlesAndShowsResult()
+        {
+            // 일시정지 메뉴 "세션 끝내기": 확인 후 이번 판을 끝내고 지금까지 모은 골드로 정산해 결과창 (10-14)
+            manager.StartStage();
+            yield return Frames(FrameRate * 8);
+            double goldBefore = manager.Save.goldCoin;
+            manager.SetPaused(true);
+            yield return null;
+            var pause = GameObject.Find("PauseMenu");
+            var end = pause.GetComponentsInChildren<UnityEngine.UI.Button>(true).First(b => b.name == "EndSession");
+            Assert.IsTrue(end.interactable);
+            end.onClick.Invoke();
+            yield return null;
+            Assert.IsTrue(GameObject.Find("Confirm") != null, "확인 상자가 먼저 뜬다");
+            yield return TestScreens.Capture(camera, "end_session_confirm");
+            pause.GetComponentsInChildren<UnityEngine.UI.Button>(true).First(b => b.name == "Yes").onClick.Invoke();
+            // 종료 슬로모션(실시간 0.5초)이 끝나야 결과창이 뜬다. 테스트는 프레임을 빨리 돌려 프레임 수로는 부족하다
+            for (int i = 0; i < FrameRate * 120 && manager.State != GameState.Result; i++) yield return null;
+            Assert.AreEqual(GameState.Result, manager.State);
+            Assert.AreEqual(SessionEnd.Retired, manager.LastResult.end);
+            Assert.IsFalse(manager.IsPaused);
+            Assert.AreEqual(1f, Time.timeScale);
+            Assert.AreEqual(goldBefore + manager.LastResult.earnedGold, manager.Save.goldCoin, 1e-6, "모은 골드는 정산된다");
+            yield return TestScreens.Capture(camera, "end_session_result");
+        }
+
+        [UnityTest]
+        public IEnumerator EndSession_DuringStarter_StopsStarterAndSettles()
+        {
+            // 스타터 중에도 세션 끝내기: 스타터를 멈추고 카메라·드래곤을 되돌린 뒤 결과창 (10-14)
+            manager.enableStarter = true;
+            manager.StartStage();
+            yield return Frames(FrameRate * 2);
+            Assert.IsTrue(manager.Battle.InStarter, "스타터 중이어야 한다");
+            manager.SetPaused(true);
+            yield return null;
+            var end = GameObject.Find("PauseMenu").GetComponentsInChildren<UnityEngine.UI.Button>(true).First(b => b.name == "EndSession");
+            Assert.IsTrue(end.interactable, "스타터 중에도 누를 수 있다");
+            manager.EndSession();
+            Assert.IsFalse(manager.Battle.InStarter);
+            Assert.AreEqual(Tuning.StandHeight, manager.Battle.Dragon.transform.position.y, 1e-3, "드래곤은 땅으로 돌아온다");
+            for (int i = 0; i < FrameRate * 120 && manager.State != GameState.Result; i++) yield return null;
+            Assert.AreEqual(GameState.Result, manager.State);
+            Assert.AreEqual(SessionEnd.Retired, manager.LastResult.end);
+            Assert.AreEqual(1f, Time.timeScale);
+            Assert.IsNull(GameObject.Find("Starter"), "스타터 화면이 남지 않는다");
         }
     }
 }

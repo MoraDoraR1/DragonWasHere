@@ -182,7 +182,11 @@ namespace DWH.Tests
                     SpendPoints();
                     failsHere = 0;
                 }
+                int doomBefore = manager.Save.GetNodeLevel("upg513");
                 BuyGreedy();
+                // 종말의 용(재사용 대기시간) 처음 산 때를 남긴다 (10-14 E안 확인용)
+                if (doomBefore == 0 && manager.Save.GetNodeLevel("upg513") > 0)
+                    log.AppendLine($"| | **종말의 용 구매** | {db.StageLabel(manager.Save.currentStage)} 출발 전 | {manager.Save.rebirthCount + 1}회차 | | | | | | | | | |");
             }
             log.AppendLine($"\n총 {runs}판, 전투 시간 합계 {totalSeconds / 60:0.0}분(전투만), 엔딩 {(manager.Save.gameCompleted ? "도달" : "못 함")}");
             File.WriteAllText(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "Logs", overrideName != null ? $"balance_sim_{overrideName}.md" : atkScale == 1 ? "balance_sim.md" : $"balance_sim_atk{atkScale:0.##}_lm{System.Environment.GetEnvironmentVariable("DWH_SIM_LM_SCALE") ?? "same"}_lmhp{System.Environment.GetEnvironmentVariable("DWH_SIM_LM_HP_SCALE") ?? "1"}_abhp{System.Environment.GetEnvironmentVariable("DWH_SIM_ATKB_HP_SCALE") ?? "1"}.md"), $"적 공격력 배율 {atkScale}\n\n" + log);

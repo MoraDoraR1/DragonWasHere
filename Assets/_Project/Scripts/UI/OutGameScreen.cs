@@ -38,6 +38,54 @@ namespace DWH.UI
             public RectTransform namePlate;
             public TMP_Text name, level;
             public float punch;
+            /// <summary>해금됨(1레벨 이상)이고 골드가 충분해 점멸 테두리를 띄울 노드</summary>
+            public bool blink;
+        }
+
+        // ───── 노드 상태별 테두리 (노드상태별전환 Ver01, 10-14) ─────
+        /// <summary>업그레이드 가능 점멸: 밝은 주황 ↔ 노랑</summary>
+        static readonly Color BlinkA = new(1f, 0.77f, 0.43f), BlinkB = new(1f, 0.91f, 0.35f);
+        /// <summary>선택 중: 진한 주황 고정</summary>
+        static readonly Color SelectedBorder = new(0.89f, 0.55f, 0.08f);
+        /// <summary>해금 불가 아이콘: 검은색</summary>
+        static readonly Color LockedIcon = new(0.08f, 0.07f, 0.07f, 1f);
+        /// <summary>색 테두리 두께와, 노드 기본(검정) 테두리와의 간격</summary>
+        const float RingThickness = 7f, RingGap = 10f;
+        /// <summary>색 테두리가 타일 아래로 내려가는 길이: 레벨 배지(타일 아래 16px)는 감싸고, 이름표(타일 아래 31px)에는 닿지 않게</summary>
+        const float RingBottom = 26f;
+        static Sprite ring;
+        static Material grayscale;
+
+        /// <summary>흰 둥근 테두리(9-slice). 색을 그대로 입힐 수 있게 코드로 만든다 (키트 테두리는 금색이라 노랑·주황으로 못 바꾼다)</summary>
+        static Sprite Ring()
+        {
+            if (ring != null) return ring;
+            const int size = 64, radius = 18, thick = 7;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            var px = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                // 둥근 사각형까지의 거리로 바깥선·안쪽선 사이만 칠한다 (가장자리는 부드럽게)
+                float cx = Mathf.Max(radius - (x + 0.5f), 0, (x + 0.5f) - (size - radius));
+                float cy = Mathf.Max(radius - (y + 0.5f), 0, (y + 0.5f) - (size - radius));
+                float outside = Mathf.Sqrt(cx * cx + cy * cy) - radius;          // 0 = 바깥선
+                float a = Mathf.Clamp01(0.5f - outside) * Mathf.Clamp01(outside + thick + 0.5f);
+                px[y * size + x] = new Color32(255, 255, 255, (byte)(a * 255));
+            }
+            tex.SetPixels32(px);
+            tex.Apply();
+            ring = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect, new Vector4(24, 24, 24, 24));
+            return ring;
+        }
+
+        /// <summary>미해금 아이콘용 회색 머티리얼 (Resources/DWHUIGrayscale.shader). 없으면 옅은 회색 틴트로 대신한다</summary>
+        static Material Grayscale()
+        {
+            if (grayscale != null) return grayscale;
+            var shader = Resources.Load<Shader>("DWHUIGrayscale");
+            if (shader != null) grayscale = new Material(shader);
+            return grayscale;
         }
 
         GameDatabase db;
@@ -185,10 +233,13 @@ namespace DWH.UI
                 tiles.Add(CreateTile(nodeLayer, node));
 
             // 선택 테두리: 아래 변만 늘려 노드 아래로 튀어나온 레벨 배지(0/12, [잠김])까지 감싼다
-            selection = UiFactory.Rect(nodeLayer, "Selection", UiFactory.Center, Vector2.zero, new Vector2(TileSize + 18, TileSize + 18 + BadgeDrop));
+            // 선택 중: 진한 주황 고정 테두리 (점멸 테두리와 같은 자리·두께)
+            float ringSize = TileSize + 2 * (RingGap + RingThickness);
+            selection = UiFactory.Rect(nodeLayer, "Selection", UiFactory.Center, Vector2.zero,
+                new Vector2(ringSize, TileSize + RingGap + RingThickness + RingBottom));
             var sel = selection.gameObject.AddComponent<Image>();
-            sel.sprite = UiTheme.KitSprite("node-selected-border");
-            sel.color = sel.sprite != null ? Color.white : UiTheme.Ember;
+            sel.sprite = Ring();
+            sel.color = SelectedBorder;
             sel.type = Image.Type.Sliced;
             sel.fillCenter = false;
             sel.raycastTarget = false;
@@ -229,12 +280,14 @@ namespace DWH.UI
             var tile = new Tile { node = node };
             tile.rect = UiFactory.Rect(layer, node.upgradeId, UiFactory.Center, Position(node), Vector2.one * TileSize);
 
-            var glow = UiFactory.Stretch(tile.rect, "Glow", -12);
-            glow.offsetMin = new Vector2(glow.offsetMin.x, -12 - BadgeDrop);
+            // 점멸 테두리: 노드 기본(검정) 테두리에서 RingGap만큼 띄운다
+            const float ringInset = -(RingGap + RingThickness);
+            var glow = UiFactory.Stretch(tile.rect, "Glow", ringInset);
+            glow.offsetMin = new Vector2(glow.offsetMin.x, -RingBottom);
             tile.glow = glow.gameObject.AddComponent<Image>();
-            tile.glow.sprite = UiTheme.KitSprite("node-selected-border");
+            tile.glow.sprite = Ring();
             tile.glow.type = Image.Type.Sliced;
-            tile.glow.color = UiTheme.Gold;
+            tile.glow.color = BlinkA;
             tile.glow.raycastTarget = false;
 
             var body = UiFactory.Stretch(tile.rect, "Body");
@@ -247,10 +300,10 @@ namespace DWH.UI
             tile.icon = UiFactory.Icon(tile.rect, "Icon", UiFactory.Center, new Vector2(0, 6), new Vector2(92, 92), Icon(node.resId));
             // 이름은 레벨 배지 아래. 길면(영어) 두 줄까지 줄여서 맞춘다 (DWH-53)
             // 이름표 바탕: 연결선은 노드 뒤 레이어라 이름표에 가려진다. 이름이 선에 씹히지 않게 한다 (크기는 이름 길이에 맞춘다, Refresh)
-            tile.namePlate = UiFactory.Panel(tile.rect, "NamePlate", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 6), new Vector2(NamePlateMaxWidth, 52),
+            tile.namePlate = UiFactory.Panel(tile.rect, "NamePlate", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 9), new Vector2(NamePlateMaxWidth, 52),
                 FrameStyle.ChipCream, new Color(1f, 1f, 1f, 0.95f));
             tile.namePlate.GetComponent<Image>().raycastTarget = false;
-            tile.name = UiFactory.Text(tile.rect, "Name", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 12), new Vector2(NameWidth, 44), 21,
+            tile.name = UiFactory.Text(tile.rect, "Name", UiFactory.TopCenter, new Vector2(0, -TileSize - BadgeDrop - 15), new Vector2(NameWidth, 44), 21,
                 TextAlignmentOptions.Top, UiTheme.InkText, bold: true);
             UiFactory.Fit(tile.name, 14, false);
             tile.lockIcon = UiFactory.Icon(tile.rect, "Lock", UiFactory.TopRight, new Vector2(-4, -4), new Vector2(36, 36), "icon-lock");
@@ -334,7 +387,7 @@ namespace DWH.UI
         {
             selected = node;
             var tile = tiles.First(t => t.node == node);
-            selection.anchoredPosition = tile.rect.anchoredPosition + new Vector2(0, -BadgeDrop / 2f);
+            selection.anchoredPosition = tile.rect.anchoredPosition + new Vector2(0, (RingGap + RingThickness - RingBottom) / 2f);
             selection.SetAsLastSibling();
             if (save != null) RefreshDetail();
         }
@@ -396,12 +449,23 @@ namespace DWH.UI
             bool core = node.Prerequisites().Length == 0;
 
             string prefix = core ? "node-core" : node.category == UpgradeCategory.PassiveSkill ? "node-soul" : "node";
-            var sprite = UiTheme.KitSprite(locked ? $"{prefix}-disabled" : status == NodeStatus.Maxed ? $"{prefix}-pressed" : $"{prefix}-normal");
+            // 노드 상태별 이미지 (노드상태별전환 Ver01, 10-14)
+            // 해금 불가 = 회색 박스 + 검은 아이콘 / 미해금(0레벨) = 일반 박스 + 회색 아이콘 / 해금됨(1레벨 이상, 최대 포함) = 일반 박스 + 컬러 아이콘
+            bool unlocked = level >= 1;
+            var sprite = UiTheme.KitSprite(locked ? $"{prefix}-disabled" : $"{prefix}-normal");
             tile.body.sprite = sprite;
             tile.body.color = sprite != null ? Color.white : locked ? UiTheme.Well : UiTheme.Cream;
-            if (tile.icon != null) tile.icon.color = locked ? new Color(0.5f, 0.45f, 0.47f, 1f) : status == NodeStatus.TooExpensive && level == 0 ? new Color(0.8f, 0.78f, 0.78f) : Color.white;
+            if (tile.icon != null)
+            {
+                var gray = !locked && !unlocked ? Grayscale() : null;
+                tile.icon.material = gray;
+                tile.icon.color = locked ? LockedIcon : !unlocked && gray == null ? new Color(0.72f, 0.7f, 0.7f) : Color.white;
+            }
             if (tile.lockIcon != null) tile.lockIcon.enabled = locked;
-            tile.glow.enabled = status == NodeStatus.Affordable;
+            // 골드가 충분하면 점멸 테두리(미해금 0레벨 노드도, 10-14 사용자 결정 2안), 아니면(최대 레벨 포함) 일반 테두리.
+            // 선택 중이면 진한 주황 테두리(Update에서 점멸을 숨긴다)
+            tile.blink = status == NodeStatus.Affordable;
+            tile.glow.enabled = tile.blink && tile.node != selected;
             tile.name.text = db.Text(node.nameStr);
             FitNamePlate(tile);
             tile.name.color = locked ? UiTheme.InkDim : UiTheme.InkText;
@@ -524,16 +588,13 @@ namespace DWH.UI
                 celebration.localScale = Vector3.one * Mathf.Lerp(1.3f, 1f, Mathf.Clamp01(t * 6f));
             }
 
-            // 살 수 있는 노드는 은은히 빛나고, 산 노드는 잠깐 튄다
-            float pulse = 0.45f + 0.35f * Mathf.Sin(Time.unscaledTime * 3.2f);
+            // 업그레이드 가능(해금됨 + 골드 충분) 노드는 테두리가 밝은 주황 ↔ 노랑으로 점멸하고, 산 노드는 잠깐 튄다.
+            // 선택 중인 노드는 점멸 대신 진한 주황 고정 테두리(Selection)만 보인다
+            var blink = Color.Lerp(BlinkA, BlinkB, 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 6f));
             foreach (var tile in tiles)
             {
-                if (tile.glow.enabled)
-                {
-                    var c = tile.glow.color;
-                    c.a = pulse;
-                    tile.glow.color = c;
-                }
+                tile.glow.enabled = tile.blink && tile.node != selected;
+                if (tile.glow.enabled) tile.glow.color = blink;
                 if (tile.punch > 0)
                 {
                     tile.punch = Mathf.Max(0, tile.punch - Time.unscaledDeltaTime * 4f);

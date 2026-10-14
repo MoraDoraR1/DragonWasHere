@@ -154,6 +154,7 @@ namespace DWH.InGame.Starter
             float centerX = (left + right) / 2f;
             float startX = view.transform.position.x;
             var normalScale = dragon.transform.localScale;
+            savedScale = normalScale;
             // 줌아웃: 건물 배치 전체 + 양옆 여백(상공을 나는 드래곤 몸 절반)이 화면 폭에 들어오게 한다.
             // 여백이 없으면 맵 끝을 날 때 드래곤이 화면 밖으로 잘린다 (DWH-56). 드래곤 크기가 줌에 따라 바뀌어 두 번 맞춘다
             float zoomSize = Mathf.Max(normalSize, (right - left) / (2f * view.aspect));
@@ -228,14 +229,14 @@ namespace DWH.InGame.Starter
             Grade = Gauge.Judge();
             JudgedBar = Gauge.Bar;
 
-            // 4) "!!" → 결과: 바를 멈춘 채 판정 색과 판정 이미지를 보여 준다 → 이탈 → 낙하 타격
+            // 4) 잠깐 멈춤 → 결과: 바를 멈춘 채 판정 이미지를 보여 준다 → 이탈 → 낙하 타격
             Phase = StarterPhase.Result;
-            barImage.color = Grade switch { StarterGrade.Great => UiTheme.Jade, StarterGrade.Good => UiTheme.Gold, _ => UiTheme.Hp };
+            // 판정 바는 언제나 흰색 (클릭해도 판정 색으로 바꾸지 않는다, 10-14 사용자 요청)
             barRect.sizeDelta = new Vector2(18, barRect.sizeDelta.y);
             DrawGauge();
             hint.text = "";
-            title.text = "!!";
-            title.color = UiTheme.Gold;
+            // 판정 직후 게이지 위에 띄우던 "!!"는 주황 줄 두 개처럼 보여 지웠다 (10-14 사용자 요청). 멈춤 시간은 그대로
+            title.text = "";
             yield return new WaitForSeconds(AlertSeconds);
             var gradeRow = db.StarterGrade(Grade.Value);
             var gradeSprite = art != null ? art.SpriteOrNull(gradeRow.resId) : null;
@@ -420,6 +421,25 @@ namespace DWH.InGame.Starter
             }
             SkillFx.Burst(transform, db, art, FxIds.Landing, new Vector2(TargetX, battle.Dragon.transform.position.y + 0.6f), multiplier > 0 ? 3f : 1.5f, new Color(1f, 0.8f, 0.4f, 0.8f));
             follow.Shake(0.3f, multiplier > 0 ? 0.25f : 0.08f);
+        }
+
+        /// <summary>드래곤 원래 크기 (상공에서는 줌아웃에 맞춰 키운다). 중간에 그만둘 때 되돌린다</summary>
+        Vector3 savedScale;
+
+        /// <summary>
+        /// 스타터를 중간에 그만둔다 (일시정지 "세션 끝내기", 10-14). 연출을 멈추고 카메라 크기·따라가기, 드래곤 크기·높이를 원래대로 돌린 뒤
+        /// 끝난 것으로 처리한다. 판정·낙하 타격은 하지 않는다
+        /// </summary>
+        public void Abort()
+        {
+            if (Phase == StarterPhase.Done) return;
+            StopAllCoroutines();
+            var dragon = battle.Dragon;
+            if (savedScale != Vector3.zero) dragon.transform.localScale = savedScale;
+            dragon.transform.position = new Vector3(dragon.transform.position.x, groundY, 0);
+            view.orthographicSize = normalSize;
+            follow.Suspended = false;
+            Finish();
         }
 
         void Finish()

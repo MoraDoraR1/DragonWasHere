@@ -24,10 +24,10 @@ namespace DWH.Tests
         [Test]
         public void UpgradeCost_MultiplierAndLinear()
         {
-            var awaken = db.Upgrade("upg101");   // 30, ×1.5
+            var awaken = db.Upgrade("upg101");   // 30, ×1.3 (10-14 1.5 → 1.3)
             Assert.AreEqual(30, Formulas.UpgradeCost(awaken, 1));
-            Assert.AreEqual(45, Formulas.UpgradeCost(awaken, 2));
-            Assert.AreEqual(68, Formulas.UpgradeCost(awaken, 3), "67.5 → 올림");
+            Assert.AreEqual(39, Formulas.UpgradeCost(awaken, 2));
+            Assert.AreEqual(51, Formulas.UpgradeCost(awaken, 3), "50.7 → 올림");
             var stamina = db.Upgrade("upg201");  // 36 + 15(n-1)
             Assert.AreEqual(36, Formulas.UpgradeCost(stamina, 1));
             Assert.AreEqual(51, Formulas.UpgradeCost(stamina, 2));
@@ -115,7 +115,7 @@ namespace DWH.Tests
             Assert.AreEqual(30, save.runSpentGold);
             Assert.AreEqual(NodeStatus.Affordable, tree.Status(stamina));
             Assert.AreEqual(2, tree.BuyMany(awaken, 2));
-            Assert.AreEqual(1000 - 30 - 45 - 68, save.goldCoin);
+            Assert.AreEqual(1000 - 30 - 39 - 51, save.goldCoin);
 
             var sides = db.Upgrade("upg506");   // 최대 4
             save.SetNodeLevel("upg505", 1);
@@ -149,7 +149,7 @@ namespace DWH.Tests
                     var d = points[i] - points[j];
                     Assert.Greater(d.magnitude, 0.7f, "노드가 겹친다");
                     // 같은 열에서 위아래로 붙으면 위 노드 이름(배지 아래)이 아래 노드를 가린다 (DWH-51)
-                    if (Mathf.Abs(d.x) < 1f) Assert.GreaterOrEqual(Mathf.Abs(d.y), 1.15f, "위아래 노드 사이에 이름 자리가 없다");
+                    if (Mathf.Abs(d.x) < 1f) Assert.GreaterOrEqual(Mathf.Abs(d.y), 1.3f, "위아래 노드 사이에 이름표와 테두리 자리가 없다");
                 }
         }
 
@@ -292,7 +292,31 @@ namespace DWH.Tests
             Assert.AreEqual(save.userId, loaded.userId);
 
             storage.Write("{\"version\":1,\"goldCoin\":99}");
-            Assert.AreEqual(0, SaveSystem.Load(storage, "stg101").goldCoin, "옛 버전 저장은 새로 시작");
+            Assert.AreEqual(0, SaveSystem.Load(storage, "stg101").goldCoin, "Ver01(숫자 ID) 저장은 새로 시작");
+        }
+
+        [Test]
+        public void Save_ContinuesAcrossBuilds()
+        {
+            // 다음 빌드에서 저장 버전이 올라도, 필드가 늘거나 줄어도 진행을 잇는다 (10-13)
+            var storage = new MemorySaveStorage();
+            storage.Write("{\"version\":3,\"goldCoin\":500,\"rebirthCount\":2,\"currentStage\":\"stg402\",\"highestStage\":\"stg502\",\"unknownField\":7,\"nodeLevels\":[{\"key\":\"upg101\",\"level\":3},{\"key\":\"upg999\",\"level\":1}],\"clearedStages\":[\"stg101\",\"stg999\"]}");
+            var save = SaveSystem.Load(storage, "stg101");
+            Assert.AreEqual(500, save.goldCoin);
+            Assert.AreEqual(2, save.rebirthCount);
+            Assert.AreEqual(SaveData.CurrentVersion, save.version);
+            Assert.IsTrue(SaveSystem.Migrate(save, db), "없는 노드·스테이지 정리");
+            Assert.AreEqual("stg402", save.currentStage);
+            Assert.AreEqual("stg502", save.highestStage);
+            Assert.AreEqual(3, save.GetNodeLevel("upg101"));
+            Assert.AreEqual(0, save.GetNodeLevel("upg999"), "테이블에 없는 노드는 뺀다");
+            CollectionAssert.AreEqual(new[] { "stg101" }, save.clearedStages);
+
+            // 없는 스테이지에 있던 저장은 첫 스테이지로
+            save.currentStage = "stg999";
+            SaveSystem.Migrate(save, db);
+            Assert.AreEqual(db.StageOrder[0], save.currentStage);
+            Assert.IsFalse(SaveSystem.Migrate(save, db), "정리된 저장은 그대로");
         }
 
         // ───── 드랍 ─────

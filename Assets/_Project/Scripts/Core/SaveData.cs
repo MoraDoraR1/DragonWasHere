@@ -10,8 +10,10 @@ namespace DWH.Core
     [Serializable]
     public class SaveData
     {
-        /// <summary>2 = 데이터 테이블 Ver02(문자열 ID). 이전 버전 저장은 ID가 달라 새로 시작한다</summary>
-        public const int CurrentVersion = 2;
+        /// <summary>2 = 데이터 테이블 Ver02(문자열 ID), 3 = 튜토리얼 완료 기록 추가. 저장 구조가 바뀌면 올리고 SaveSystem.Load·Migrate에서 옛 저장을 옮긴다</summary>
+        public const int CurrentVersion = 3;
+        /// <summary>이보다 낮은 버전(Ver01 숫자 ID)만 새로 시작한다. 그 뒤 빌드는 버전이 달라도 진행을 잇는다</summary>
+        public const int MinCompatibleVersion = 2;
 
         public int version = CurrentVersion;
 
@@ -44,11 +46,20 @@ namespace DWH.Core
         public int playCount;
 
         // 설정·지표
-        /// <summary>처음 시작(저장 없음)은 영어. 바꾼 언어는 저장해 다음에도 유지한다 (10-13 사용자 요청)</summary>
+        /// <summary>게임을 켤 때는 언제나 영어로 시작한다(10-14). 실행 중에 바꾼 언어는 그 실행 동안만 유지</summary>
         public string language = "en";
         /// <summary>지표용 사용자 ID (게임이 만든 UUID)</summary>
         public string userId = "";
         public SaveSettings settings = new();
+        /// <summary>끝낸 튜토리얼 (TutorialOverlay.Starter·InGame·Upgrade·RebirthTab). 새 게임을 누르면 지워져 튜토리얼이 처음부터 다시 나온다 (10-14 사용자 요청)</summary>
+        public List<string> tutorialsDone = new();
+
+        public bool TutorialDone(string id) => tutorialsDone.Contains(id);
+
+        public void MarkTutorial(string id)
+        {
+            if (!tutorialsDone.Contains(id)) tutorialsDone.Add(id);
+        }
 
         public int GetNodeLevel(string id) => Find(nodeLevels, id)?.level ?? 0;
         public void SetNodeLevel(string id, int level) => Set(nodeLevels, id, level);
@@ -80,5 +91,7 @@ namespace DWH.Core
         public float masterVolume = 1f;
         /// <summary>화면 흔들림 켜기/끄기 (환경설정)</summary>
         public bool screenShake = true;
+        /// <summary>조작 모드: true = 마우스 유도(처음 시작), false = 자동 이동. Space·모드 버튼으로 바꾸면 다음 판에도 유지 (10-14)</summary>
+        public bool mouseGuide = true;
     }
 }

@@ -43,7 +43,7 @@ DwhAnalytics.Log(AnalyticsEvents.RunStart, new EventParams()
 | Web 팀 테스트 빌드 (DWH_DEV) | Firebase 전송 + `is_dev=1` + DebugView 표시 |
 | Web 출시 빌드 | Firebase 전송, `is_dev=0` |
 
-- `user_id`: 첫 실행 때 만든 무작위 ID(PlayerPrefs). 개인정보 없음.
+- `user_id`: 첫 실행 때 만든 무작위 ID. 개인정보 없음. 웹 빌드는 브라우저 localStorage(`DragonWasHere.dwh.uid`)에 둬서 itch.io에 새 빌드를 올려도(주소가 바뀜) 같은 사용자로 이어진다. 세션 번호·누적 플레이 시간·카운터도 같다(`DwhPrefs`, 10-13).
 - 누적 플레이 시간과 실행 횟수(session_index)는 자동으로 셉니다.
 - 이탈: index.html이 페이지를 떠날 때(pagehide) `page_exit`(scene·session_sec·persisted + 공통 파라미터)를 보낸다. 화면은 `DwhAnalytics.SetScene`으로 알려 준다. 다음 실행의 `game_session_start`에는 `return_type`(first/quick=60초 안 복귀·새로고침 추정/later), `return_gap_sec`, `prev_exit_scene`이 붙는다. 새로고침·탭 닫기·브라우저 종료는 떠나는 순간 구분할 수 없다.
 - GA4 예약 이벤트(session_start 등)와 겹치지 않게 이름을 정했습니다. 새 이벤트는 `AnalyticsEvents`에 추가합니다.

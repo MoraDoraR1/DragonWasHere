@@ -270,6 +270,22 @@ namespace DWH.InGame.Stage
                 End(BattleState.Failed);
         }
 
+        /// <summary>일시정지 메뉴 "세션 끝내기"로 끝냈다 (10-14)</summary>
+        public bool Retired { get; private set; }
+
+        /// <summary>
+        /// 세션 끝내기: 지금까지 모은 것으로 이번 판을 끝낸다. 일반 스테이지는 실패로, 보너스 스테이지는 보너스를 마친 것으로 정산한다.
+        /// 스타터 중이면 스타터를 멈추고 끝낸다(10-14). 이미 끝난 판이면 아무것도 하지 않는다
+        /// </summary>
+        public bool Retire()
+        {
+            if (State != BattleState.Playing) return false;
+            if (InStarter) Starter.Abort();
+            Retired = true;
+            End(Mode == BattleMode.Bonus ? BattleState.Cleared : BattleState.Failed);
+            return true;
+        }
+
         void End(BattleState result)
         {
             State = result;

@@ -73,16 +73,22 @@ namespace DWH.UI
         public void Show(SessionResult result, SaveData save, int affordableUpgrades, bool canRetry)
         {
             var stage = db.Stage(result.stageId);
-            var chipStyle = result.cleared ? FrameStyle.ChipGold : FrameStyle.ButtonRed;
+            var chipStyle = result.cleared ? FrameStyle.ChipGold : result.end == SessionEnd.Retired ? FrameStyle.ChipCream : FrameStyle.ButtonRed;
             UiFactory.Frame(eyebrowChip.gameObject, chipStyle);
             eyebrow.color = UiFactory.LabelColorFor(chipStyle);
             eyebrow.text = UiText.Get(result.end switch
             {
                 SessionEnd.Defeated => "ui_result_defeated",
                 SessionEnd.Exhausted => "ui_result_exhausted",
+                SessionEnd.Retired => "ui_result_retired",
                 _ => "ui_result_clear",
             });
-            title.text = result.gameCompleted ? UiText.Get("ui_result_ending") : UiText.Get(result.cleared ? "ui_hud_clear" : result.end == SessionEnd.Defeated ? "ui_hud_dead_sub" : "ui_hud_exhausted_sub");
+            title.text = result.gameCompleted ? UiText.Get("ui_result_ending") : UiText.Get(result.cleared ? "ui_hud_clear" : result.end switch
+            {
+                SessionEnd.Defeated => "ui_hud_dead_sub",
+                SessionEnd.Retired => "ui_result_retired_title",
+                _ => "ui_hud_exhausted_sub",
+            });
             subtitle.text = $"{db.StageLabel(stage)} {db.Text(stage.nameStr)} · {db.Text(db.Era(stage).nameStr)} | {db.Text(db.Theme(stage).nameStr)}";
 
             string gold = UiTheme.HexString(UiTheme.GoldDeep);

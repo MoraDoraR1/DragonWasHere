@@ -1,3 +1,5 @@
+using DWH.Data;
+using DWH.InGame.Fx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,58 +30,80 @@ namespace DWH.InGame.Dragon
         }
     }
 
+    /// <summary>마우스 유도 / 자동 유도를 바꿀 수 있는 입력 (Space·HUD 모드 버튼, 10-14)</summary>
+    public interface IGuideModeInput
+    {
+        /// <summary>true = 마우스 유도, false = 자동 유도</summary>
+        bool MouseMode { get; set; }
+    }
+
     /// <summary>
-    /// 커서의 x좌표가 목표 지점이다. 커서가 게임 화면 밖에 있거나 일정 시간 움직이지 않으면 자동 모드로 바뀐다.
+    /// 마우스 유도 (10-14 변경): 커서의 x좌표가 목표 지점이다.
+    /// - 마우스 유도 / 자동 유도는 Space 또는 HUD 왼쪽 아래 모드 버튼으로 바꾼다 (예전: 커서가 일정 시간 멈추면 자동으로 바뀜 → 삭제).
+    /// - 커서가 근경(건물 HP바 아래 지면, 보조 스킬 버튼 줄)이나 화면 밖에 있으면 커서를 무시하고 마지막 유도 지점으로 계속 간다.
+    ///   보조 스킬 버튼을 누르러 커서를 내려도 드래곤이 엉뚱한 쪽으로 가지 않게 하려는 것.
+    /// - 아직 유도 지점이 없으면(판 시작 직후 커서가 지면에 있으면) 자동으로 움직인다.
     /// </summary>
-    public class MouseGuideInput : IGuideInput
+    public class MouseGuideInput : IGuideInput, IGuideModeInput
     {
         readonly Camera camera;
-        readonly float idleSeconds;
-        Vector2 lastPosition;
-        float lastMoveTime = float.NegativeInfinity;
+        bool hasLast;
+        float lastGuideX;
 
-        public MouseGuideInput(Camera camera, float idleSeconds)
-        {
-            this.camera = camera;
-            this.idleSeconds = idleSeconds;
-        }
+        public MouseGuideInput(Camera camera) => this.camera = camera;
+
+        public bool MouseMode { get; set; } = true;
+
+        /// <summary>이보다 아래(월드 y)의 커서는 무시한다: 건물 HP바 아래 끝</summary>
+        public static float FloorY => Tuning.StandHeight - WorldHealthBar.BottomBelowStand;
 
         int cachedFrame = -1;
-        bool cachedValid;
+        bool cachedValid, cachedGuided;
+        float cachedX;
         Vector2 cachedWorld;
 
+        /// <summary>조준점·궤적을 그릴 커서 위치. 커서를 무시하는 중(근경·화면 밖)이면 false</summary>
         public bool TryGetCursor(out Vector2 world)
         {
-            if (cachedFrame != Time.frameCount) TryGetGuideX(out _);
+            Refresh();
             world = cachedWorld;
             return cachedValid;
         }
 
         public bool TryGetGuideX(out float worldX)
         {
+            Refresh();
+            worldX = cachedX;
+            return cachedGuided;
+        }
+
+        void Refresh()
+        {
+            if (cachedFrame == Time.frameCount) return;
             cachedFrame = Time.frameCount;
             cachedValid = false;
-            worldX = 0;
+            cachedGuided = false;
+            if (!MouseMode) return;
+
             var mouse = Mouse.current;
-            if (mouse == null || !Application.isFocused)
-                return false;
-
-            Vector2 pos = mouse.position.ReadValue();
-            if ((pos - lastPosition).sqrMagnitude > 0.01f)
+            if (mouse != null && Application.isFocused)
             {
-                lastPosition = pos;
-                lastMoveTime = Time.unscaledTime;
+                Vector2 pos = mouse.position.ReadValue();
+                // 레터박스(검은 띠) 위의 커서는 화면 밖으로 본다
+                if (camera.pixelRect.Contains(pos))
+                {
+                    var world = (Vector2)camera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, -camera.transform.position.z));
+                    if (world.y >= FloorY)
+                    {
+                        cachedWorld = world;
+                        cachedValid = true;
+                        hasLast = true;
+                        lastGuideX = world.x;
+                    }
+                }
             }
-
-            // 레터박스(검은 띠) 위의 커서는 화면 밖으로 본다
-            bool onScreen = camera.pixelRect.Contains(pos);
-            if (!onScreen || Time.unscaledTime - lastMoveTime >= idleSeconds)
-                return false;
-
-            cachedWorld = camera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, -camera.transform.position.z));
-            cachedValid = true;
-            worldX = cachedWorld.x;
-            return true;
+            cachedGuided = hasLast;
+            cachedX = lastGuideX;
         }
     }
 }

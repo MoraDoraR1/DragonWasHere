@@ -77,6 +77,11 @@ namespace DWH.UI
         /// <param name="onPause">일시정지 버튼. null이면 버튼을 만들지 않는다</param>
         /// <param name="showTip">첫 판 조작 안내를 띄운다</param>
         /// <param name="carriedSessionGold">이번 판 앞 구간(보너스 전 일반 스테이지)에서 번 골드. "+N" 탭에 더한다</param>
+        /// <summary>지금 조작 모드 (true = 마우스 유도). 없으면 드래곤이 유도 중인지로 표시한다</summary>
+        public Func<bool> MouseModeProvider;
+        /// <summary>모드 버튼을 눌렀을 때 (GameManager가 Space와 같은 처리를 넣는다)</summary>
+        public Action ToggleMode;
+
         public static BattleHud Create(BattleController battle, Func<double> ownedGoldProvider = null, ArtCatalog art = null,
             Action onPause = null, bool showTip = false, double carriedSessionGold = 0)
         {
@@ -110,6 +115,10 @@ namespace DWH.UI
             bottomGroup.Add(mode.gameObject);
             modeChip = mode.GetComponent<Image>();
             modeText = UiFactory.Text(mode, "Text", UiFactory.Center, Vector2.zero, new Vector2(240, 56), 24, TextAlignmentOptions.Center, bold: true);
+            // 누르면 Space와 같이 마우스 유도 ↔ 자동 이동을 바꾼다 (10-14)
+            var modeButton = mode.gameObject.AddComponent<Button>();
+            modeButton.targetGraphic = modeChip;
+            modeButton.onClick.AddListener(() => ToggleMode?.Invoke());
 
             if (onPause != null)
             {
@@ -270,9 +279,17 @@ namespace DWH.UI
                     () => battle.Actives.Use(skill), FrameStyle.ButtonGold);
                 bottomGroup.Add(button.gameObject);
                 var rect = (RectTransform)button.transform;
-                var icon = UiFactory.Icon(rect, "Icon", UiFactory.Center, new Vector2(0, 10), new Vector2(72, 72), art != null ? art.SpriteOrNull(db.Active(id).resId) : null);
+                // 아이콘은 조금 위로, 글자는 테두리에서 띄운다 (글자가 아래 테두리에 붙어 보였다, 10-14)
+                var icon = UiFactory.Icon(rect, "Icon", UiFactory.Center, new Vector2(0, 14), new Vector2(64, 64), art != null ? art.SpriteOrNull(db.Active(id).resId) : null);
                 activeIcons.Add(icon);
-                activeButtons.Add((id, button, button.GetComponentInChildren<TMP_Text>()));
+                var label = button.GetComponentInChildren<TMP_Text>();
+                label.margin = new Vector4(10, 8, 10, 12);
+                // 오른쪽 위 숫자 배지: 같은 숫자 키(1·2·3)로 쓸 수 있다는 표시 (10-14)
+                var key = UiFactory.Panel(rect, "Key", UiFactory.TopRight, new Vector2(6, 6), new Vector2(36, 36), FrameStyle.ChipGold);
+                key.GetComponent<Image>().raycastTarget = false;
+                UiFactory.Text(key, "Text", UiFactory.Center, Vector2.zero, new Vector2(36, 36), 22, TextAlignmentOptions.Center,
+                    UiFactory.LabelColorFor(FrameStyle.ChipGold), bold: true).text = ActiveKeys[i];
+                activeButtons.Add((id, button, label));
                 i++;
             }
         }
@@ -327,7 +344,7 @@ namespace DWH.UI
                     icon.color = usable ? Color.white : new Color(0.5f, 0.45f, 0.47f, 1f);
                     label.color = UiTheme.InkText;
                     label.alignment = TextAlignmentOptions.Bottom;
-                    label.text = level == 0 ? $"<size=18>{UiText.Get("ui_locked")}</size>" : $"<size=22>×{left}</size> <size=14>[{ActiveKeys[i]}]</size>";
+                    label.text = level == 0 ? $"<size=18>{UiText.Get("ui_locked")}</size>" : $"<size=22>×{left}</size>";
                     continue;
                 }
                 var style = level == 0 ? FrameStyle.ButtonDark : FrameStyle.ButtonGold;
@@ -337,7 +354,7 @@ namespace DWH.UI
                     label.color = UiFactory.LabelColorFor(style);
                 }
                 label.text = level == 0 ? $"{name}\n<size=18>{UiText.Get("ui_locked")}</size>"
-                    : $"{name}\n<size=30>×{left}</size>\n<size=16>[{ActiveKeys[i]}]</size>";
+                    : $"{name}\n<size=30>×{left}</size>";
             }
 
             // 키보드 1·2·3. 일시정지 중(timeScale 0)에는 받지 않는다
@@ -455,7 +472,7 @@ namespace DWH.UI
             if (battle.Mode == BattleMode.Bonus)
                 progressFillImage.color = Color.Lerp(UiTheme.Gold, UiTheme.Cream, Mathf.PingPong(Time.unscaledTime * 1.5f, 1f) * 0.6f);
 
-            bool guided = battle.Dragon.IsGuided;
+            bool guided = MouseModeProvider?.Invoke() ?? battle.Dragon.IsGuided;
             UiFactory.Frame(modeChip.gameObject, guided ? FrameStyle.ChipGold : FrameStyle.ChipCream);
             modeText.color = UiFactory.LabelColorFor(guided ? FrameStyle.ChipGold : FrameStyle.ChipCream);
             modeText.text = UiText.Get(guided ? "ui_hud_mode_guided" : "ui_hud_mode_auto");

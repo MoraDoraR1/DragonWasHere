@@ -103,6 +103,8 @@ namespace DWH.Analytics
         public const string ResultClear = "clear";
         public const string ResultFailHp = "fail_hp";
         public const string ResultFailStamina = "fail_stamina";
+        /// <summary>일시정지 "세션 끝내기"로 직접 끝냄 (10-14)</summary>
+        public const string ResultRetired = "retired";
 
         public const string ActionRetryNow = "retry_now";
         public const string ActionToTree = "to_tree";

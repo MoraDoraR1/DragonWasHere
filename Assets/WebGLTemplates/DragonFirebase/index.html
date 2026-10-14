@@ -218,6 +218,76 @@
 #endif
       document.querySelector("#unity-loading-bar").style.display = "block";
 
+      // ── 이전 빌드 진행 옮기기 (10-13) ──
+      // 게임은 진행(DWH.Save)과 지표 값(dwh.*: 사용자 ID·세션 번호·플레이 시간·카운터)을 localStorage "DragonWasHere.<키>"에 둔다
+      // (도메인 단위라 주소가 바뀌어도 남음). 그 전 빌드(Ver03까지)는 PlayerPrefs에만 저장했는데, 웹 PlayerPrefs는 IndexedDB
+      // "/idbfs/<페이지 주소 해시>/PlayerPrefs"라 itch에 새로 올려 주소가 바뀌면 못 읽는다. localStorage에 없는 키는
+      // 같은 도메인의 모든 PlayerPrefs 파일에서 가장 최근 값을 찾아 옮긴 뒤 게임을 띄운다.
+      var DWH_LOCAL_PREFIX = "DragonWasHere.";
+      // Unity PlayerPrefs 파일: "UnityPrf" + 8바이트, 항목 = 키(길이 1바이트, 0x80이면 int32 길이) + 값
+      // (0xFD float32, 0xFE int32, 그 밖은 문자열 길이 1바이트, 0x80이면 int32 길이)
+      function dwhParsePrefs(contents) {
+        var b = new Uint8Array(contents), dv = new DataView(b.buffer, b.byteOffset, b.byteLength), dec = new TextDecoder("utf-8");
+        var out = {}, p = 16;
+        if (b.length < 16 || dec.decode(b.subarray(0, 8)) !== "UnityPrf") return out;
+        while (p < b.length) {
+          var kl = b[p++];
+          if (kl === 0) break;
+          if (kl === 0x80) { kl = dv.getInt32(p, true); p += 4; }
+          if (kl <= 0 || p + kl > b.length) break;
+          var key = dec.decode(b.subarray(p, p + kl)); p += kl;
+          var t = b[p++], value;
+          if (t === 0xFD) { value = dv.getFloat32(p, true); p += 4; }
+          else if (t === 0xFE) { value = dv.getInt32(p, true); p += 4; }
+          else {
+            var len = t;
+            if (t === 0x80) { len = dv.getInt32(p, true); p += 4; }
+            if (len < 0 || p + len > b.length) break;
+            value = dec.decode(b.subarray(p, p + len)); p += len;
+          }
+          out[key] = value;
+        }
+        return out;
+      }
+      function dwhRecoverSave() {
+        return new Promise(function (resolve) {
+          try {
+            if (localStorage.getItem(DWH_LOCAL_PREFIX + "DWH.Save")) return resolve();
+            var req = indexedDB.open("/idbfs");
+            req.onupgradeneeded = function (e) { e.target.transaction.abort(); };   // 없던 DB는 만들지 않는다
+            req.onerror = function () { resolve(); };
+            req.onsuccess = function () {
+              var db = req.result, files = [];
+              if (!db.objectStoreNames.contains("FILE_DATA")) { db.close(); return resolve(); }
+              var cursor = db.transaction("FILE_DATA").objectStore("FILE_DATA").openCursor();
+              cursor.onsuccess = function (e) {
+                var c = e.target.result;
+                if (c) {
+                  if (/\/PlayerPrefs$/.test(c.key) && c.value && c.value.contents) {
+                    try { files.push({ time: +c.value.timestamp || 0, prefs: dwhParsePrefs(c.value.contents) }); } catch (err) {}
+                  }
+                  c.continue();
+                  return;
+                }
+                db.close();
+                files.sort(function (a, b) { return a.time - b.time; });   // 최근 파일이 마지막에 덮어쓴다
+                var found = {};
+                files.forEach(function (f) {
+                  for (var key in f.prefs) if (key === "DWH.Save" || key.indexOf("dwh.") === 0) found[key] = f.prefs[key];
+                });
+                var moved = 0;
+                for (var key in found) {
+                  if (localStorage.getItem(DWH_LOCAL_PREFIX + key) === null) { localStorage.setItem(DWH_LOCAL_PREFIX + key, String(found[key])); moved++; }
+                }
+                if (moved) console.log("[DWH] 이전 빌드 진행을 옮겼습니다 (" + moved + "개)");
+                resolve();
+              };
+              cursor.onerror = function () { db.close(); resolve(); };
+            };
+          } catch (e) { resolve(); }
+        });
+      }
+
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
@@ -232,7 +302,9 @@
           alert(message);
         });
       };
-      document.body.appendChild(script);
+      // 진행 옮기기가 끝나면(최대 3초) 게임을 띄운다
+      Promise.race([dwhRecoverSave(), new Promise(function (r) { setTimeout(r, 3000); })])
+        .then(function () { document.body.appendChild(script); });
     </script>
   </body>
 </html>

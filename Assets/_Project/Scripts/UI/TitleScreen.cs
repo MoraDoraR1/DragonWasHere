@@ -82,6 +82,19 @@ namespace DWH.UI
             continueButton = UiFactory.Button(root, "Continue", UiFactory.Center, new Vector2(0, -310), ButtonSize, UiText.Get("ui_title_continue"), 42,
                 () => actions.Continue?.Invoke(), FrameStyle.ButtonGreen);
 
+            // 도감 · 미니게임: 아직 없는 기능이라 "(예정)"으로 보여 주기만 하고 누를 수 없다 (10-14 사용자 요청)
+            // 글자가 버튼에 꽉 차 보여(영어) 버튼을 키우고, "(예정)"은 아랫줄에 작게, 안쪽 여백을 둔다 (10-14)
+            var soonSize = new Vector2(250, 92);
+            foreach (var (name, key, x) in new[] { ("Collection", "ui_title_collection", -soonSize.x / 2f - 10f), ("MiniGame", "ui_title_minigame", soonSize.x / 2f + 10f) })
+            {
+                var soon = UiFactory.Button(root, name, UiFactory.Center, new Vector2(x, -420), soonSize, UiText.Get(key), 26, () => { }, FrameStyle.ButtonDark);
+                soon.interactable = false;
+                var label = soon.GetComponentInChildren<TMP_Text>();
+                label.margin = new Vector4(18, 8, 18, 8);
+                label.lineSpacing = -12;
+                UiFactory.Fit(label, 16, false);
+            }
+
             // 8. 버전
             UiFactory.Text(root, "Version", UiFactory.BottomLeft, new Vector2(40, 32), new Vector2(500, 44), 26, TextAlignmentOptions.BottomLeft,
                 outline: true).text = UiText.Format("ui_title_version", Application.version);
