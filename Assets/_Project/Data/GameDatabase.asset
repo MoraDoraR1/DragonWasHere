@@ -3606,37 +3606,37 @@ MonoBehaviour:
     tier: 1
     nameStr: item_name_101
     descStr: item_desc_101
-    goldValue: 1
+    goldValue: 2
     resId: res5000001
   - itemId: itm102
     tier: 2
     nameStr: item_name_102
     descStr: item_desc_102
-    goldValue: 5
+    goldValue: 10
     resId: res5000002
   - itemId: itm103
     tier: 3
     nameStr: item_name_103
     descStr: item_desc_103
-    goldValue: 25
+    goldValue: 50
     resId: res5000003
   - itemId: itm104
     tier: 4
     nameStr: item_name_104
     descStr: item_desc_104
-    goldValue: 100
+    goldValue: 200
     resId: res5000004
   - itemId: itm105
     tier: 5
     nameStr: item_name_105
     descStr: item_desc_105
-    goldValue: 500
+    goldValue: 1000
     resId: res5000005
   - itemId: itm106
     tier: 6
     nameStr: item_name_106
     descStr: item_desc_106
-    goldValue: 1000
+    goldValue: 2000
     resId: res5000006
   dropGroups:
   - dropGroup: drp1101

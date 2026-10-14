@@ -327,8 +327,8 @@ namespace DWH.Tests
             var drops = DropPlanner.Expand(db, "drp1302", new System.Random(1));   // 사파이어 4 + 금괴 10
             Assert.AreEqual(14, drops.Count);
             Assert.AreEqual("itm103", drops[0].itemId);
-            Assert.AreEqual(4 * 25 + 10 * 5, DropPlanner.TotalGold(drops));
-            Assert.AreEqual(150, db.DropGroupGold("drp1302"));
+            Assert.AreEqual(4 * 50 + 10 * 10, DropPlanner.TotalGold(drops));   // 단가 2배 (10-14 재화 수급 상향)
+            Assert.AreEqual(300, db.DropGroupGold("drp1302"));
         }
 
         [Test]
