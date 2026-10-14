@@ -122,11 +122,15 @@ namespace DWH.InGame.Dragon
         /// <summary>점프 중 몸통으로 칠 수 있는 공중 유닛 목록 (8.6)</summary>
         public void SetAirTargets(IReadOnlyList<AirUnit> units) => airTargets = units;
 
+        /// <summary>마지막으로 체력을 깎은 쪽 (지표 run_end killed_by). 맞은 적이 없으면 null</summary>
+        public string LastHitBy { get; private set; }
+
         public void TakeHit(double damage, Projectile source)
         {
             // 전투가 끝난 뒤(슬로모션 중)에 날아든 탄은 맞지 않는다. 클리어 직후 쓰러져 보너스 진입이 뒤집히지 않게 한다
             if (!IsAlive || !Controllable) return;
             if (IsParrying) return;
+            LastHitBy = source != null ? source.Shooter : LastHitBy;
             Vitals.TakeDamage(damage);
             Hurt?.Invoke(damage);
         }

@@ -8,6 +8,7 @@ using DWH.InGame.Stage;
 using DWH.InGame.Starter;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace DWH.UI
@@ -21,7 +22,7 @@ namespace DWH.UI
     /// - 정산: 첫 결과 화면 1쪽 (정산 창 전체)
     /// - 강화: 아웃게임에 처음 들어오면 2쪽 (노드 선택 · 오른쪽 상세 창)
     /// - 환생: 환생 탭을 처음 열면 3쪽 (환생 강화 · 환생 포인트 · 액티브 해금 조건)
-    /// 떠 있는 동안 조작·진행을 멈춘다(Time.timeScale 0, 화면 전체가 클릭을 막음). "다음"으로 넘기고 마지막 쪽의 X로 닫는다. 오른쪽 위 SKIP은 지금 튜토리얼 전체를 건너뛴다.
+    /// 떠 있는 동안 조작·진행을 멈춘다(Time.timeScale 0, 화면 전체가 클릭을 막음). "다음"(또는 Space)으로 넘기고 마지막 쪽의 X로 닫는다. 오른쪽 위 SKIP은 지금 튜토리얼 전체를 건너뛴다.
     /// 끝낸 튜토리얼은 SaveData.tutorialsDone에 남는다. 테스트·봇(타이틀 없이 시작)은 GameManager.TutorialsEnabled가 꺼져 있다.
     /// </summary>
     public class TutorialOverlay : MonoBehaviour
@@ -70,6 +71,12 @@ namespace DWH.UI
         float sinceLanding;
 
         public bool IsOpen => card != null && frame.gameObject.activeSelf;
+        /// <summary>
+        /// 이번 프레임의 Space를 튜토리얼이 "다음"으로 썼는지. 마지막 쪽을 Space로 닫은 그 프레임에
+        /// 같은 Space가 모드 바꾸기·출격·결과 확인·스타터 입력으로 한 번 더 쓰이지 않게 한다
+        /// </summary>
+        public static bool UsedKeyThisFrame => usedKeyFrame == Time.frameCount;
+        static int usedKeyFrame = -1;
         /// <summary>지금 보이는 쪽의 문구 키 (테스트용)</summary>
         public string CurrentKey => IsOpen ? pages[index].textKey : null;
 
@@ -178,7 +185,10 @@ namespace DWH.UI
         void ShowPage()
         {
             var page = pages[index];
+            // 마우스로 누른 "다음" 버튼이 선택된 채 남으면 키보드 제출과 Space가 겹쳐 두 쪽이 넘어갈 수 있다
+            if (UnityEngine.EventSystems.EventSystem.current != null) UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
             page.onShow?.Invoke();
+            Core.Analytics.TutorialPageShown();
             body.text = UiText.Get(page.textKey);
             note.gameObject.SetActive(page.noteKey != null);
             if (page.noteKey != null) noteText.text = UiText.Get(page.noteKey);
@@ -195,6 +205,7 @@ namespace DWH.UI
         public void OnNext()
         {
             if (!IsOpen) return;
+            Core.Analytics.TutorialStep(db, game.Save, StepId(pages[index]), false);
             if (index < pages.Count - 1)
             {
                 index++;
@@ -208,6 +219,7 @@ namespace DWH.UI
         public void OnSkip()
         {
             if (!IsOpen) return;
+            Core.Analytics.TutorialStep(db, game.Save, StepId(pages[index]), true);
             string id = skipId;
             onDone = null;
             Close();
@@ -238,6 +250,13 @@ namespace DWH.UI
             if (IsOpen)
             {
                 Layout();   // 강조 대상이 움직이거나(드래곤) 화면이 늦게 만들어져도 따라간다
+                // Space = "다음" (마지막 쪽이면 닫기), 모든 튜토리얼 공통 (10-14 사용자 요청)
+                var keyboard = Keyboard.current;
+                if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+                {
+                    usedKeyFrame = Time.frameCount;
+                    OnNext();
+                }
                 return;
             }
             if (game.IsPaused || (game.Settings != null && game.Settings.IsOpen)) return;
@@ -263,7 +282,7 @@ namespace DWH.UI
                             Open(InGame, new[]
                             {
                                 P("ui_tutorial_ingame_1", DragonBody),
-                                P("ui_tutorial_ingame_2", AimArea, "ui_tutorial_ingame_2b", GroundZone),
+                                P("ui_tutorial_ingame_2", null, "ui_tutorial_ingame_2b", GroundZone),
                                 P("ui_tutorial_ingame_3", () => Ui("HUD", "Mode"),
                                     "ui_tutorial_ingame_3b", () => Ui("HUD", "ActiveMeteor", "ActiveHurricane", "ActiveEarthquake")),
                                 P("ui_tutorial_ingame_4", () => Ui("HUD", "HpChip", "HpBar", "StaminaChip", "StaminaBar")),
@@ -300,6 +319,9 @@ namespace DWH.UI
                     break;
             }
         }
+
+        /// <summary>지표 tutorial_step의 step_id: 문구 키에서 앞부분을 뺀 것 (예: ingame_2)</summary>
+        static string StepId(Page page) => page.textKey.Replace("ui_tutorial_", "");
 
         static Page P(string key, Func<Rect?> target = null, string noteKey = null, Func<Rect?> noteTarget = null) =>
             new() { textKey = key, target = target, noteKey = noteKey, noteTarget = noteTarget };
@@ -342,17 +364,6 @@ namespace DWH.UI
             if (dragon == null) return null;
             var box = dragon.Hitbox;
             return World(box.min, box.max);
-        }
-
-        /// <summary>마우스 유도: 드래곤 머리 앞 (조준 표시가 뜨는 곳)</summary>
-        Rect? AimArea()
-        {
-            var dragon = game.Battle != null ? game.Battle.Dragon : null;
-            if (dragon == null || dragon.Animator == null) return null;
-            Vector2 mouth = dragon.Animator.Mouth;
-            float size = dragon.Hitbox.height * 0.8f;
-            var center = mouth + new Vector2(dragon.Facing * size, size * 0.5f);
-            return World(center - Vector2.one * size / 2, center + Vector2.one * size / 2);
         }
 
         /// <summary>근경: 마우스 유도에서 커서를 무시하는 아래 영역 (건물 HP바 아래 ~ 화면 아래, 화면 가로 전체)</summary>

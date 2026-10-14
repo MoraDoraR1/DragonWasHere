@@ -196,6 +196,12 @@ namespace DWH.UI
 
         public void SetTab(int index)
         {
+            // 지표 rebirth_view: 환생 탭을 열면 open, 환생하지 않고 다른 탭으로 가면 cancel
+            if (save != null && index != tab)
+            {
+                if (index == 1) Core.Analytics.RebirthViewOpen(db, save, Rebirth.PointsIfRebirthNow(db, save));
+                else if (tab == 1) Core.Analytics.RebirthViewClosed(db, save, Rebirth.PointsIfRebirthNow(db, save));
+            }
             tab = index;
             for (int i = 0; i < tabs.Count; i++)
             {
@@ -368,7 +374,11 @@ namespace DWH.UI
             Refresh();
         }
 
-        public void Hide() => gameObject.SetActive(false);
+        public void Hide()
+        {
+            if (tab == 1 && save != null) Core.Analytics.RebirthViewClosed(db, save, Rebirth.PointsIfRebirthNow(db, save));   // 환생 탭을 열어 둔 채 출격
+            gameObject.SetActive(false);
+        }
 
         public void SetQuantity(int index)
         {
@@ -396,7 +406,12 @@ namespace DWH.UI
         {
             // 첫 탭은 설명, 같은 노드를 다시 누르면 구매 (터치 대응)
             if (selected == node) BuySelected();
-            else Select(node);
+            else
+            {
+                // 지표 nodes_viewed: 유저가 직접 고른 노드만 센다 (처음 화면·튜토리얼·언어 바꾸기로 다시 고르는 것은 빼고)
+                Core.Analytics.NodeViewed();
+                Select(node);
+            }
         }
 
         void BuySelected()

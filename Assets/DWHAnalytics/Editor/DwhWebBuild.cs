@@ -56,6 +56,11 @@ namespace DWH.Analytics.Editor
                 return false;
             }
 
+            // 페이지가 직접 보내는 지표(game_load·client_error)도 팀 테스트를 거를 수 있게 is_dev를 index.html에 넣는다 (10-14)
+            string indexPath = Path.Combine(outDir, "index.html");
+            if (File.Exists(indexPath))
+                File.WriteAllText(indexPath, File.ReadAllText(indexPath).Replace("__DWH_IS_DEV__", dev ? "1" : "0"));
+
             if (!File.Exists(Path.Combine(outDir, "firebase-config.js")))
                 Debug.LogWarning("[DWH Build] firebase-config.js가 없습니다. WebGL 템플릿이 DragonFirebase인지 확인하세요.");
 

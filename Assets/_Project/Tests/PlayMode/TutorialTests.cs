@@ -109,6 +109,10 @@ namespace DWH.Tests
             Assert.AreEqual("ui_tutorial_starter_3", Tutorial.CurrentKey);
             yield return ShotAndNext("tutorial_starter_3");
             Assert.IsTrue(manager.Save.TutorialDone(TutorialOverlay.Starter));
+            // 지표 (Ver03, 10-14): 튜토리얼 쪽마다 tutorial_step, 스타터 판정 끝에 starter_end
+            Assert.Contains("tutorial_step", DWH.Core.Analytics.Recent);
+            for (int i = 0; i < FrameRate * 10 && manager.Battle.InStarter; i++) yield return null;
+            Assert.Contains("starter_end", DWH.Core.Analytics.Recent);
 
             // 인게임: 착지 2초 뒤 4쪽
             yield return WaitOpen("ui_tutorial_ingame_1", 20);

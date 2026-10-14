@@ -75,7 +75,9 @@ namespace DWH.InGame.Buildings
             // 전투 오브젝트 아래에 두어 전투를 정리할 때 날아가던 탄도 함께 지운다
             var go = ProjectileVisual.Create(building.transform.parent, db, art, ProjectileVisual.BuildingConst, origin,
                 projectileSprite, GrayboxColors.Projectile, size);
-            go.AddComponent<Projectile>().Launch(direction, speed, damage, groundShot, dragon, view);
+            var shot = go.AddComponent<Projectile>();
+            shot.Shooter = building != null && building.Type == BuildingType.Landmark ? "landmark" : "building";
+            shot.Launch(direction, speed, damage, groundShot, dragon, view);
             ProjectileVisual.Orient(go, direction);
         }
     }

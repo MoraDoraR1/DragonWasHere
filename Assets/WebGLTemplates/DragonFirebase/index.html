@@ -83,6 +83,42 @@
         addEventListener("pageshow", function (e) { if (e.persisted) sent = false; });
         return tracker;
       })();
+
+      // ── 페이지 지표 (지표 계획 Ver03, 10-14) ──
+      // game_load: 로딩 시작·완료·오류, 로딩이 끝나기 전에 닫으면 abandon(표본). progress는 %, duration_sec는 시작부터.
+      // client_error: JS 오류(js_error)·처리 안 된 Promise(promise)·그래픽 손실(webgl_lost). 같은 오류 한 번, 세션당 5번까지.
+      // 게임이 아직 안 떠서 공통 파라미터가 없으므로 build_version·is_dev(빌드할 때 넣음)를 직접 붙인다.
+      var DWH_BUILD_VERSION = {{{ JSON.stringify(PRODUCT_VERSION) }}};
+      var DWH_PAGE_IS_DEV = "__DWH_IS_DEV__" === "1";
+      var pageMetrics = (function () {
+        var startedAt = Date.now(), done = false, abandoned = false, sentErrors = {}, errorCount = 0;
+        function log(name, p) {
+          p.build_version = DWH_BUILD_VERSION;
+          p.is_dev = DWH_PAGE_IS_DEV ? 1 : 0;
+          if (DWH_PAGE_IS_DEV) p.debug_mode = true;
+          window.DwhAnalyticsBridge._call("log", [name, p]);
+        }
+        var m = {
+          progress: 0,
+          load: function (step) {
+            if (step === "complete" || step === "error") done = true;
+            log("game_load", { load_step: step, progress: Math.round(m.progress * 100), duration_sec: Math.round((Date.now() - startedAt) / 1000) });
+          },
+          error: function (type, message) {
+            var key = type + "|" + message;
+            if (errorCount >= 5 || sentErrors[key]) return;
+            sentErrors[key] = true;
+            errorCount++;
+            log("client_error", { error_type: type, scene: (exitTracker.context && exitTracker.context.scene) || "title", message: String(message || "").substring(0, 100) });
+          }
+        };
+        addEventListener("error", function (e) { m.error("js_error", e.message || (e.target && e.target.src) || "error"); }, true);
+        addEventListener("unhandledrejection", function (e) { m.error("promise", e.reason && (e.reason.message || e.reason) || "rejection"); });
+        addEventListener("pagehide", function () {
+          if (!done && !abandoned) { abandoned = true; m.load("abandon"); }
+        });
+        return m;
+      })();
     </script>
     <script type="module">
       const FIREBASE_VERSION = "10.12.2";
@@ -292,16 +328,24 @@
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
+          pageMetrics.progress = progress;
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
         }).then((unityInstance) => {
+          pageMetrics.progress = 1;
+          pageMetrics.load("complete");
           document.querySelector("#unity-loading-bar").style.display = "none";
           document.querySelector("#unity-fullscreen-button").onclick = () => {
             unityInstance.SetFullscreen(1);
           };
         }).catch((message) => {
+          pageMetrics.load("error");
+          pageMetrics.error("js_error", message);
           alert(message);
         });
       };
+      canvas.addEventListener("webglcontextlost", function () { pageMetrics.error("webgl_lost", "webglcontextlost"); });
+      pageMetrics.load("start");
+
       // 진행 옮기기가 끝나면(최대 3초) 게임을 띄운다
       Promise.race([dwhRecoverSave(), new Promise(function (r) { setTimeout(r, 3000); })])
         .then(function () { document.body.appendChild(script); });

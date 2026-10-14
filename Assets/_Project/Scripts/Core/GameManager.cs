@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DWH.Analytics;
 using DWH.Data;
 using DWH.InGame;
 using DWH.InGame.Dragon;
@@ -98,7 +99,9 @@ namespace DWH.Core
             BuildScreens();
             TutorialsEnabled = showTitle;
             if (tutorial == null) tutorial = TutorialOverlay.Create(this, database);
-            Analytics.SessionStart(database, Save);
+            Analytics.SessionStart(database, Save, HasProgress);
+            // 실제 실행에서만 Unity 예외를 client_error로 보낸다 (테스트는 일부러 내는 오류가 있다)
+            if (showTitle) Analytics.WatchExceptions();
             if (showTitle) EnterTitle();
             else EnterOutGame();
         }
@@ -123,6 +126,18 @@ namespace DWH.Core
             m.MouseMode = !m.MouseMode;
             Save.settings.mouseGuide = m.MouseMode;
             SaveSystem.Save(storage, Save);
+        }
+
+        static readonly List<UnityEngine.EventSystems.RaycastResult> PointerHits = new();
+
+        /// <summary>마우스가 버튼 같은 조작 UI 위에 있는지</summary>
+        static bool PointerOverControl()
+        {
+            var events = UnityEngine.EventSystems.EventSystem.current;
+            if (events == null || Mouse.current == null) return false;
+            PointerHits.Clear();
+            events.RaycastAll(new UnityEngine.EventSystems.PointerEventData(events) { position = Mouse.current.position.ReadValue() }, PointerHits);
+            return PointerHits.Any(h => h.gameObject.GetComponentInParent<UnityEngine.UI.Selectable>() != null);
         }
 
         /// <summary>지금 저장 (튜토리얼 완료 등)</summary>
@@ -173,6 +188,7 @@ namespace DWH.Core
             resultScreen.Hide();
             outGame.Hide();
             title.Show(HasProgress);
+            Analytics.TitleShown();
             SetState(GameState.Title);
         }
 
@@ -182,6 +198,7 @@ namespace DWH.Core
         public void ContinueGame()
         {
             if (State != GameState.Title || !HasProgress) return;
+            Analytics.TitleStart(database, Save);
             title.Hide();
             EnterOutGame();
         }
@@ -193,6 +210,8 @@ namespace DWH.Core
         public void StartNewGame()
         {
             if (State != GameState.Title) return;
+            Analytics.TitleStart(database, Save);
+            Analytics.TutorialReset();
             if (HasProgress)
             {
                 var keep = Save;
@@ -269,6 +288,12 @@ namespace DWH.Core
             if (guideInput is IGuideModeInput modeInput) modeInput.MouseMode = Save.settings.mouseGuide;
             Battle = BattleController.Create(database, art, stageId, view, guideInput, mode, carriedVitals, sessionStats, starter);
             Battle.Ended += OnBattleEnded;
+            // 지표 starter_end: 판정까지 끝난 스타터만 (세션 끝내기로 그만둔 스타터는 보내지 않는다)
+            if (Battle.Starter != null)
+                Battle.Starter.Finished += s =>
+                {
+                    if (!s.Aborted && s.Grade is StarterGrade grade) Analytics.StarterEnd(database, Save, grade, s.HitDamage, s.JudgedSeconds);
+                };
             Battle.Actives.Configure(activeLevels, sessionUses);
             // 정산 후에는 보유 골드에 세션 골드가 더해지므로, HUD는 출발 시점 보유량 + 앞 구간 골드 + 현재 구간 획득량으로 표시한다
             double shown = goldAtDeparture + goldBefore;
@@ -278,6 +303,7 @@ namespace DWH.Core
         }
 
         Func<BattleHud> rebuildHud;
+        float bonusStartTime;
 
         void OnBattleEnded(BattleController battle)
         {
@@ -297,6 +323,9 @@ namespace DWH.Core
                     maxCombo = battle.Drops.MaxCombo,
                     hpLeft = battle.Dragon.Vitals.Hp,
                     staminaLeft = battle.Dragon.Vitals.Stamina,
+                    // 지표 killed_by: 쓰러졌으면 마지막으로 맞은 쪽, 기력이 다했으면 stamina, 클리어·세션 끝내기면 없음
+                    killedBy = cleared || battle.Retired ? null
+                        : battle.Dragon.Vitals.IsDead ? battle.Dragon.LastHitBy ?? AnalyticsValues.KilledByBuilding : AnalyticsValues.KilledByStamina,
                 };
 
                 // 보물 산더미: 클리어 시 이번 스테이지 골드 × v 추가 (효과 12)
@@ -313,6 +342,8 @@ namespace DWH.Core
                     var vitals = battle.Dragon.Vitals;
                     CloseBattle();
                     StartBattle(LastResult.stageId, BattleMode.Bonus, vitals, LastResult.earnedGold);
+                    bonusStartTime = Time.time;
+                    Analytics.BonusStart(database, Save);
                     SetState(GameState.Bonus);
                     return;
                 }
@@ -320,6 +351,7 @@ namespace DWH.Core
             else
             {
                 LastResult.bonusGold = battle.Drops.CollectedGold;
+                LastResult.bonusSeconds = Time.time - bonusStartTime;
                 LastResult.bonusDestroyed = battle.DestroyedCount;
                 LastResult.bonusTotal = battle.Buildings.Count;
                 LastResult.maxCombo = Math.Max(LastResult.maxCombo, battle.Drops.MaxCombo);
@@ -332,7 +364,7 @@ namespace DWH.Core
             Save.playCount++;
             SaveSystem.Save(storage, Save);
 
-            Analytics.RunEnd(database, Save, LastResult);
+            Analytics.RunEnd(database, Save, LastResult, Upgrades.AffordableCount(), guideInput is IGuideModeInput mode && mode.MouseMode);
             if (!rebirthBefore && Rebirth.IsUnlocked(database, Save)) Analytics.RebirthUnlocked(database, Save);
             if (LastResult.gameCompleted) Analytics.GameComplete(database, Save);
 
@@ -398,8 +430,10 @@ namespace DWH.Core
         /// <summary>한/영 전환. 화면을 다시 만든다. 전투·일시정지·결과 화면에서도 된다 (환경설정, 10-13 사용자 요청)</summary>
         public void ToggleLanguage()
         {
-            Localization.Current = Localization.Current == Language.Ko ? Language.En : Language.Ko;
+            var before = Localization.Current;
+            Localization.Current = before == Language.Ko ? Language.En : Language.Ko;
             Save.language = Localization.Code(Localization.Current);
+            Analytics.LanguageChange(database, Save, before);
             SaveSystem.Save(storage, Save);
             int tab = outGame.Tab;
             bool settingsOpen = settings.IsOpen;
@@ -475,9 +509,17 @@ namespace DWH.Core
 
         void Update()
         {
+            // 지표: 판 동안 입력 수·프레임(run_end), 타이틀에서 버튼이 아닌 곳 클릭(title_start misclicks)
+            if (State is GameState.Stage or GameState.Bonus && !IsPaused) Analytics.RunTick();
+            // 지표: 이탈(page_exit) 순간의 판 진행·둥지 상태
+            if (IsInitialized) Analytics.ExitTick(State, Battle, Time.time - departTime);
+            if (State == GameState.Title && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && !PointerOverControl())
+                Analytics.TitleMisclick();
+
             var keyboard = Keyboard.current;
             if (keyboard == null) return;
-            if (tutorial != null && tutorial.IsOpen) return;   // 튜토리얼 중에는 단축키(일시정지·출격·확인)를 막는다
+            // 튜토리얼 중에는 단축키(일시정지·출격·확인)를 막는다. Space로 튜토리얼을 닫은 프레임도 막는다
+            if ((tutorial != null && tutorial.IsOpen) || TutorialOverlay.UsedKeyThisFrame) return;
             bool escape = keyboard.escapeKey.wasPressedThisFrame;
             // 열린 팝업이 있으면 Esc는 팝업부터 닫는다
             if (escape && settings.IsOpen)

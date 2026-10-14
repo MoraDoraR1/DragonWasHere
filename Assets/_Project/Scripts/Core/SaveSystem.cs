@@ -54,7 +54,8 @@ namespace DWH.Core
 
         public void Write(string json)
         {
-            LocalSet(LocalKey, json);
+            // localStorage가 막혔으면(사파리 개인정보 모드 등) 지표 client_error로 알린다. PlayerPrefs에는 그대로 저장한다
+            if (!LocalSet(LocalKey, json)) Analytics.ClientError(DWH.Analytics.AnalyticsValues.ErrorSaveFailed, "localStorage");
             fallback.Write(json);
         }
 
@@ -69,11 +70,11 @@ namespace DWH.Core
         [System.Runtime.InteropServices.DllImport("__Internal")] static extern int DwhStorage_Set(string key, string value);
         [System.Runtime.InteropServices.DllImport("__Internal")] static extern void DwhStorage_Remove(string key);
         static string LocalGet(string key) => DwhStorage_Get(key);
-        static void LocalSet(string key, string value) => DwhStorage_Set(key, value);
+        static bool LocalSet(string key, string value) => DwhStorage_Set(key, value) != 0;
         static void LocalRemove(string key) => DwhStorage_Remove(key);
 #else
         static string LocalGet(string key) => null;
-        static void LocalSet(string key, string value) { }
+        static bool LocalSet(string key, string value) => true;
         static void LocalRemove(string key) { }
 #endif
     }

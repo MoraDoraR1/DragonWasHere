@@ -36,6 +36,8 @@ namespace DWH.InGame.Starter
         {
             if (Time.timeScale <= 0) return false;
             var keyboard = Keyboard.current;
+            // Space로 튜토리얼을 닫은 프레임의 Space는 스타터 입력이 아니다
+            if (TutorialOverlay.UsedKeyThisFrame) return false;
             if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame) return true;
             var mouse = Mouse.current;
             if (mouse == null || !mouse.leftButton.wasPressedThisFrame) return false;
@@ -90,6 +92,10 @@ namespace DWH.InGame.Starter
         public Building Target { get; private set; }
         public float TargetX { get; private set; }
         public int HitCount { get; private set; }
+        /// <summary>낙하 타격 한 번의 피해량 (지표 starter_end damage). 건물에 안 떨어지면 0</summary>
+        public double HitDamage { get; private set; }
+        /// <summary>스타터 시작부터 판정 끝까지 걸린 시간 (지표 starter_end starter_sec)</summary>
+        public float JudgedSeconds { get; private set; }
         /// <summary>판정한 순간의 바 위치 (테스트용)</summary>
         public float JudgedBar { get; private set; }
         public event Action<StageStarter> Finished;
@@ -149,6 +155,7 @@ namespace DWH.InGame.Starter
 
         IEnumerator Run()
         {
+            float startedAt = Time.time;
             var dragon = battle.Dragon;
             float left = battle.StageLeft, right = battle.StageRight;
             float centerX = (left + right) / 2f;
@@ -227,6 +234,7 @@ namespace DWH.InGame.Starter
                 yield return null;
             }
             Grade = Gauge.Judge();
+            JudgedSeconds = Time.time - startedAt;
             JudgedBar = Gauge.Bar;
 
             // 4) 잠깐 멈춤 → 결과: 바를 멈춘 채 판정 이미지를 보여 준다 → 이탈 → 낙하 타격
@@ -417,6 +425,7 @@ namespace DWH.InGame.Starter
                     double amount = Damage.Compute(battle.Stats.AttackPower, multiplier, false, 1);
                     foreach (var b in hits) b.TakeDamage(amount, false);
                     HitCount = hits.Count;
+                    HitDamage = amount;
                 }
             }
             SkillFx.Burst(transform, db, art, FxIds.Landing, new Vector2(TargetX, battle.Dragon.transform.position.y + 0.6f), multiplier > 0 ? 3f : 1.5f, new Color(1f, 0.8f, 0.4f, 0.8f));
@@ -430,9 +439,13 @@ namespace DWH.InGame.Starter
         /// 스타터를 중간에 그만둔다 (일시정지 "세션 끝내기", 10-14). 연출을 멈추고 카메라 크기·따라가기, 드래곤 크기·높이를 원래대로 돌린 뒤
         /// 끝난 것으로 처리한다. 판정·낙하 타격은 하지 않는다
         /// </summary>
+        /// <summary>중간에 그만뒀다 (지표 starter_end를 보내지 않는다)</summary>
+        public bool Aborted { get; private set; }
+
         public void Abort()
         {
             if (Phase == StarterPhase.Done) return;
+            Aborted = true;
             StopAllCoroutines();
             var dragon = battle.Dragon;
             if (savedScale != Vector3.zero) dragon.transform.localScale = savedScale;

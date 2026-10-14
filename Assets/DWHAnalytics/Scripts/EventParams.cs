@@ -35,6 +35,13 @@ namespace DWH.Analytics
             return this;
         }
 
+        /// <summary>다른 묶음의 값을 모두 넣는다 (같은 키는 덮어쓴다)</summary>
+        public EventParams AddAll(EventParams other)
+        {
+            if (other != null) foreach (var kv in other._items) Put(kv.Key, kv.Value);
+            return this;
+        }
+
         public bool Has(string key)
         {
             foreach (var kv in _items) if (kv.Key == key) return true;

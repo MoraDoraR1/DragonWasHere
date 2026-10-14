@@ -15,6 +15,8 @@ namespace DWH.InGame.Buildings
 
         /// <summary>지면 높이로 날아가는 탄. 점프 중인 드래곤은 맞지 않는다</summary>
         public bool IsGroundShot { get; private set; }
+        /// <summary>쏜 쪽 (지표 run_end killed_by: building/landmark/air)</summary>
+        public string Shooter { get; set; } = "building";
 
         public void Launch(Vector2 direction, float speed, double damageAmount, bool groundShot, DragonController dragon, Camera camera)
         {

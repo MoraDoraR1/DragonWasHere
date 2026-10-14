@@ -23,6 +23,8 @@ namespace DWH.Analytics
         public static string StageId = "1-1";
         public static int RebirthCount;
         public static int GrowthStage = 1;
+        /// <summary>지금 언어 코드 (ko/en). 비어 있으면 보내지 않는다</summary>
+        public static string Lang = "";
 
         /// <summary>지금 화면 (AnalyticsValues.Scene*). SetScene으로 바꾼다. 브라우저가 page_exit에 쓴다.</summary>
         public static string Scene { get; private set; } = AnalyticsValues.SceneTitle;
@@ -94,14 +96,16 @@ namespace DWH.Analytics
         }
 
         /// <summary>세이브를 읽은 직후 한 번 호출. 한 실행에 한 번만 보낸다.</summary>
-        public static void StartSession(string maxStage)
+        /// <param name="hasSave">이어할 기록이 있는지 (지표 Ver03 has_save)</param>
+        public static void StartSession(string maxStage, bool hasSave = false)
         {
             if (_sessionStarted) return;
             _sessionStarted = true;
             SetUserProperty(AnalyticsParams.MaxStage, maxStage);
             Log(AnalyticsEvents.GameSessionStart, new EventParams()
                 .Add(AnalyticsParams.TotalPlaytimeSec, Mathf.FloorToInt(TotalPlaytimeSec))
-                .Add(AnalyticsParams.MaxStage, maxStage));
+                .Add(AnalyticsParams.MaxStage, maxStage)
+                .Add(AnalyticsParams.HasSave, hasSave));
         }
 
         public static void Log(string eventName, EventParams p = null)
@@ -115,6 +119,7 @@ namespace DWH.Analytics
 
             p ??= new EventParams();
             if (!p.Has(AnalyticsParams.StageId)) p.Add(AnalyticsParams.StageId, StageId);
+            if (!string.IsNullOrEmpty(Lang)) p.Add(AnalyticsParams.Lang, Lang);
             p.Add(AnalyticsParams.RebirthCount, RebirthCount)
              .Add(AnalyticsParams.GrowthStage, GrowthStage)
              .Add(AnalyticsParams.SessionIndex, SessionIndex)
@@ -140,15 +145,30 @@ namespace DWH.Analytics
             PushContext();
         }
 
-        /// <summary>page_exit에 붙일 공통 파라미터 + 지금 화면. 이벤트를 보낼 때마다, 화면이 바뀔 때마다 갱신한다.</summary>
-        public static EventParams ExitContext() => new EventParams()
-            .Add(AnalyticsParams.Scene, Scene)
-            .Add(AnalyticsParams.StageId, StageId)
-            .Add(AnalyticsParams.RebirthCount, RebirthCount)
-            .Add(AnalyticsParams.GrowthStage, GrowthStage)
-            .Add(AnalyticsParams.SessionIndex, SessionIndex)
-            .Add(AnalyticsParams.BuildVersion, BuildVersion)
-            .Add(AnalyticsParams.IsDev, IsDev);
+        /// <summary>page_exit에 붙일 공통 파라미터 + 지금 화면 + 이탈 순간 상태. 이벤트를 보낼 때마다, 화면이 바뀔 때마다 갱신한다.</summary>
+        public static EventParams ExitContext()
+        {
+            var p = new EventParams()
+                .Add(AnalyticsParams.Scene, Scene)
+                .Add(AnalyticsParams.StageId, StageId)
+                .Add(AnalyticsParams.RebirthCount, RebirthCount)
+                .Add(AnalyticsParams.GrowthStage, GrowthStage)
+                .Add(AnalyticsParams.SessionIndex, SessionIndex)
+                .Add(AnalyticsParams.BuildVersion, BuildVersion)
+                .Add(AnalyticsParams.IsDev, IsDev);
+            if (!string.IsNullOrEmpty(Lang)) p.Add(AnalyticsParams.Lang, Lang);
+            return p.AddAll(ExitState);
+        }
+
+        /// <summary>page_exit에 덧붙일 이탈 순간 상태 (전투 진행·둥지 등). SetExitState로 바꾼다</summary>
+        public static EventParams ExitState { get; private set; }
+
+        /// <summary>이탈 순간 상태를 바꾸고 브라우저에 넘긴다 (게임이 1초마다·화면이 바뀔 때 부른다)</summary>
+        public static void SetExitState(EventParams state)
+        {
+            ExitState = state;
+            PushContext();
+        }
 
         static void PushContext()
         {

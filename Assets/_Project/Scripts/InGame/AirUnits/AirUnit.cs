@@ -185,7 +185,9 @@ namespace DWH.InGame.AirUnits
                 bulletSprite, GrayboxColors.AirProjectile, shotSize);
             // 드래곤의 현재 위치를 조준한 대각선 탄. 지면 탄이 아니라 점프로 피할 수 없다(패링은 된다)
             var aim = dragon.Hitbox.center - origin;
-            go.AddComponent<Projectile>().Launch(aim, shotSpeed, AttackDamage, false, dragon, view);
+            var shot = go.AddComponent<Projectile>();
+            shot.Shooter = "air";
+            shot.Launch(aim, shotSpeed, AttackDamage, false, dragon, view);
             ProjectileVisual.Orient(go, aim);
         }
     }

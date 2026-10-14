@@ -19,6 +19,10 @@ namespace DWH.Core
         public int destroyedBuildings;
         public int totalBuildings;
         public double bonusGold;
+        /// <summary>보너스 스테이지에 머문 시간 (지표 run_end bonus_sec)</summary>
+        public float bonusSeconds;
+        /// <summary>마지막으로 체력을 깎은 쪽 building/landmark/air, 기력이 다했으면 stamina (지표 run_end killed_by). 클리어면 null</summary>
+        public string killedBy;
         public int bonusDestroyed;
         public int bonusTotal;
         /// <summary>보물 산더미: 클리어 시 더해 준 골드 (earnedGold에 포함)</summary>
