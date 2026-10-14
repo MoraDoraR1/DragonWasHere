@@ -1876,7 +1876,7 @@ MonoBehaviour:
     stageId: stg302
     buildingType: 1
     count: 20
-    hp: 2835
+    hp: 1400
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -1888,7 +1888,7 @@ MonoBehaviour:
     stageId: stg302
     buildingType: 2
     count: 7
-    hp: 1598
+    hp: 800
     atk: 8
     atkSpeed: 1
     atkRange: 400
@@ -2008,7 +2008,7 @@ MonoBehaviour:
     stageId: stg401
     buildingType: 1
     count: 21
-    hp: 864
+    hp: 1150
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2020,7 +2020,7 @@ MonoBehaviour:
     stageId: stg401
     buildingType: 2
     count: 7
-    hp: 449
+    hp: 600
     atk: 23
     atkSpeed: 1
     atkRange: 400
@@ -2032,7 +2032,7 @@ MonoBehaviour:
     stageId: stg401
     buildingType: 4
     count: 16
-    hp: 1440
+    hp: 1900
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2044,7 +2044,7 @@ MonoBehaviour:
     stageId: stg402
     buildingType: 1
     count: 24
-    hp: 5880
+    hp: 2270
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2056,7 +2056,7 @@ MonoBehaviour:
     stageId: stg402
     buildingType: 2
     count: 9
-    hp: 3975
+    hp: 1530
     atk: 140
     atkSpeed: 1
     atkRange: 400
@@ -2068,7 +2068,7 @@ MonoBehaviour:
     stageId: stg402
     buildingType: 3
     count: 1
-    hp: 28665
+    hp: 11100
     atk: 58
     atkSpeed: 1
     atkRange: 600
@@ -2080,7 +2080,7 @@ MonoBehaviour:
     stageId: stg402
     buildingType: 4
     count: 17
-    hp: 8820
+    hp: 3400
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2176,7 +2176,7 @@ MonoBehaviour:
     stageId: stg501
     buildingType: 1
     count: 25
-    hp: 6480
+    hp: 5370
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2188,7 +2188,7 @@ MonoBehaviour:
     stageId: stg501
     buildingType: 2
     count: 9
-    hp: 3370
+    hp: 2790
     atk: 47
     atkSpeed: 1
     atkRange: 400
@@ -2200,7 +2200,7 @@ MonoBehaviour:
     stageId: stg501
     buildingType: 4
     count: 18
-    hp: 10800
+    hp: 8940
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2212,7 +2212,7 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 1
     count: 28
-    hp: 53200
+    hp: 18200
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2224,7 +2224,7 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 2
     count: 11
-    hp: 35963
+    hp: 12300
     atk: 112
     atkSpeed: 1
     atkRange: 400
@@ -2236,7 +2236,7 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 3
     count: 1
-    hp: 103740
+    hp: 35500
     atk: 34
     atkSpeed: 1
     atkRange: 600
@@ -2248,7 +2248,7 @@ MonoBehaviour:
     stageId: stg502
     buildingType: 4
     count: 19
-    hp: 10500
+    hp: 3590
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2344,7 +2344,7 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 1
     count: 29
-    hp: 16830
+    hp: 25700
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2356,7 +2356,7 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 2
     count: 11
-    hp: 8752
+    hp: 13300
     atk: 96
     atkSpeed: 1
     atkRange: 400
@@ -2368,7 +2368,7 @@ MonoBehaviour:
     stageId: stg601
     buildingType: 4
     count: 20
-    hp: 28050
+    hp: 42800
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2380,7 +2380,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 1
     count: 32
-    hp: 100000
+    hp: 52200
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2392,7 +2392,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 2
     count: 13
-    hp: 67600
+    hp: 35300
     atk: 192
     atkSpeed: 1
     atkRange: 400
@@ -2404,7 +2404,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 3
     count: 1
-    hp: 585000
+    hp: 305000
     atk: 180
     atkSpeed: 1
     atkRange: 600
@@ -2416,7 +2416,7 @@ MonoBehaviour:
     stageId: stg602
     buildingType: 4
     count: 21
-    hp: 150000
+    hp: 78300
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2512,7 +2512,7 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 1
     count: 33
-    hp: 112500
+    hp: 125000
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -2524,7 +2524,7 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 2
     count: 13
-    hp: 58500
+    hp: 64800
     atk: 199
     atkSpeed: 1
     atkRange: 400
@@ -2536,7 +2536,7 @@ MonoBehaviour:
     stageId: stg701
     buildingType: 4
     count: 22
-    hp: 187500
+    hp: 208000
     atk: 0
     atkSpeed: 0
     atkRange: NaN
@@ -3111,7 +3111,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_411
-    hp: 5880
+    hp: 2270
     atk: 15
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3122,7 +3122,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_411
-    hp: 5880
+    hp: 2270
     atk: 15
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3133,7 +3133,7 @@ MonoBehaviour:
     slot: 2
     spawnSec: 25
     nameStr: unit_name_412
-    hp: 10192
+    hp: 3930
     atk: 24
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3210,7 +3210,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_511
-    hp: 7200
+    hp: 5960
     atk: 18
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3221,7 +3221,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_511
-    hp: 7200
+    hp: 5960
     atk: 18
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3232,7 +3232,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 25
     nameStr: unit_name_511
-    hp: 7200
+    hp: 5960
     atk: 18
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3243,7 +3243,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_511
-    hp: 16800
+    hp: 5740
     atk: 46
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3254,7 +3254,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_511
-    hp: 16800
+    hp: 5740
     atk: 46
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3265,7 +3265,7 @@ MonoBehaviour:
     slot: 2
     spawnSec: 25
     nameStr: unit_name_512
-    hp: 29120
+    hp: 9950
     atk: 75
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3342,7 +3342,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_611
-    hp: 20400
+    hp: 31100
     atk: 37
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3353,7 +3353,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_611
-    hp: 20400
+    hp: 31100
     atk: 37
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3364,7 +3364,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 25
     nameStr: unit_name_611
-    hp: 20400
+    hp: 31100
     atk: 37
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3375,7 +3375,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_611
-    hp: 120000
+    hp: 62600
     atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3386,7 +3386,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_611
-    hp: 120000
+    hp: 62600
     atk: 64
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3397,7 +3397,7 @@ MonoBehaviour:
     slot: 2
     spawnSec: 25
     nameStr: unit_name_612
-    hp: 208000
+    hp: 109000
     atk: 103
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3474,7 +3474,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 3
     nameStr: unit_name_711
-    hp: 150000
+    hp: 166000
     atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3485,7 +3485,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 10
     nameStr: unit_name_711
-    hp: 150000
+    hp: 166000
     atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
@@ -3496,7 +3496,7 @@ MonoBehaviour:
     slot: 1
     spawnSec: 25
     nameStr: unit_name_711
-    hp: 150000
+    hp: 166000
     atk: 76
     atkSpeed: 0.5
     moveSpeed: 300
@@ -5182,7 +5182,7 @@ MonoBehaviour:
     prereqId1: upg509
     prereqId2: 
     maxLevel: 0
-    baseCost: 72000
+    baseCost: 14400
     addCost: NaN
     costMult: 1.5
     effectType1: 23

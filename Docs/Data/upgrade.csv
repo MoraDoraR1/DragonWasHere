@@ -18,7 +18,7 @@ upg501,upgrade_name_501,upgrade_desc_501,5,upg101,,0,36,,1.5,18,0.25,0.25,2,,,,,
 upg502,upgrade_name_502,upgrade_desc_502,5,upg501,,30,450,270,,19,0.25,0.25,2,20,0.05,0.05,2,res6000102
 upg503,upgrade_name_503,upgrade_desc_503,5,upg501,,0,240,,1.5,21,1,0.25,2,,,,,res6000094
 upg504,upgrade_name_504,upgrade_desc_504,5,upg503,,6,1800,2520,,22,2,1,1,,,,,res6000110
-upg505,upgrade_name_505,upgrade_desc_505,5,upg509,,0,72000,,1.5,23,1,0.25,2,,,,,res6000098
+upg505,upgrade_name_505,upgrade_desc_505,5,upg509,,0,14400,,1.5,23,1,0.25,2,,,,,res6000098
 upg506,upgrade_name_506,upgrade_desc_506,5,upg505,,4,270000,405000,,24,1,1,1,,,,,res6000113
 upg507,upgrade_name_507,upgrade_desc_507,5,upg101,,0,36,,1.5,25,0.25,0.25,2,,,,,res6000091
 upg508,upgrade_name_508,upgrade_desc_508,5,upg507,,15,360,216,,26,7,-0.35,1,,,,,res6000103
